@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v9.4</title>
+    <title>Reference Refinement v9.5</title>
     <style>
         /* CSS Variables */
         :root {
@@ -891,7 +891,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v9.4</h1>
+            <h1>Reference Refinement v9.5</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -934,48 +934,21 @@
                     <input type="file" id="fileInput" accept=".txt" onchange="app.loadFile(event, 'decisions')">
                 </div>
                 <div class="control-group">
-                    <label>Load Finalized (Final.txt)</label>
-                    <input type="file" id="finalInput" accept=".txt" onchange="app.loadFile(event, 'final')">
-                </div>
-                <div class="control-group">
-                    <label>Quick Actions</label>
+                    <label>Actions</label>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="app.exportFile('decisions')">Export Decisions</button>
-                        <button onclick="app.exportFile('final')" class="success">Export Final</button>
+                        <button onclick="app.exportFile()">Save decisions.txt</button>
+                        <button onclick="app.exportOverrideLog()" style="background: var(--accent-color);">Export Override Log</button>
                         <button onclick="app.clearAll()" class="danger">Clear All</button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Filters & Search -->
-        <div class="controls">
-            <div class="control-row">
                 <div class="control-group">
-                    <label for="searchInput">Search</label>
-                    <input id="searchInput" type="text" class="control-input"
-                        placeholder="Search title, authors, or ID..."
-                        oninput="app.applyFilters()">
-                </div>
-                <div class="control-group">
-                    <label for="urlFilter">URL Status</label>
-                    <select id="urlFilter" class="control-input" onchange="app.applyFilters()">
-                        <option value="">All</option>
-                        <option value="has-urls">Has URLs</option>
-                        <option value="no-urls">No URLs</option>
-                        <option value="finalized">Finalized</option>
-                        <option value="not-finalized">Not Finalized</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="sortBy">Sort By</label>
-                    <select id="sortBy" class="control-input" onchange="app.applyFilters()">
-                        <option value="id-asc">ID (Ascending)</option>
-                        <option value="id-desc">ID (Descending)</option>
-                        <option value="year-desc">Year (Newest)</option>
-                        <option value="year-asc">Year (Oldest)</option>
-                        <option value="title">Title (A-Z)</option>
-                    </select>
+                    <label>Display</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                            <input type="checkbox" id="showFinalizedToggle" onchange="app.applyFilters()">
+                            <span>Show Finalized References</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1145,7 +1118,7 @@
                                 <span id="rankBtnText">Autorank Candidates (AI)</span>
                             </button>
                             <button onclick="app.finalizeReference()" class="success">
-                                Finalize & Save to Final.txt
+                                Finalize Reference
                             </button>
                         </div>
                     </div>
@@ -1205,9 +1178,23 @@
             apiBaseUrl: '',
             isAdvancedMode: false,
             debugLogs: [],
+            overrideLog: [],  // Track query and ranking overrides
+            aiSuggestedQuery: null,  // Store AI-suggested query for comparison
+            aiRankedResults: null,  // Store AI ranking results for comparison
+            autoSaveTimeout: null,  // Debounce timer for auto-save
 
             // Initialize
             init() {
+                // Load override log from localStorage
+                const savedLog = localStorage.getItem('rr_override_log');
+                if (savedLog) {
+                    try {
+                        this.overrideLog = JSON.parse(savedLog);
+                    } catch (e) {
+                        this.overrideLog = [];
+                    }
+                }
+
                 // Load saved API URL
                 const savedUrl = localStorage.getItem('rr_api_url');
                 if (savedUrl) {
@@ -1509,106 +1496,157 @@
             },
 
             extractReferenceInfo(ref) {
-                let text = ref.text;
+                // New parser using "Relevance:" as anchor point
+                // Format: [RID] <variable bibliographic fields> Relevance: <text> FLAGS[...] PRIMARY_URL[...] SECONDARY_URL[...]
 
-                // First, check if relevance text is embedded in the same line
-                const relevanceMatch = text.match(/\bRelevance:\s*(.+?)(?:\s+FLAGS\[|$)/i);
-                if (relevanceMatch) {
-                    ref.relevance_text = relevanceMatch[1].trim();
-                    // Remove the relevance part from text for cleaner parsing
-                    text = text.replace(/\bRelevance:\s*.+?(?=\s+FLAGS\[|$)/i, '').trim();
+                const text = ref.text;
+
+                // 1. Find "Relevance:" as anchor point
+                const relevanceIndex = text.indexOf('Relevance:');
+
+                // 2. Extract bibliographic section (everything before "Relevance:")
+                let biblioSection = '';
+                if (relevanceIndex > 0) {
+                    // Remove [RID] from start to get pure biblio section
+                    const afterId = text.substring(0, relevanceIndex).replace(/^\[\d+\]\s*/, '').trim();
+                    biblioSection = afterId;
+                } else {
+                    // No "Relevance:" found - treat everything except FLAGS/URLs as biblio
+                    const flagsIndex = text.indexOf('FLAGS[');
+                    const urlIndex = text.indexOf('PRIMARY_URL[');
+                    const endIndex = flagsIndex > 0 ? flagsIndex : (urlIndex > 0 ? urlIndex : text.length);
+                    biblioSection = text.substring(0, endIndex).replace(/^\[\d+\]\s*/, '').trim();
                 }
 
-                // Extract year (4-digit year in parentheses)
-                const yearMatch = text.match(/\((\d{4})\)/);
-                ref.year = yearMatch ? yearMatch[1] : '';
-
-                // Extract authors (text before year)
-                const beforeYear = text.split('(')[0];
-                const afterId = beforeYear.replace(/^\[\d+\]\s*/, '');
-                ref.authors = afterId.trim();
-
-                // Extract title and remaining parts
-                const afterYear = text.split(')').slice(1).join(')');
-                if (afterYear) {
-                    // Clean up leading punctuation and whitespace
-                    let cleaned = afterYear.replace(/^[\.\s]+/, '').trim();
-
-                    // Split by period followed by space (sentence boundaries)
-                    const parts = cleaned.split(/\.\s+/);
-
-                    // First non-empty part is the title
-                    const titlePart = parts.find(p => p.trim().length > 0);
-                    if (titlePart) {
-                        // Check if title is in italics (common format)
-                        const italicMatch = titlePart.match(/<i>(.*?)<\/i>|_(.*?)_|\*(.*?)\*/);
-                        if (italicMatch) {
-                            ref.title = (italicMatch[1] || italicMatch[2] || italicMatch[3]).trim();
-                        } else {
-                            ref.title = titlePart.trim();
-                        }
-                    }
-
-                    // Process remaining parts for container, publisher, etc.
-                    if (parts.length > 1) {
-                        const remaining = parts.slice(1).join('. ');
-
-                        // Extract DOI
-                        const doiMatch = remaining.match(/(?:doi:|https?:\/\/doi\.org\/)?(10\.\d{4,9}\/[^\s]+)/i);
-                        if (doiMatch) {
-                            ref.doi = doiMatch[1];
-                        }
-
-                        // Extract ISBN
-                        const isbnMatch = remaining.match(/ISBN[:\s]*([\d-]+)/i);
-                        if (isbnMatch) {
-                            ref.isbn = isbnMatch[1];
-                        }
-
-                        // Extract volume, issue, pages (e.g., "45(3), 123-145")
-                        const volIssueMatch = remaining.match(/(\d+)\((\d+)\)[,:]?\s*(\d+[-–]\d+)?/);
-                        if (volIssueMatch) {
-                            ref.volume = volIssueMatch[1];
-                            ref.issue = volIssueMatch[2];
-                            if (volIssueMatch[3]) ref.pages = volIssueMatch[3];
-                        }
-
-                        // Container title (journal/book name) - first capitalized phrase
-                        const containerMatch = remaining.match(/^([A-Z][^.,;]*?)(?:[,;.]|$)/);
-                        if (containerMatch) {
-                            ref.container_title = containerMatch[1].trim();
-                        }
-
-                        // Publisher (often after container, preceded by colon or comma)
-                        const publisherMatch = remaining.match(/[,:]\s*([A-Z][^.,;]*?Press|[A-Z][^.,;]*?Publishers?)/);
-                        if (publisherMatch) {
-                            ref.publisher = publisherMatch[1].trim();
-                        }
-                    }
+                // 3. Extract relevance text (between "Relevance:" and FLAGS/URLs/EOL)
+                if (relevanceIndex > 0) {
+                    const afterRelevance = text.substring(relevanceIndex + 10); // Skip "Relevance:"
+                    const flagsMatch = afterRelevance.match(/^(.*?)(?=FLAGS\[|PRIMARY_URL\[|SECONDARY_URL\[|$)/);
+                    ref.relevance_text = flagsMatch ? flagsMatch[1].trim() : afterRelevance.trim();
+                } else {
+                    ref.relevance_text = '';
                 }
+
+                // 4. Extract FLAGS
+                const flagsMatch = text.match(/FLAGS\[([^\]]*)\]/);
+                if (flagsMatch) {
+                    const flagsContent = flagsMatch[1];
+                    const flags = flagsContent.split(',').map(f => f.trim());
+                    ref.finalized = flags.includes('FINALIZED');
+                } else {
+                    ref.finalized = false;
+                }
+
+                // 5. Parse bibliographic section flexibly
+                this.parseBiblioSection(ref, biblioSection);
             },
 
-            exportFile(fileType) {
+            parseBiblioSection(ref, biblioSection) {
+                // Extract fields in any order from bibliographic section
+
+                // Year: 4-digit number in parentheses
+                const yearMatch = biblioSection.match(/\((\d{4})\)/);
+                ref.year = yearMatch ? yearMatch[1] : '';
+
+                // Author: Text before (Year) or first segment before period
+                if (yearMatch) {
+                    const beforeYear = biblioSection.substring(0, biblioSection.indexOf(yearMatch[0])).trim();
+                    ref.authors = beforeYear.replace(/[,;]\s*$/, '').trim();
+                } else {
+                    // No year found, try to extract first segment as author
+                    const firstPeriod = biblioSection.indexOf('.');
+                    if (firstPeriod > 0) {
+                        ref.authors = biblioSection.substring(0, firstPeriod).trim();
+                    } else {
+                        ref.authors = '';
+                    }
+                }
+
+                // Title: Try multiple heuristics
+                // 1. Text immediately after (Year). up to next period
+                // 2. Longest capitalized segment
+                // 3. Text in quotes or italics
+                let titleCandidates = [];
+
+                if (yearMatch) {
+                    const afterYear = biblioSection.substring(biblioSection.indexOf(yearMatch[0]) + yearMatch[0].length);
+                    const afterYearCleaned = afterYear.replace(/^[\.\s,;]+/, '');
+                    const nextPeriod = afterYearCleaned.indexOf('.');
+                    if (nextPeriod > 0) {
+                        titleCandidates.push(afterYearCleaned.substring(0, nextPeriod).trim());
+                    } else if (afterYearCleaned.length > 0) {
+                        titleCandidates.push(afterYearCleaned.trim());
+                    }
+                }
+
+                // Look for quoted or italicized text
+                const quotedMatch = biblioSection.match(/"([^"]+)"|'([^']+)'|<i>([^<]+)<\/i>|_([^_]+)_/);
+                if (quotedMatch) {
+                    titleCandidates.push((quotedMatch[1] || quotedMatch[2] || quotedMatch[3] || quotedMatch[4]).trim());
+                }
+
+                // Pick longest candidate as title
+                ref.title = titleCandidates.reduce((longest, current) =>
+                    current.length > longest.length ? current : longest, '');
+
+                // DOI: Pattern 10.xxxx/yyyy
+                const doiMatch = biblioSection.match(/(?:doi:|DOI:)?\s*(10\.\d{4,9}\/[^\s,;.]+)/i);
+                ref.doi = doiMatch ? doiMatch[1] : '';
+
+                // ISBN: Pattern ISBN: xxx-xxx-xxx
+                const isbnMatch = biblioSection.match(/ISBN:?\s*([\d-]+)/i);
+                ref.isbn = isbnMatch ? isbnMatch[1] : '';
+
+                // Volume, Issue, Pages: Pattern Vol. 45(3), pp. 123-145 or just 45(3), 123-145
+                const volMatch = biblioSection.match(/Vol\.\s*(\d+)|(?:^|[^\d])(\d+)\(/i);
+                ref.volume = volMatch ? (volMatch[1] || volMatch[2]) : '';
+
+                const issueMatch = biblioSection.match(/\((\d+)\)/);
+                // Make sure this issue is not the year
+                if (issueMatch && issueMatch[1] !== ref.year) {
+                    ref.issue = issueMatch[1];
+                } else {
+                    ref.issue = '';
+                }
+
+                const pagesMatch = biblioSection.match(/pp?\.\s*([\d\-–]+)|pages?\s*([\d\-–]+)/i);
+                ref.pages = pagesMatch ? (pagesMatch[1] || pagesMatch[2]) : '';
+
+                // Edition: Pattern "2nd ed." or "Second Edition"
+                const editionMatch = biblioSection.match(/(\d+(?:st|nd|rd|th)\s*ed(?:ition)?\.?)/i);
+                ref.edition = editionMatch ? editionMatch[1] : '';
+
+                // Container title (journal/book name): Capitalized text that's not author or title
+                // This is harder to extract reliably, using best guess
+                const parts = biblioSection.split(/\.\s+/);
+                for (let part of parts) {
+                    part = part.trim();
+                    // Skip if it's the author, title, or contains DOI/ISBN
+                    if (part && part !== ref.authors && part !== ref.title &&
+                        !part.match(/ISBN|DOI|Vol\.|pp?\./i) &&
+                        part.match(/^[A-Z]/)) {
+                        ref.container_title = part;
+                        break;
+                    }
+                }
+                if (!ref.container_title) ref.container_title = '';
+
+                // Publisher: Look for "Press", "Publisher", or common publisher names
+                const publisherMatch = biblioSection.match(/([A-Z][^,;.]*?(?:Press|Publishers?|University|Books|Publishing))/);
+                ref.publisher = publisherMatch ? publisherMatch[1].trim() : '';
+
+                // Publisher location: Look for pattern "Location: City" or city before publisher
+                const locationMatch = biblioSection.match(/Location:\s*([^,;.]+)|([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)[,:]?\s*(?:Press|Publisher)/);
+                ref.publisher_place = locationMatch ? (locationMatch[1] || locationMatch[2] || '').trim() : '';
+            },
+
+            exportFile() {
+                // Export all references to decisions.txt format
                 let content = '';
-                let filename = '';
-                let refs = [];
+                const filename = 'decisions.txt';
 
-                if (fileType === 'decisions') {
-                    refs = this.references;
-                    filename = `decisions_${new Date().toISOString().split('T')[0]}.txt`;
-
-                    // Use generateDecisionsEntry for each reference
-                    for (const ref of refs) {
-                        content += this.generateDecisionsEntry(ref, ref.finalized) + '\n';
-                    }
-                } else if (fileType === 'final') {
-                    refs = this.references.filter(r => r.finalized);
-                    filename = `Final_${new Date().toISOString().split('T')[0]}.txt`;
-
-                    // Use generateFinalEntry for each finalized reference
-                    for (const ref of refs) {
-                        content += this.generateFinalEntry(ref) + '\n';
-                    }
+                for (const ref of this.references) {
+                    content += this.generateDecisionsEntry(ref, ref.finalized) + '\n';
                 }
 
                 const blob = new Blob([content], { type: 'text/plain' });
@@ -1619,66 +1657,76 @@
                 a.click();
                 URL.revokeObjectURL(url);
 
-                this.showToast(`${fileType === 'final' ? 'Final.txt' : 'Decisions.txt'} exported`, 'success');
+                this.showToast('decisions.txt saved', 'success');
+
+                // Also save to localStorage as backup
+                localStorage.setItem('rr_decisions_backup', content);
+                localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
+            },
+
+            exportOverrideLog() {
+                // Export override log in JSONL format
+                if (!this.overrideLog || this.overrideLog.length === 0) {
+                    this.showToast('No overrides logged yet', 'info');
+                    return;
+                }
+
+                const content = this.overrideLog.map(entry => JSON.stringify(entry)).join('\n');
+                const filename = `override_log_${new Date().toISOString().split('T')[0]}.jsonl`;
+
+                const blob = new Blob([content], { type: 'application/x-jsonlines' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showToast('Override log exported', 'success');
+            },
+
+            autoSave() {
+                // Debounced auto-save to localStorage
+                clearTimeout(this.autoSaveTimeout);
+                this.autoSaveTimeout = setTimeout(() => {
+                    // Save references to localStorage
+                    const content = this.references.map(ref =>
+                        this.generateDecisionsEntry(ref, ref.finalized)
+                    ).join('\n');
+
+                    localStorage.setItem('rr_decisions_backup', content);
+                    localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
+
+                    // Save override log
+                    localStorage.setItem('rr_override_log', JSON.stringify(this.overrideLog));
+
+                    console.log('Auto-saved to localStorage');
+                }, 500);  // 500ms debounce
             },
 
             // Filtering and Display
             applyFilters() {
-                const search = document.getElementById('searchInput').value.toLowerCase();
-                const urlFilter = document.getElementById('urlFilter').value;
-                const sortBy = document.getElementById('sortBy').value;
+                // Simplified filtering: Show only non-finalized by default, unless checkbox is checked
+                const showFinalized = document.getElementById('showFinalizedToggle')?.checked || false;
 
-                // Filter
                 this.filteredReferences = this.references.filter(ref => {
-                    // Search filter
-                    if (search && !this.matchesSearch(ref, search)) return false;
-
-                    // URL filter
-                    if (urlFilter) {
-                        const hasUrls = ref.urls.primary || ref.urls.secondary;
-                        if (urlFilter === 'has-urls' && !hasUrls) return false;
-                        if (urlFilter === 'no-urls' && hasUrls) return false;
-                        if (urlFilter === 'finalized' && !ref.finalized) return false;
-                        if (urlFilter === 'not-finalized' && ref.finalized) return false;
-                    }
-
+                    // Filter by finalized status
+                    if (!showFinalized && ref.finalized) return false;
                     return true;
                 });
 
-                // Sort
-                this.sortReferences(sortBy);
+                // Always sort by ID ascending
+                this.filteredReferences.sort((a, b) => {
+                    const aId = parseInt(a.id) || 0;
+                    const bId = parseInt(b.id) || 0;
+                    return aId - bId;
+                });
 
                 // Display
                 this.renderReferences();
                 this.updateStats();
             },
 
-            matchesSearch(ref, search) {
-                return ref.id.includes(search) ||
-                       ref.title.toLowerCase().includes(search) ||
-                       ref.authors.toLowerCase().includes(search) ||
-                       ref.text.toLowerCase().includes(search);
-            },
-
-            sortReferences(sortBy) {
-                switch (sortBy) {
-                    case 'id-asc':
-                        this.filteredReferences.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-                        break;
-                    case 'id-desc':
-                        this.filteredReferences.sort((a, b) => parseInt(b.id) - parseInt(a.id));
-                        break;
-                    case 'year-desc':
-                        this.filteredReferences.sort((a, b) => (b.year || '0') - (a.year || '0'));
-                        break;
-                    case 'year-asc':
-                        this.filteredReferences.sort((a, b) => (a.year || '0') - (b.year || '0'));
-                        break;
-                    case 'title':
-                        this.filteredReferences.sort((a, b) => a.title.localeCompare(b.title));
-                        break;
-                }
-            },
 
             renderReferences() {
                 const grid = document.getElementById('referencesGrid');
@@ -1957,6 +2005,10 @@
                 ref.text = text;
 
                 this.showToast('Reference saved', 'success');
+
+                // Auto-save after changes
+                this.autoSave();
+
                 this.closeModal();
                 this.applyFilters();
             },
@@ -1977,46 +2029,96 @@
                 // Mark as finalized
                 ref.finalized = true;
 
-                // Generate updated decisions.txt entry with [FINALIZED] flag
+                // Generate updated decisions.txt entry with FLAGS[FINALIZED]
                 const decisionsEntry = this.generateDecisionsEntry(ref, true);
 
-                // Generate clean Final.txt entry (no flags)
-                const finalEntry = this.generateFinalEntry(ref);
-
-                // Show both entries in debug log
+                // Show entry in debug log
                 this.addDebugLog('=== FINALIZED REFERENCE ===');
                 this.addDebugLog('\nDecisions.txt entry:\n' + decisionsEntry);
-                this.addDebugLog('\nFinal.txt entry:\n' + finalEntry);
 
-                this.showToast('Reference finalized! Check Debug tab (Tab 3) for file updates.', 'success');
+                this.showToast('Reference finalized! FLAGS[FINALIZED] added.', 'success');
 
-                // Update display
+                // Auto-save decisions.txt
+                this.autoSave();
+
+                // Update display (reference will disappear from view if "Show Finalized" is unchecked)
                 this.applyFilters();
+
+                // Close modal
+                this.closeModal();
             },
 
             generateDecisionsEntry(ref, includeFinalized = false) {
-                let entry = ref.text + '\n';
-                if (includeFinalized) {
-                    entry += '[FINALIZED]\n';
+                // New single-line format: [RID] Author (Year). Title. ... Relevance: text FLAGS[...] PRIMARY_URL[...] SECONDARY_URL[...]
+
+                let entry = `[${ref.id}] `;
+
+                // Add author if present
+                if (ref.authors) {
+                    entry += `${ref.authors} `;
                 }
+
+                // Add year if present
+                if (ref.year) {
+                    entry += `(${ref.year}). `;
+                }
+
+                // Add title if present
+                if (ref.title) {
+                    entry += `${ref.title}. `;
+                }
+
+                // Add container title if present
+                if (ref.container_title) {
+                    entry += `${ref.container_title}. `;
+                }
+
+                // Add publisher if present
+                if (ref.publisher) {
+                    entry += `${ref.publisher}. `;
+                }
+
+                // Add volume/issue/pages if present
+                if (ref.volume) {
+                    entry += `Vol. ${ref.volume}`;
+                    if (ref.issue) {
+                        entry += `(${ref.issue})`;
+                    }
+                    entry += '. ';
+                }
+                if (ref.pages) {
+                    entry += `pp. ${ref.pages}. `;
+                }
+
+                // Add DOI if present
+                if (ref.doi) {
+                    entry += `DOI: ${ref.doi}. `;
+                }
+
+                // Add ISBN if present
+                if (ref.isbn) {
+                    entry += `ISBN: ${ref.isbn}. `;
+                }
+
+                // Add relevance text if present
                 if (ref.relevance_text) {
-                    entry += `Relevance: ${ref.relevance_text}\n`;
-                }
-                if (ref.urls.primary) entry += `Primary URL: ${ref.urls.primary}\n`;
-                if (ref.urls.secondary) entry += `Secondary URL: ${ref.urls.secondary}\n`;
-
-                for (const query of ref.queries) {
-                    entry += `Q: ${query}\n`;
+                    entry += `Relevance: ${ref.relevance_text} `;
                 }
 
-                return entry;
-            },
+                // Add FLAGS if finalized
+                if (includeFinalized || ref.finalized) {
+                    entry += `FLAGS[FINALIZED] `;
+                }
 
-            generateFinalEntry(ref) {
-                let entry = ref.text + '\n';
-                if (ref.urls.primary) entry += `Primary URL: ${ref.urls.primary}\n`;
-                if (ref.urls.secondary) entry += `Secondary URL: ${ref.urls.secondary}\n`;
-                return entry;
+                // Add URLs
+                if (ref.urls.primary) {
+                    entry += `PRIMARY_URL[${ref.urls.primary}] `;
+                }
+                if (ref.urls.secondary) {
+                    entry += `SECONDARY_URL[${ref.urls.secondary}] `;
+                }
+
+                return entry.trim();
             },
 
             // AI Operations
@@ -2057,6 +2159,8 @@ Return only the queries, one per line. Make them specific and use quotation mark
 
                     if (response.result) {
                         document.getElementById('editQueries').value = response.result;
+                        // Store AI-suggested query for override detection
+                        this.aiSuggestedQuery = response.result;
                         this.addDebugLog('Generated queries:\n' + response.result);
                         this.showToast('Queries generated', 'success');
                     }
