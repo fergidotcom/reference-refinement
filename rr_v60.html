@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v11.0</title>
+    <title>Reference Refinement v11.2</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -991,7 +991,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v11.0</h1>
+            <h1>Reference Refinement v11.2</h1>
         </div>
     </header>
 
@@ -2391,7 +2391,9 @@ ${response.result}`;
                     item.classList.add(urlType === 'primary' ? 'selected-primary' : 'selected-secondary');
                 }
 
-                this.addDebugLog(`Selected as ${urlType} URL: ${candidate.url}`);
+                // Log selection with query that found it
+                const queryInfo = candidate.query ? `\nFound by query: ${candidate.query}` : '';
+                this.addDebugLog(`Selected as ${urlType} URL: ${candidate.url}${queryInfo}`);
             },
 
             async rankCandidates() {

@@ -66,7 +66,8 @@ export const handler: Handler = async (event, context) => {
       title: item.title,
       url: item.link,
       snippet: item.snippet,
-      displayUrl: item.displayLink
+      displayUrl: item.displayLink,
+      query: query  // Include the query that found this result
     }));
 
     return {
