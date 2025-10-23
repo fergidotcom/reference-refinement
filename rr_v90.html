@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v9.6</title>
+    <title>Reference Refinement v9.7</title>
     <style>
         /* CSS Variables */
         :root {
@@ -891,7 +891,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v9.6</h1>
+            <h1>Reference Refinement v9.7</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -984,6 +984,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Edit Reference</h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-left: auto; margin-right: 0.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">AI Model:</label>
+                    <select id="aiModelSelect" class="form-select" style="font-size: 0.85rem; padding: 0.3rem 0.5rem;" onchange="app.saveModelPreference()">
+                        <option value="claude-3-5-haiku-20241022">Haiku (Fast)</option>
+                        <option value="claude-3-5-sonnet-20241022">Sonnet (Better)</option>
+                    </select>
+                </div>
                 <button class="modal-close" onclick="app.closeModal()">&times;</button>
             </div>
 
@@ -1238,6 +1245,10 @@
                         console.error('Failed to auto-load from localStorage:', e);
                     }
                 }
+
+                // Load saved AI model preference (default to Haiku)
+                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-3-5-haiku-20241022';
+                document.getElementById('aiModelSelect').value = savedModel;
 
                 // Load saved API URL
                 const savedUrl = localStorage.getItem('rr_api_url');
@@ -1796,6 +1807,16 @@
                 console.log('Override logged:', entry);
             },
 
+            saveModelPreference() {
+                const model = document.getElementById('aiModelSelect').value;
+                localStorage.setItem('rr_ai_model', model);
+                console.log('Saved AI model preference:', model);
+            },
+
+            getSelectedModel() {
+                return document.getElementById('aiModelSelect').value;
+            },
+
             // Filtering and Display
             applyFilters() {
                 // Simplified filtering: Show only non-finalized by default, unless checkbox is checked
@@ -2244,9 +2265,10 @@ Use the relevance context to understand what aspects of this work are most impor
 
 Return only the queries, one per line. Make them specific and use quotation marks for exact phrases.`;
 
+                    const model = this.getSelectedModel();
                     const response = await this.apiRequest('/api/llm-chat', {
                         method: 'POST',
-                        body: JSON.stringify({ prompt })
+                        body: JSON.stringify({ prompt, model })
                     });
 
                     if (response.result) {
@@ -2489,6 +2511,7 @@ Return only the queries, one per line. Make them specific and use quotation mark
                 this.addDebugLog('AI ranking candidates...');
 
                 try {
+                    const model = this.getSelectedModel();
                     const response = await this.apiRequest('/api/llm-rank', {
                         method: 'POST',
                         body: JSON.stringify({
@@ -2498,7 +2521,8 @@ Return only the queries, one per line. Make them specific and use quotation mark
                                 year: ref.year,
                                 container_title: ref.container_title
                             },
-                            candidates: ref.searchResults
+                            candidates: ref.searchResults,
+                            model: model
                         })
                     });
 
