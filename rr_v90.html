@@ -1,0 +1,2354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Reference Refinement v9.4</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --background: #f5f7fa;
+            --card-background: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: #dcdfe6;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+            --tab-active: #3498db;
+            --tab-inactive: #95a5a6;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.25rem;
+        }
+
+        .mode-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-color);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        /* API Status */
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+        }
+
+        .status-indicator.connected { background: var(--success-color); }
+        .status-indicator.error { background: var(--danger-color); }
+
+        /* API Config Panel */
+        .api-config {
+            background: var(--card-background);
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            display: none;
+        }
+
+        .api-config.visible { display: block; }
+
+        .api-config-inner {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .api-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .api-input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Buttons */
+        button {
+            padding: 0.5rem 1rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active { transform: translateY(0); }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: var(--text-secondary);
+        }
+
+        button.success {
+            background: var(--success-color);
+        }
+
+        button.danger {
+            background: var(--danger-color);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Controls Section */
+        .controls {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-row:last-child { margin-bottom: 0; }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(90deg, var(--primary-color), #34495e);
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Reference Grid */
+        .references-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        /* Reference Card */
+        .reference-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .reference-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-color);
+        }
+
+        .reference-card.finalized {
+            background: #e8f5e9;
+            border-color: var(--success-color);
+        }
+
+        .reference-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        .reference-id {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .finalized-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reference-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .reference-authors {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .reference-year {
+            display: inline-block;
+            background: var(--background);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reference-relevance {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #fff9e6;
+            border-left: 3px solid var(--warning-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-style: italic;
+            border-radius: 4px;
+        }
+
+        .reference-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .reference-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .reference-actions button {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        /* URLs Section */
+        .urls-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .url-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--background);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .url-type {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            background: var(--primary-color);
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .url-type.primary { background: var(--success-color); }
+        .url-type.secondary { background: var(--accent-color); }
+
+        .url-link {
+            flex: 1;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .url-link:hover { text-decoration: underline; }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .modal.visible { display: flex; }
+
+        .modal-content {
+            background: var(--card-background);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        /* Tabs */
+        .modal-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            background: var(--background);
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .modal-tab:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .modal-tab.active {
+            color: var(--tab-active);
+            border-bottom-color: var(--tab-active);
+            background: var(--card-background);
+        }
+
+        .modal-body {
+            padding: 0.75rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #tab1.tab-content.active {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .modal-section {
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-section:last-child { margin-bottom: 0; }
+
+        .modal-section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-select {
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Candidates List */
+        .candidates-list {
+            min-height: 600px;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .candidate-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: var(--background);
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .candidate-item:hover {
+            border-color: var(--accent-color);
+        }
+
+        .candidate-item.selected-primary {
+            border-color: var(--success-color);
+            background: #e8f5e9;
+        }
+
+        .candidate-item.selected-secondary {
+            border-color: var(--accent-color);
+            background: #e8f4fd;
+        }
+
+        .candidate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .candidate-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .candidate-score {
+            background: var(--warning-color);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .candidate-snippet {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .candidate-url {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+
+        .candidate-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .candidate-actions button {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* Debug Section */
+        .debug-section {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .debug-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .debug-content {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--text-primary);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 350px;
+        }
+
+        .toast.visible { transform: translateX(0); }
+        .toast.success { background: var(--success-color); }
+        .toast.error { background: var(--danger-color); }
+        .toast.warning { background: var(--warning-color); }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+
+            .header-controls {
+                justify-content: center;
+            }
+
+            .control-row {
+                flex-direction: column;
+            }
+
+            .control-group {
+                min-width: 100%;
+            }
+
+            .stats-bar {
+                justify-content: space-around;
+            }
+
+            .modal-content {
+                margin: 0.5rem;
+                max-height: calc(100vh - 1rem);
+            }
+
+            .toast-container {
+                left: 1rem;
+                right: 1rem;
+                bottom: 1rem;
+            }
+
+            .toast {
+                max-width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-tabs {
+                flex-direction: column;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .controls,
+            .reference-actions,
+            .modal,
+            .toast-container {
+                display: none !important;
+            }
+
+            .reference-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus Indicators */
+        *:focus-visible {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>Reference Refinement v9.4</h1>
+            <div class="header-controls">
+                <div class="mode-toggle">
+                    <span class="mode-label">Mode:</span>
+                    <div id="modeToggle" class="toggle-switch">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span id="modeLabel" class="mode-label">Standalone</span>
+                </div>
+                <div class="api-status">
+                    <div id="statusIndicator" class="status-indicator"></div>
+                    <span id="statusText">Disconnected</span>
+                </div>
+                <button id="pingButton" onclick="app.ping()">Ping</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- API Configuration Panel -->
+    <div id="apiConfig" class="api-config">
+        <div class="api-config-inner">
+            <div class="api-input-group">
+                <input id="apiUrl" type="text" class="api-input"
+                    placeholder="Enter backend URL (e.g., http://192.168.1.100:8000 or https://xxx.trycloudflare.com)">
+                <button onclick="app.setApiUrl()">Set URL</button>
+                <button onclick="app.clearApiUrl()" class="secondary">Clear</button>
+            </div>
+            <small style="color: var(--text-secondary);">
+                Leave empty for standalone mode (using Netlify Functions)
+            </small>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- File Controls -->
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label>Load References (decisions.txt)</label>
+                    <input type="file" id="fileInput" accept=".txt" onchange="app.loadFile(event, 'decisions')">
+                </div>
+                <div class="control-group">
+                    <label>Load Finalized (Final.txt)</label>
+                    <input type="file" id="finalInput" accept=".txt" onchange="app.loadFile(event, 'final')">
+                </div>
+                <div class="control-group">
+                    <label>Quick Actions</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="app.exportFile('decisions')">Export Decisions</button>
+                        <button onclick="app.exportFile('final')" class="success">Export Final</button>
+                        <button onclick="app.clearAll()" class="danger">Clear All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters & Search -->
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="searchInput">Search</label>
+                    <input id="searchInput" type="text" class="control-input"
+                        placeholder="Search title, authors, or ID..."
+                        oninput="app.applyFilters()">
+                </div>
+                <div class="control-group">
+                    <label for="urlFilter">URL Status</label>
+                    <select id="urlFilter" class="control-input" onchange="app.applyFilters()">
+                        <option value="">All</option>
+                        <option value="has-urls">Has URLs</option>
+                        <option value="no-urls">No URLs</option>
+                        <option value="finalized">Finalized</option>
+                        <option value="not-finalized">Not Finalized</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy" class="control-input" onchange="app.applyFilters()">
+                        <option value="id-asc">ID (Ascending)</option>
+                        <option value="id-desc">ID (Descending)</option>
+                        <option value="year-desc">Year (Newest)</option>
+                        <option value="year-asc">Year (Oldest)</option>
+                        <option value="title">Title (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">Total</span>
+                <span id="statTotal" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Filtered</span>
+                <span id="statFiltered" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">With URLs</span>
+                <span id="statUrls" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Finalized</span>
+                <span id="statFinalized" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <!-- References Grid -->
+        <div id="referencesGrid" class="references-grid">
+            <!-- References will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Edit Modal with Tabs -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Reference</h2>
+                <button class="modal-close" onclick="app.closeModal()">&times;</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" onclick="app.switchTab(0)">
+                    Suggest & Query
+                </button>
+                <button class="modal-tab" onclick="app.switchTab(1)">
+                    Candidates & Autorank
+                </button>
+                <button class="modal-tab" onclick="app.switchTab(2)">
+                    Debug & Feedback
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab 1: Suggest & Query -->
+                <div id="tab0" class="tab-content active">
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <h3 style="margin-bottom: 0.5rem;">Reference Information</h3>
+
+                        <div class="form-row">
+                            <div class="form-group" style="max-width: 80px; margin-bottom: 0.5rem;">
+                                <label class="form-label">RID</label>
+                                <input id="editId" type="text" class="form-input" readonly>
+                            </div>
+                            <div class="form-group" style="flex: 1; margin-bottom: 0.5rem;">
+                                <label class="form-label">Title</label>
+                                <input id="editTitle" type="text" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label">Authors</label>
+                                <input id="editAuthors" type="text" class="form-input">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label">Year</label>
+                                <input id="editYear" type="text" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label">Journal/Book Title</label>
+                                <input id="editContainerTitle" type="text" class="form-input">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label">Publisher</label>
+                                <input id="editPublisher" type="text" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Other</label>
+                            <input id="editOther" type="text" class="form-input"
+                                placeholder="Vol. 45(3), pp. 123-145, DOI: 10.xxxx/..., ISBN: 978..., Location: NY">
+                        </div>
+
+                        <!-- Hidden fields for backward compatibility -->
+                        <input id="editVolume" type="hidden">
+                        <input id="editIssue" type="hidden">
+                        <input id="editPages" type="hidden">
+                        <input id="editEdition" type="hidden">
+                        <input id="editDOI" type="hidden">
+                        <input id="editISBN" type="hidden">
+                        <input id="editPublisherPlace" type="hidden">
+                    </div>
+
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <h3 style="margin-bottom: 0.5rem;">URL Management</h3>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Primary URL</label>
+                            <input id="editPrimaryUrl" type="url" class="form-input" placeholder="https://...">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Secondary URL</label>
+                            <input id="editSecondaryUrl" type="url" class="form-input" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <!-- Hidden relevance text field for backend use -->
+                    <textarea id="editRelevanceText" style="display: none;"></textarea>
+
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <h3 style="margin-bottom: 0.5rem;">Search Queries</h3>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Generated Queries</label>
+                            <textarea id="editQueries" class="form-textarea" rows="5"
+                                placeholder="Click 'Suggest' to generate queries, or enter manually (one per line)..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="app.generateQueries()">
+                                <span id="suggestBtnText">Suggest Queries (AI)</span>
+                            </button>
+                            <button onclick="app.runSearch()" class="success">
+                                <span id="queryBtnText">Query & Search</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Candidates & Autorank -->
+                <div id="tab1" class="tab-content">
+                    <div class="modal-section" style="flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0.5rem 0.75rem;">
+                        <h3 style="margin-bottom: 0.5rem;">Search Results</h3>
+                        <div id="candidatesContainer" style="flex: 1; overflow-y: auto; min-height: 500px; max-height: 600px;">
+                            <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                                No search results yet. Run queries in the "Suggest & Query" tab first.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="modal-section" style="flex-shrink: 0; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <h3 style="margin-bottom: 0.5rem;">Current URLs</h3>
+                        <div id="currentUrlsDisplay" style="padding: 0.5rem; background: var(--background); border-radius: 6px; font-size: 0.85rem;">
+                            <div style="margin-bottom: 0.25rem;">
+                                <strong>Primary:</strong> <span id="displayPrimaryUrl" style="color: var(--text-secondary); font-style: italic;">Not set</span>
+                            </div>
+                            <div>
+                                <strong>Secondary:</strong> <span id="displaySecondaryUrl" style="color: var(--text-secondary); font-style: italic;">Not set</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section" style="flex-shrink: 0; padding: 0.5rem 0.75rem;">
+                        <h3 style="margin-bottom: 0.5rem;">Actions</h3>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button onclick="app.rankCandidates()">
+                                <span id="rankBtnText">Autorank Candidates (AI)</span>
+                            </button>
+                            <button onclick="app.finalizeReference()" class="success">
+                                Finalize & Save to Final.txt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Debug & Feedback -->
+                <div id="tab2" class="tab-content">
+                    <div class="modal-section">
+                        <h3>Raw Data</h3>
+                        <div class="debug-section">
+                            <div class="debug-label">Original Source Line</div>
+                            <div id="debugSourceLine" class="debug-content"></div>
+                        </div>
+
+                        <div class="debug-section">
+                            <div class="debug-label">Parsed Fields</div>
+                            <div id="debugParsed" class="debug-content"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Parsing Issues</h3>
+                        <div id="debugIssues" class="debug-section">
+                            <div class="debug-content">No parsing issues detected.</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Search & Ranking Logs</h3>
+                        <div id="debugLogs" class="debug-section">
+                            <div class="debug-content">No logs yet. Run search and ranking operations to see logs here.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="app.closeModal()" class="secondary">Cancel</button>
+                <button onclick="app.saveReference()" class="success">Save Changes</button>
+                <button onclick="app.finalizeReference()" style="background: var(--warning-color);">Finalize</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JavaScript Application -->
+    <script>
+        // Application State
+        const app = {
+            references: [],
+            finalizedReferences: [],
+            filteredReferences: [],
+            currentEditId: null,
+            currentTab: 0,
+            apiBaseUrl: '',
+            isAdvancedMode: false,
+            debugLogs: [],
+
+            // Initialize
+            init() {
+                // Load saved API URL
+                const savedUrl = localStorage.getItem('rr_api_url');
+                if (savedUrl) {
+                    this.apiBaseUrl = savedUrl;
+                    document.getElementById('apiUrl').value = savedUrl;
+                    this.setMode(true);
+                }
+
+                // Check connection on load
+                this.ping();
+
+                // Setup event listeners
+                this.setupEventListeners();
+            },
+
+            // Event Listeners
+            setupEventListeners() {
+                // Mode toggle
+                document.getElementById('modeToggle').addEventListener('click', () => {
+                    this.toggleMode();
+                });
+
+                // Close modal on ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeModal();
+                });
+
+                // Close modal on background click
+                document.getElementById('editModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'editModal') this.closeModal();
+                });
+            },
+
+            // Mode Management
+            toggleMode() {
+                this.setMode(!this.isAdvancedMode);
+            },
+
+            setMode(advanced) {
+                this.isAdvancedMode = advanced;
+                const toggle = document.getElementById('modeToggle');
+                const label = document.getElementById('modeLabel');
+                const config = document.getElementById('apiConfig');
+
+                if (advanced) {
+                    toggle.classList.add('active');
+                    label.textContent = 'Advanced';
+                    config.classList.add('visible');
+                } else {
+                    toggle.classList.remove('active');
+                    label.textContent = 'Standalone';
+                    config.classList.remove('visible');
+                    this.apiBaseUrl = '';
+                }
+
+                this.ping();
+            },
+
+            // API Configuration
+            setApiUrl() {
+                const url = document.getElementById('apiUrl').value.trim();
+                if (url) {
+                    this.apiBaseUrl = url.replace(/\/$/, '');
+                    localStorage.setItem('rr_api_url', this.apiBaseUrl);
+                    this.showToast('API URL saved', 'success');
+                    this.ping();
+                }
+            },
+
+            clearApiUrl() {
+                this.apiBaseUrl = '';
+                document.getElementById('apiUrl').value = '';
+                localStorage.removeItem('rr_api_url');
+                this.showToast('API URL cleared', 'success');
+                this.ping();
+            },
+
+            // API Client
+            async apiRequest(endpoint, options = {}) {
+                // When in standalone mode (no custom backend), use absolute Netlify URL
+                // because the HTML may be served from claude.ai artifacts
+                const NETLIFY_URL = 'https://rrv521-1760738877.netlify.app';
+
+                let url;
+                if (this.apiBaseUrl) {
+                    // Advanced mode - use custom backend
+                    url = `${this.apiBaseUrl}${endpoint}`;
+                } else {
+                    // Standalone mode - use absolute Netlify URL
+                    // Convert /api/ to /.netlify/functions/
+                    const functionPath = endpoint.replace('/api/', '/');
+                    url = `${NETLIFY_URL}/.netlify/functions${functionPath}`;
+                }
+
+                const defaultOptions = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                try {
+                    console.log('API Request:', url, options);
+                    const response = await fetch(url, { ...defaultOptions, ...options });
+
+                    console.log('API Response status:', response.status);
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('API Error response:', errorText);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('API Response data:', data);
+                    return data;
+                } catch (error) {
+                    console.error('API request failed:', error);
+                    throw error;
+                }
+            },
+
+            // Connection Test
+            async ping() {
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+
+                try {
+                    const result = await this.apiRequest('/api/health');
+
+                    if (result.ok) {
+                        indicator.classList.add('connected');
+                        indicator.classList.remove('error');
+                        text.textContent = `Connected (${result.version || 'v9.0'})`;
+                        this.showToast('Connected to backend', 'success');
+                    }
+                } catch (error) {
+                    indicator.classList.remove('connected');
+                    indicator.classList.add('error');
+                    text.textContent = 'Disconnected';
+
+                    if (this.isAdvancedMode) {
+                        this.showToast('Connection failed. Check backend URL.', 'error');
+                    }
+                }
+            },
+
+            // File Operations
+            loadFile(event, fileType) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        if (fileType === 'decisions') {
+                            this.parseDecisions(e.target.result);
+                            this.showToast(`Loaded ${this.references.length} references`, 'success');
+                        } else if (fileType === 'final') {
+                            this.parseFinal(e.target.result);
+                            this.showToast(`Loaded ${this.finalizedReferences.length} finalized references`, 'success');
+                        }
+                        this.applyFilters();
+                    } catch (error) {
+                        this.showToast('Failed to parse file', 'error');
+                        console.error('Parse error:', error);
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            parseDecisions(content) {
+                this.references = [];
+                const lines = content.split('\n');
+                let currentRef = null;
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+
+                    // Reference ID line
+                    if (trimmed.startsWith('[') && trimmed.includes(']') && trimmed.match(/\[\d+\]/)) {
+                        if (currentRef) this.references.push(currentRef);
+
+                        const idMatch = trimmed.match(/\[(\d+)\]/);
+                        if (idMatch) {
+                            currentRef = {
+                                id: idMatch[1],
+                                text: trimmed,
+                                finalized: false,
+                                relevance_text: '',
+                                urls: {
+                                    primary: '',
+                                    secondary: '',
+                                    },
+                                queries: [],
+                                searchResults: [],
+                                // Bibliographic fields
+                                title: '',
+                                authors: '',
+                                year: '',
+                                container_title: '',
+                                publisher: '',
+                                publisher_place: '',
+                                volume: '',
+                                issue: '',
+                                pages: '',
+                                edition: '',
+                                doi: '',
+                                isbn: ''
+                            };
+
+                            // Extract basic info
+                            this.extractReferenceInfo(currentRef);
+                        }
+                    }
+                    // FINALIZED flag
+                    else if (trimmed === '[FINALIZED]' && currentRef) {
+                        currentRef.finalized = true;
+                    }
+                    // URL lines
+                    else if (trimmed.startsWith('Primary URL:') && currentRef) {
+                        currentRef.urls.primary = trimmed.replace('Primary URL:', '').trim();
+                    }
+                    else if (trimmed.startsWith('Secondary URL:') && currentRef) {
+                        currentRef.urls.secondary = trimmed.replace('Secondary URL:', '').trim();
+                    }
+                    // Relevance text (not a rating)
+                    else if (trimmed.startsWith('Relevance:') && currentRef) {
+                        const relevanceText = trimmed.replace('Relevance:', '').trim();
+                        // Only store if it's not a rating keyword
+                        if (!['high', 'medium', 'low', 'remove', 'unknown'].includes(relevanceText.toLowerCase())) {
+                            currentRef.relevance_text = relevanceText;
+                        }
+                    }
+                    // Query lines
+                    else if (trimmed.startsWith('Q:') && currentRef) {
+                        currentRef.queries.push(trimmed.substring(2).trim());
+                    }
+                }
+
+                if (currentRef) this.references.push(currentRef);
+            },
+
+            parseFinal(content) {
+                this.finalizedReferences = [];
+                const lines = content.split('\n');
+                let currentRef = null;
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+
+                    if (trimmed.startsWith('[') && trimmed.includes(']')) {
+                        if (currentRef) this.finalizedReferences.push(currentRef);
+
+                        const idMatch = trimmed.match(/\[(\d+)\]/);
+                        if (idMatch) {
+                            currentRef = {
+                                id: idMatch[1],
+                                text: trimmed,
+                                finalized: true,
+                                relevance_text: '',
+                                urls: { primary: '', secondary: '' },
+                                queries: [],
+                                searchResults: [],
+                                title: '', authors: '', year: '',
+                                container_title: '', publisher: '', publisher_place: '',
+                                volume: '', issue: '', pages: '', edition: '',
+                                doi: '', isbn: ''
+                            };
+                            this.extractReferenceInfo(currentRef);
+                        }
+                    }
+                    else if (trimmed.startsWith('Primary URL:') && currentRef) {
+                        currentRef.urls.primary = trimmed.replace('Primary URL:', '').trim();
+                    }
+                    else if (trimmed.startsWith('Secondary URL:') && currentRef) {
+                        currentRef.urls.secondary = trimmed.replace('Secondary URL:', '').trim();
+                    }
+                    // Relevance text
+                    else if (trimmed.startsWith('Relevance:') && currentRef) {
+                        const relevanceText = trimmed.replace('Relevance:', '').trim();
+                        if (!['high', 'medium', 'low', 'remove', 'unknown'].includes(relevanceText.toLowerCase())) {
+                            currentRef.relevance_text = relevanceText;
+                        }
+                    }
+                }
+
+                if (currentRef) this.finalizedReferences.push(currentRef);
+
+                // Merge finalized references into main references
+                for (const finalRef of this.finalizedReferences) {
+                    const existingRef = this.references.find(r => r.id === finalRef.id);
+                    if (existingRef) {
+                        existingRef.finalized = true;
+                        existingRef.urls = finalRef.urls;
+                    } else {
+                        this.references.push(finalRef);
+                    }
+                }
+            },
+
+            extractReferenceInfo(ref) {
+                let text = ref.text;
+
+                // First, check if relevance text is embedded in the same line
+                const relevanceMatch = text.match(/\bRelevance:\s*(.+?)(?:\s+FLAGS\[|$)/i);
+                if (relevanceMatch) {
+                    ref.relevance_text = relevanceMatch[1].trim();
+                    // Remove the relevance part from text for cleaner parsing
+                    text = text.replace(/\bRelevance:\s*.+?(?=\s+FLAGS\[|$)/i, '').trim();
+                }
+
+                // Extract year (4-digit year in parentheses)
+                const yearMatch = text.match(/\((\d{4})\)/);
+                ref.year = yearMatch ? yearMatch[1] : '';
+
+                // Extract authors (text before year)
+                const beforeYear = text.split('(')[0];
+                const afterId = beforeYear.replace(/^\[\d+\]\s*/, '');
+                ref.authors = afterId.trim();
+
+                // Extract title and remaining parts
+                const afterYear = text.split(')').slice(1).join(')');
+                if (afterYear) {
+                    // Clean up leading punctuation and whitespace
+                    let cleaned = afterYear.replace(/^[\.\s]+/, '').trim();
+
+                    // Split by period followed by space (sentence boundaries)
+                    const parts = cleaned.split(/\.\s+/);
+
+                    // First non-empty part is the title
+                    const titlePart = parts.find(p => p.trim().length > 0);
+                    if (titlePart) {
+                        // Check if title is in italics (common format)
+                        const italicMatch = titlePart.match(/<i>(.*?)<\/i>|_(.*?)_|\*(.*?)\*/);
+                        if (italicMatch) {
+                            ref.title = (italicMatch[1] || italicMatch[2] || italicMatch[3]).trim();
+                        } else {
+                            ref.title = titlePart.trim();
+                        }
+                    }
+
+                    // Process remaining parts for container, publisher, etc.
+                    if (parts.length > 1) {
+                        const remaining = parts.slice(1).join('. ');
+
+                        // Extract DOI
+                        const doiMatch = remaining.match(/(?:doi:|https?:\/\/doi\.org\/)?(10\.\d{4,9}\/[^\s]+)/i);
+                        if (doiMatch) {
+                            ref.doi = doiMatch[1];
+                        }
+
+                        // Extract ISBN
+                        const isbnMatch = remaining.match(/ISBN[:\s]*([\d-]+)/i);
+                        if (isbnMatch) {
+                            ref.isbn = isbnMatch[1];
+                        }
+
+                        // Extract volume, issue, pages (e.g., "45(3), 123-145")
+                        const volIssueMatch = remaining.match(/(\d+)\((\d+)\)[,:]?\s*(\d+[-–]\d+)?/);
+                        if (volIssueMatch) {
+                            ref.volume = volIssueMatch[1];
+                            ref.issue = volIssueMatch[2];
+                            if (volIssueMatch[3]) ref.pages = volIssueMatch[3];
+                        }
+
+                        // Container title (journal/book name) - first capitalized phrase
+                        const containerMatch = remaining.match(/^([A-Z][^.,;]*?)(?:[,;.]|$)/);
+                        if (containerMatch) {
+                            ref.container_title = containerMatch[1].trim();
+                        }
+
+                        // Publisher (often after container, preceded by colon or comma)
+                        const publisherMatch = remaining.match(/[,:]\s*([A-Z][^.,;]*?Press|[A-Z][^.,;]*?Publishers?)/);
+                        if (publisherMatch) {
+                            ref.publisher = publisherMatch[1].trim();
+                        }
+                    }
+                }
+            },
+
+            exportFile(fileType) {
+                let content = '';
+                let filename = '';
+                let refs = [];
+
+                if (fileType === 'decisions') {
+                    refs = this.references;
+                    filename = `decisions_${new Date().toISOString().split('T')[0]}.txt`;
+
+                    // Use generateDecisionsEntry for each reference
+                    for (const ref of refs) {
+                        content += this.generateDecisionsEntry(ref, ref.finalized) + '\n';
+                    }
+                } else if (fileType === 'final') {
+                    refs = this.references.filter(r => r.finalized);
+                    filename = `Final_${new Date().toISOString().split('T')[0]}.txt`;
+
+                    // Use generateFinalEntry for each finalized reference
+                    for (const ref of refs) {
+                        content += this.generateFinalEntry(ref) + '\n';
+                    }
+                }
+
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showToast(`${fileType === 'final' ? 'Final.txt' : 'Decisions.txt'} exported`, 'success');
+            },
+
+            // Filtering and Display
+            applyFilters() {
+                const search = document.getElementById('searchInput').value.toLowerCase();
+                const urlFilter = document.getElementById('urlFilter').value;
+                const sortBy = document.getElementById('sortBy').value;
+
+                // Filter
+                this.filteredReferences = this.references.filter(ref => {
+                    // Search filter
+                    if (search && !this.matchesSearch(ref, search)) return false;
+
+                    // URL filter
+                    if (urlFilter) {
+                        const hasUrls = ref.urls.primary || ref.urls.secondary;
+                        if (urlFilter === 'has-urls' && !hasUrls) return false;
+                        if (urlFilter === 'no-urls' && hasUrls) return false;
+                        if (urlFilter === 'finalized' && !ref.finalized) return false;
+                        if (urlFilter === 'not-finalized' && ref.finalized) return false;
+                    }
+
+                    return true;
+                });
+
+                // Sort
+                this.sortReferences(sortBy);
+
+                // Display
+                this.renderReferences();
+                this.updateStats();
+            },
+
+            matchesSearch(ref, search) {
+                return ref.id.includes(search) ||
+                       ref.title.toLowerCase().includes(search) ||
+                       ref.authors.toLowerCase().includes(search) ||
+                       ref.text.toLowerCase().includes(search);
+            },
+
+            sortReferences(sortBy) {
+                switch (sortBy) {
+                    case 'id-asc':
+                        this.filteredReferences.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+                        break;
+                    case 'id-desc':
+                        this.filteredReferences.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+                        break;
+                    case 'year-desc':
+                        this.filteredReferences.sort((a, b) => (b.year || '0') - (a.year || '0'));
+                        break;
+                    case 'year-asc':
+                        this.filteredReferences.sort((a, b) => (a.year || '0') - (b.year || '0'));
+                        break;
+                    case 'title':
+                        this.filteredReferences.sort((a, b) => a.title.localeCompare(b.title));
+                        break;
+                }
+            },
+
+            renderReferences() {
+                const grid = document.getElementById('referencesGrid');
+                grid.innerHTML = '';
+
+                for (const ref of this.filteredReferences) {
+                    const card = this.createReferenceCard(ref);
+                    grid.appendChild(card);
+                }
+            },
+
+            createReferenceCard(ref) {
+                const card = document.createElement('div');
+                card.className = 'reference-card' + (ref.finalized ? ' finalized' : '');
+
+                // Build compact meta info (inline with bullets)
+                let metaHtml = '';
+                const metaParts = [];
+                if (ref.container_title) metaParts.push(`${ref.container_title}`);
+                if (ref.publisher) metaParts.push(ref.publisher);
+                if (ref.volume) metaParts.push(`Vol. ${ref.volume}${ref.issue ? '(' + ref.issue + ')' : ''}`);
+                if (ref.pages) metaParts.push(`pp. ${ref.pages}`);
+                if (ref.isbn) metaParts.push(`ISBN: ${ref.isbn}`);
+                if (metaParts.length > 0) {
+                    metaHtml = `<div class="reference-meta">${metaParts.join(' • ')}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="reference-header">
+                        <span class="reference-id">#${ref.id}</span>
+                        ${ref.finalized ? '<span class="finalized-badge">Finalized</span>' : ''}
+                    </div>
+                    <div class="reference-content">
+                        <h3>${ref.title || 'Untitled'}</h3>
+                        <div class="reference-authors">${ref.authors || 'Unknown authors'}</div>
+                        ${ref.year ? `<span class="reference-year">${ref.year}</span>` : ''}
+                        ${metaHtml}
+                        ${ref.relevance_text ? `<div class="reference-relevance">${ref.relevance_text}</div>` : ''}
+                    </div>
+                    ${this.createUrlsSection(ref)}
+                    <div class="reference-actions">
+                        <button onclick="app.editReference('${ref.id}')">Edit</button>
+                        ${ref.urls.primary ? `<button onclick="window.open('${ref.urls.primary}', '_blank')" class="success">Primary URL</button>` : ''}
+                        ${ref.urls.secondary ? `<button onclick="window.open('${ref.urls.secondary}', '_blank')" style="background: var(--accent-color);">Secondary URL</button>` : ''}
+                    </div>
+                `;
+                return card;
+            },
+
+            createUrlsSection(ref) {
+                const urls = [];
+                if (ref.urls.primary) urls.push({ type: 'primary', label: 'Primary', url: ref.urls.primary });
+                if (ref.urls.secondary) urls.push({ type: 'secondary', label: 'Secondary', url: ref.urls.secondary });
+
+                if (urls.length === 0) return '';
+
+                const urlsHtml = urls.map(u => `
+                    <div class="url-item">
+                        <span class="url-type ${u.type}">${u.label}</span>
+                        <a href="${u.url}" target="_blank" class="url-link">${u.url}</a>
+                    </div>
+                `).join('');
+
+                return `<div class="urls-section">${urlsHtml}</div>`;
+            },
+
+            updateStats() {
+                document.getElementById('statTotal').textContent = this.references.length;
+                document.getElementById('statFiltered').textContent = this.filteredReferences.length;
+
+                const withUrls = this.references.filter(r => r.urls.primary || r.urls.secondary).length;
+                const finalized = this.references.filter(r => r.finalized).length;
+
+                document.getElementById('statUrls').textContent = withUrls;
+                document.getElementById('statFinalized').textContent = finalized;
+            },
+
+            // Tab Management
+            switchTab(tabIndex) {
+                this.currentTab = tabIndex;
+
+                // Update tab buttons
+                const tabs = document.querySelectorAll('.modal-tab');
+                tabs.forEach((tab, index) => {
+                    if (index === tabIndex) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+
+                // Update tab content
+                const contents = document.querySelectorAll('.tab-content');
+                contents.forEach((content, index) => {
+                    if (index === tabIndex) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            },
+
+            // Edit Modal
+            editReference(id) {
+                const ref = this.references.find(r => r.id === id);
+                if (!ref) return;
+
+                this.currentEditId = id;
+                this.debugLogs = [];
+
+                // Populate form - Tab 1
+                document.getElementById('editId').value = ref.id;
+                document.getElementById('editTitle').value = ref.title || '';
+                document.getElementById('editAuthors').value = ref.authors || '';
+                document.getElementById('editYear').value = ref.year || '';
+                document.getElementById('editContainerTitle').value = ref.container_title || '';
+                document.getElementById('editPublisher').value = ref.publisher || '';
+                document.getElementById('editPublisherPlace').value = ref.publisher_place || '';
+                document.getElementById('editPrimaryUrl').value = ref.urls.primary || '';
+                document.getElementById('editSecondaryUrl').value = ref.urls.secondary || '';
+                // Populate hidden individual fields for backward compatibility
+                document.getElementById('editVolume').value = ref.volume || '';
+                document.getElementById('editIssue').value = ref.issue || '';
+                document.getElementById('editPages').value = ref.pages || '';
+                document.getElementById('editEdition').value = ref.edition || '';
+                document.getElementById('editDOI').value = ref.doi || '';
+                document.getElementById('editISBN').value = ref.isbn || '';
+                document.getElementById('editPublisherPlace').value = ref.publisher_place || '';
+
+                // Build compound "Other" field (Vol/Issue/Pages/Edition + DOI/ISBN/Location)
+                let otherValue = '';
+                if (ref.volume) otherValue += `Vol. ${ref.volume}`;
+                if (ref.issue) otherValue += `(${ref.issue})`;
+                if (ref.pages) otherValue += `${otherValue ? ', ' : ''}pp. ${ref.pages}`;
+                if (ref.edition) otherValue += `${otherValue ? ', ' : ''}${ref.edition}`;
+                if (ref.doi) otherValue += `${otherValue ? ', ' : ''}DOI: ${ref.doi}`;
+                if (ref.isbn) otherValue += `${otherValue ? ', ' : ''}ISBN: ${ref.isbn}`;
+                if (ref.publisher_place) otherValue += `${otherValue ? ', ' : ''}Location: ${ref.publisher_place}`;
+                document.getElementById('editOther').value = otherValue;
+
+                document.getElementById('editRelevanceText').value = ref.relevance_text || '';
+                document.getElementById('editQueries').value = ref.queries.join('\n');
+
+                // Tab 2 - Clear candidates and populate URL displays
+                document.getElementById('candidatesContainer').innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                        No search results yet. Run queries in the "Suggest & Query" tab first.
+                    </p>
+                `;
+
+                // Update Current URLs display
+                const primaryUrlSpan = document.getElementById('displayPrimaryUrl');
+                const secondaryUrlSpan = document.getElementById('displaySecondaryUrl');
+
+                if (ref.urls.primary) {
+                    primaryUrlSpan.innerHTML = `<a href="${ref.urls.primary}" target="_blank" style="color: var(--success-color); text-decoration: none;">${ref.urls.primary}</a>`;
+                } else {
+                    primaryUrlSpan.innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Not set</span>';
+                }
+
+                if (ref.urls.secondary) {
+                    secondaryUrlSpan.innerHTML = `<a href="${ref.urls.secondary}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${ref.urls.secondary}</a>`;
+                } else {
+                    secondaryUrlSpan.innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Not set</span>';
+                }
+
+                // Tab 3 - Debug info
+                document.getElementById('debugSourceLine').textContent = ref.text;
+                document.getElementById('debugParsed').textContent = JSON.stringify({
+                    id: ref.id,
+                    title: ref.title,
+                    authors: ref.authors,
+                    year: ref.year,
+                    container_title: ref.container_title,
+                    publisher: ref.publisher,
+                    volume: ref.volume,
+                    issue: ref.issue,
+                    pages: ref.pages,
+                    doi: ref.doi,
+                    isbn: ref.isbn,
+                    relevance_text: ref.relevance_text
+                }, null, 2);
+
+                // Check for parsing issues
+                const issues = [];
+                if (!ref.title) issues.push('Missing title');
+                if (!ref.authors) issues.push('Missing authors');
+                if (!ref.year) issues.push('Missing year');
+
+                if (issues.length > 0) {
+                    document.getElementById('debugIssues').innerHTML = `
+                        <div class="debug-content" style="color: var(--danger-color);">
+                            ${issues.map(i => `• ${i}`).join('\n')}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('debugIssues').innerHTML = `
+                        <div class="debug-content">No parsing issues detected.</div>
+                    `;
+                }
+
+                // Switch to first tab and show modal
+                this.switchTab(0);
+                document.getElementById('editModal').classList.add('visible');
+            },
+
+            closeModal() {
+                document.getElementById('editModal').classList.remove('visible');
+                this.currentEditId = null;
+            },
+
+            saveReference() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref) return;
+
+                // Update reference from Tab 1 fields
+                ref.title = document.getElementById('editTitle').value;
+                ref.authors = document.getElementById('editAuthors').value;
+                ref.year = document.getElementById('editYear').value;
+                ref.container_title = document.getElementById('editContainerTitle').value;
+                ref.publisher = document.getElementById('editPublisher').value;
+                ref.publisher_place = document.getElementById('editPublisherPlace').value;
+                ref.urls.primary = document.getElementById('editPrimaryUrl').value;
+                ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
+
+                // Parse compound "Other" field (Vol/Issue/Pages/Edition + DOI/ISBN/Location)
+                const otherValue = document.getElementById('editOther').value;
+                ref.volume = '';
+                ref.issue = '';
+                ref.pages = '';
+                ref.edition = '';
+                ref.doi = '';
+                ref.isbn = '';
+                ref.publisher_place = '';
+
+                if (otherValue) {
+                    // Extract volume: "Vol. 45" or just "45"
+                    const volMatch = otherValue.match(/Vol\.\s*(\d+)|^(\d+)/i);
+                    if (volMatch) ref.volume = volMatch[1] || volMatch[2];
+
+                    // Extract issue: "(3)"
+                    const issueMatch = otherValue.match(/\((\d+)\)/);
+                    if (issueMatch) ref.issue = issueMatch[1];
+
+                    // Extract pages: "pp. 123-145" or "123-145"
+                    const pagesMatch = otherValue.match(/pp\.\s*([\d\-–]+)/i);
+                    if (pagesMatch) ref.pages = pagesMatch[1];
+
+                    // Extract edition: "2nd ed." or similar
+                    const editionMatch = otherValue.match(/(\d+(?:st|nd|rd|th)?\s*ed\.?)/i);
+                    if (editionMatch) ref.edition = editionMatch[1];
+
+                    // Extract DOI: "DOI: 10.xxxx/..." or just "10.xxxx/..."
+                    const doiMatch = otherValue.match(/DOI:\s*(10\.\S+)|(?:^|\s)(10\.\d{4,9}\/\S+)/i);
+                    if (doiMatch) ref.doi = doiMatch[1] || doiMatch[2];
+
+                    // Extract ISBN: "ISBN: 978-..." or "ISBN 978..."
+                    const isbnMatch = otherValue.match(/ISBN:?\s*([\d\-]+)/i);
+                    if (isbnMatch) ref.isbn = isbnMatch[1];
+
+                    // Extract Location: "Location: New York" or similar
+                    const locationMatch = otherValue.match(/Location:\s*([^,]+)/i);
+                    if (locationMatch) ref.publisher_place = locationMatch[1].trim();
+                }
+
+                ref.relevance_text = document.getElementById('editRelevanceText').value;
+                ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
+
+                // Rebuild text
+                let text = `[${ref.id}] ${ref.authors}`;
+                if (ref.year) text += ` (${ref.year})`;
+                if (ref.title) text += `. ${ref.title}`;
+                if (ref.container_title) text += `. ${ref.container_title}`;
+                if (ref.publisher) text += `. ${ref.publisher}`;
+
+                ref.text = text;
+
+                this.showToast('Reference saved', 'success');
+                this.closeModal();
+                this.applyFilters();
+            },
+
+            finalizeReference() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref) return;
+
+                // Validate: must have at least a primary URL
+                if (!ref.urls.primary) {
+                    this.showToast('Cannot finalize: Must have at least a Primary URL', 'error');
+                    return;
+                }
+
+                // Save current changes first
+                this.saveReference();
+
+                // Mark as finalized
+                ref.finalized = true;
+
+                // Generate updated decisions.txt entry with [FINALIZED] flag
+                const decisionsEntry = this.generateDecisionsEntry(ref, true);
+
+                // Generate clean Final.txt entry (no flags)
+                const finalEntry = this.generateFinalEntry(ref);
+
+                // Show both entries in debug log
+                this.addDebugLog('=== FINALIZED REFERENCE ===');
+                this.addDebugLog('\nDecisions.txt entry:\n' + decisionsEntry);
+                this.addDebugLog('\nFinal.txt entry:\n' + finalEntry);
+
+                this.showToast('Reference finalized! Check Debug tab (Tab 3) for file updates.', 'success');
+
+                // Update display
+                this.applyFilters();
+            },
+
+            generateDecisionsEntry(ref, includeFinalized = false) {
+                let entry = ref.text + '\n';
+                if (includeFinalized) {
+                    entry += '[FINALIZED]\n';
+                }
+                if (ref.relevance_text) {
+                    entry += `Relevance: ${ref.relevance_text}\n`;
+                }
+                if (ref.urls.primary) entry += `Primary URL: ${ref.urls.primary}\n`;
+                if (ref.urls.secondary) entry += `Secondary URL: ${ref.urls.secondary}\n`;
+
+                for (const query of ref.queries) {
+                    entry += `Q: ${query}\n`;
+                }
+
+                return entry;
+            },
+
+            generateFinalEntry(ref) {
+                let entry = ref.text + '\n';
+                if (ref.urls.primary) entry += `Primary URL: ${ref.urls.primary}\n`;
+                if (ref.urls.secondary) entry += `Secondary URL: ${ref.urls.secondary}\n`;
+                return entry;
+            },
+
+            // AI Operations
+            async generateQueries() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref) return;
+
+                const btn = event.target;
+                const originalText = document.getElementById('suggestBtnText').textContent;
+                btn.disabled = true;
+                document.getElementById('suggestBtnText').innerHTML = '<span class="loading"></span> Generating...';
+
+                this.addDebugLog('Generating search queries...');
+
+                try {
+                    const prompt = `Generate 5-7 highly specific Google search queries to find this academic reference online. Focus on unique identifying information.
+
+Reference Information:
+- Title: ${ref.title || 'Unknown'}
+- Authors: ${ref.authors || 'Unknown'}
+- Year: ${ref.year || 'Unknown'}
+- Journal/Book: ${ref.container_title || 'Unknown'}
+- Publisher: ${ref.publisher || 'Unknown'}
+- DOI: ${ref.doi || 'None'}
+- ISBN: ${ref.isbn || 'None'}
+
+Relevance Context (Why This Reference Matters):
+${ref.relevance_text || 'No context provided'}
+
+Use the relevance context to understand what aspects of this work are most important. Generate queries that will help find the most relevant version of this source.
+
+Return only the queries, one per line. Make them specific and use quotation marks for exact phrases.`;
+
+                    const response = await this.apiRequest('/api/llm-chat', {
+                        method: 'POST',
+                        body: JSON.stringify({ prompt })
+                    });
+
+                    if (response.result) {
+                        document.getElementById('editQueries').value = response.result;
+                        this.addDebugLog('Generated queries:\n' + response.result);
+                        this.showToast('Queries generated', 'success');
+                    }
+                } catch (error) {
+                    const errorMsg = error.message || error.toString();
+                    this.addDebugLog('Error generating queries: ' + errorMsg);
+                    this.showToast('Query generation failed. Check Debug tab (Tab 3) for details.', 'error');
+                    console.error('Generate queries error:', error);
+                } finally {
+                    btn.disabled = false;
+                    document.getElementById('suggestBtnText').textContent = originalText;
+                }
+            },
+
+            async runSearch() {
+                const queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
+                if (queries.length === 0) {
+                    this.showToast('Enter search queries first', 'warning');
+                    return;
+                }
+
+                const btn = event.target;
+                const originalText = document.getElementById('queryBtnText').textContent;
+                btn.disabled = true;
+                document.getElementById('queryBtnText').innerHTML = '<span class="loading"></span> Searching...';
+
+                this.addDebugLog('Running searches for ' + queries.length + ' queries...');
+
+                try {
+                    const results = [];
+
+                    for (const query of queries) {
+                        this.addDebugLog('Searching: ' + query);
+                        const response = await this.apiRequest('/api/search-google', {
+                            method: 'POST',
+                            body: JSON.stringify({ query })
+                        });
+
+                        if (response.results) {
+                            results.push(...response.results);
+                            this.addDebugLog(`Found ${response.results.length} results`);
+                        }
+                    }
+
+                    // Deduplicate by URL
+                    const unique = Array.from(new Map(results.map(r => [r.url, r])).values());
+                    this.addDebugLog(`Total unique results: ${unique.length}`);
+
+                    // Display results in Tab 2
+                    this.displaySearchResults(unique);
+
+                    // Store results
+                    const ref = this.references.find(r => r.id === this.currentEditId);
+                    if (ref) ref.searchResults = unique;
+
+                    // Auto-switch to Tab 2
+                    this.switchTab(1);
+
+                    this.showToast(`Found ${unique.length} results`, 'success');
+                } catch (error) {
+                    const errorMsg = error.message || error.toString();
+                    this.addDebugLog('Search error: ' + errorMsg);
+                    this.showToast('Search failed. Check Debug tab (Tab 3) for details.', 'error');
+                    console.error('Search error:', error);
+                } finally {
+                    btn.disabled = false;
+                    document.getElementById('queryBtnText').textContent = originalText;
+                }
+            },
+
+            displaySearchResults(results) {
+                const container = document.getElementById('candidatesContainer');
+                const ref = this.references.find(r => r.id === this.currentEditId);
+
+                if (results.length === 0) {
+                    container.innerHTML = `
+                        <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                            No results found. Try different queries.
+                        </p>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = results.map((r, i) => {
+                    // Check if this URL is already assigned
+                    let assignedType = '';
+                    let badgeHtml = '';
+                    if (ref) {
+                        if (ref.urls.primary === r.url) {
+                            assignedType = 'primary';
+                            badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                        } else if (ref.urls.secondary === r.url) {
+                            assignedType = 'secondary';
+                            badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                        }
+                    }
+
+                    const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                    return `
+                        <div class="${itemClass}" data-index="${i}" data-url="${r.url}">
+                            <div class="candidate-header">
+                                <div class="candidate-title">${r.title}${badgeHtml}</div>
+                            </div>
+                            <div class="candidate-snippet">${r.snippet}</div>
+                            <div class="candidate-url">${r.url}</div>
+                            <div class="candidate-actions">
+                                <button onclick="app.selectCandidate(${i}, 'primary')" class="success">
+                                    Set as Primary
+                                </button>
+                                <button onclick="app.selectCandidate(${i}, 'secondary')">
+                                    Set as Secondary
+                                </button>
+                                <button onclick="window.open('${r.url}', '_blank')" class="secondary">
+                                    Preview
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            selectCandidate(index, urlType) {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref || !ref.searchResults || !ref.searchResults[index]) return;
+
+                const candidate = ref.searchResults[index];
+
+                if (urlType === 'primary') {
+                    ref.urls.primary = candidate.url;
+                    document.getElementById('editPrimaryUrl').value = candidate.url;
+                    // Update display in Candidates tab
+                    document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${candidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${candidate.url}</a>`;
+                    this.showToast('Set as Primary URL', 'success');
+                } else if (urlType === 'secondary') {
+                    ref.urls.secondary = candidate.url;
+                    document.getElementById('editSecondaryUrl').value = candidate.url;
+                    // Update display in Candidates tab
+                    document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${candidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${candidate.url}</a>`;
+                    this.showToast('Set as Secondary URL', 'success');
+                }
+
+                // Update visual selection
+                document.querySelectorAll('.candidate-item').forEach(item => {
+                    item.classList.remove('selected-primary', 'selected-secondary');
+                });
+
+                const item = document.querySelector(`[data-index="${index}"]`);
+                if (item) {
+                    item.classList.add(urlType === 'primary' ? 'selected-primary' : 'selected-secondary');
+                }
+
+                this.addDebugLog(`Selected as ${urlType} URL: ${candidate.url}`);
+            },
+
+            async rankCandidates() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref || !ref.searchResults || ref.searchResults.length === 0) {
+                    this.showToast('No search results to rank', 'warning');
+                    return;
+                }
+
+                const btn = event.target;
+                const originalText = document.getElementById('rankBtnText').textContent;
+                btn.disabled = true;
+                document.getElementById('rankBtnText').innerHTML = '<span class="loading"></span> Ranking...';
+
+                this.addDebugLog('AI ranking candidates...');
+
+                try {
+                    const response = await this.apiRequest('/api/llm-rank', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            reference: {
+                                title: ref.title,
+                                authors: ref.authors,
+                                year: ref.year,
+                                container_title: ref.container_title
+                            },
+                            candidates: ref.searchResults
+                        })
+                    });
+
+                    if (response.rankings && response.rankings.length > 0) {
+                        this.addDebugLog(`Received ${response.rankings.length} rankings from AI`);
+
+                        // Auto-fill top URLs from ranked results
+                        if (response.rankings[0]) {
+                            const topCandidate = ref.searchResults[response.rankings[0].index];
+                            if (topCandidate) {
+                                ref.urls.primary = topCandidate.url;
+                                document.getElementById('editPrimaryUrl').value = topCandidate.url;
+                                // Update Current URLs display
+                                document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${topCandidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${topCandidate.url}</a>`;
+                                this.addDebugLog('Primary URL (score: ' + response.rankings[0].score + '): ' + topCandidate.url);
+                            }
+                        }
+                        if (response.rankings[1]) {
+                            const secondCandidate = ref.searchResults[response.rankings[1].index];
+                            if (secondCandidate) {
+                                ref.urls.secondary = secondCandidate.url;
+                                document.getElementById('editSecondaryUrl').value = secondCandidate.url;
+                                // Update Current URLs display
+                                document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${secondCandidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${secondCandidate.url}</a>`;
+                                this.addDebugLog('Secondary URL (score: ' + response.rankings[1].score + '): ' + secondCandidate.url);
+                            }
+                        }
+
+                        // Update display with scores
+                        const container = document.getElementById('candidatesContainer');
+                        response.rankings.forEach((ranking, rank) => {
+                            const candidateIndex = ranking.index;
+                            const item = container.querySelector(`[data-index="${candidateIndex}"]`);
+                            if (item) {
+                                const header = item.querySelector('.candidate-header');
+                                const existingScore = header.querySelector('.candidate-score');
+                                if (existingScore) existingScore.remove();
+
+                                const scoreSpan = document.createElement('div');
+                                scoreSpan.className = 'candidate-score';
+                                scoreSpan.textContent = `Score: ${ranking.score}%`;
+                                header.appendChild(scoreSpan);
+
+                                // Highlight top 2
+                                item.classList.remove('selected-primary', 'selected-secondary');
+                                if (rank === 0) item.classList.add('selected-primary');
+                                if (rank === 1) item.classList.add('selected-secondary');
+                            }
+                        });
+
+                        this.showToast('URLs ranked and auto-filled', 'success');
+                    } else if (response.error) {
+                        this.addDebugLog('Ranking API error: ' + response.error);
+                        this.showToast('Ranking failed: ' + response.error, 'error');
+                    } else {
+                        this.addDebugLog('No rankings returned from API');
+                        this.showToast('No rankings returned', 'warning');
+                    }
+                } catch (error) {
+                    const errorMsg = error.message || error.toString();
+                    this.addDebugLog('Ranking error: ' + errorMsg);
+                    this.showToast('Ranking failed. Check Debug tab (Tab 3) for details.', 'error');
+                    console.error('Ranking error:', error);
+                } finally {
+                    btn.disabled = false;
+                    document.getElementById('rankBtnText').textContent = originalText;
+                }
+            },
+
+            // Debug Logging
+            addDebugLog(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                this.debugLogs.push(`[${timestamp}] ${message}`);
+
+                const logsDiv = document.getElementById('debugLogs');
+                logsDiv.innerHTML = `<div class="debug-content">${this.debugLogs.join('\n\n')}</div>`;
+            },
+
+            // Utility
+            clearAll() {
+                if (confirm('Clear all references? This cannot be undone.')) {
+                    this.references = [];
+                    this.finalizedReferences = [];
+                    this.filteredReferences = [];
+                    this.renderReferences();
+                    this.updateStats();
+                    this.showToast('All references cleared', 'success');
+                }
+            },
+
+            // Notifications
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+
+                container.appendChild(toast);
+
+                setTimeout(() => toast.classList.add('visible'), 10);
+
+                setTimeout(() => {
+                    toast.classList.remove('visible');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>

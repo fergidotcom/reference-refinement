@@ -1,0 +1,17 @@
+{
+  "name": "reference-refinement-v6",
+  "version": "6.0.0",
+  "description": "Reference Refinement System - Serverless Backend",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "tsc",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "@netlify/functions": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}

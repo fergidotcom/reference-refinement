@@ -1,0 +1,63 @@
+# Netlify Configuration for Reference Refinement v7.4
+# This file overrides any build settings in the Netlify UI
+
+[build]
+  # No build command needed - we deploy static HTML
+  command = ""
+  publish = "."
+  
+[build.environment]
+  NODE_VERSION = "18"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  
+  # Function timeout (10 seconds)
+  [functions."*"]
+    timeout = 10
+
+# Redirects - API endpoints to functions
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/api/llm/chat"
+  to = "/.netlify/functions/llm-chat"
+  status = 200
+
+[[redirects]]
+  from = "/api/llm/rank"
+  to = "/.netlify/functions/llm-rank"
+  status = 200
+
+[[redirects]]
+  from = "/api/search/google"
+  to = "/.netlify/functions/search-google"
+  status = 200
+
+# Default redirect - serve main app
+[[redirects]]
+  from = "/"
+  to = "/rr_v60.html"
+  status = 200
+
+# CORS headers for all function endpoints
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+
+# Headers for HTML files
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"

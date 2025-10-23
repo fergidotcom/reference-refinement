@@ -1,0 +1,135 @@
+primary:
+  weights:
+    doi_present: 1.5
+    publisher_domain: 1.0
+    author_domain: 0.6
+    exact_title_match: 0
+    author_match: 0
+    exact_title: 10.0
+    all_authors: 5.0
+    domain_step: 0.2
+    title_coverage: 3.0
+    author_mentioned: 2.5
+  penalties:
+    low_signal_path: -1.0
+    aggregator_like: -1.5
+    near_title_wrong_author: -8.0
+    shopping_like: -3.0
+    review_cue: -2.0
+  domain_priority:
+  - us.macmillan.com
+  - macmillan.com
+  - fsg.com
+  - penguinrandomhouse.com
+  - harpercollins.com
+  - oxfordacademic.com
+  - hup.harvard.edu
+  - harvard.edu
+secondary:
+  weights:
+    review_cue: 7.5
+    reputable_media: 1.2
+    topic_alignment: 0.6
+    title_coverage: 2.0
+    author_mentioned: 1.2
+  penalties:
+    same_domain_as_primary: -1.5
+    is_publisher_or_doi: -0.3
+    shopping_like: -3.0
+    author_bibliography: -2.0
+    toc_or_issue: -3.0
+    same_author_content: -3.5
+  domain_priority:
+  - tandfonline.com
+  - routledge.com
+  - taylorfrancis.com
+  - sagepub.com
+  - cambridge.org
+  - oup.com
+  - jstor.org
+  - muse.jhu.edu
+  - oxfordacademic.com
+  - doi.org
+  - ndpr.nd.edu
+  - blogs.lse.ac.uk
+  - lsereviewofbooks
+  - h-net.org
+  - oapen.org
+  - complete-review.com
+shared:
+  text_hints:
+    low_signal_terms:
+    - review
+    - book review
+    - syllabus
+    - slides
+    - ppt
+    - quiz
+    - cheat
+    - flashcard
+    - summary
+    - notes
+    - bibliography
+    - references
+    review_terms:
+    - An Analysis of Amos Tversky and Daniel Kahneman's Judgment
+    - an analysis of
+    - analysis
+    - analysis of Judgment under Uncertainty
+    - book review
+    - case review
+    - commentary
+    - critical analysis
+    - critical review
+    - critique
+    - discussion
+    - essay
+    - literature review
+    - overview
+    - rejoinder
+    - response
+    - response to
+    - review
+    - review of
+    - review of Judgment under Uncertainty
+    - summary
+    - review essay
+    - study guide
+    - critical notice
+    - a review of
+    toc_terms:
+    - table of contents
+    - current issue
+    - issue
+    - volume
+    - toc
+  deny_domains:
+  - academia.edu
+  - cambridge.org
+  - dblp.org
+  - dblp.uni-trier.de
+  - digitalcommons.unl.edu
+  - jstor.org
+  - mendeley.com
+  - researchgate.net
+  - scholar.google.com
+  - scholar.princeton.edu
+  - semanticscholar.org
+  - springer.com
+  - tandfonline.com
+  - wikipedia.org
+  - quizlet.com
+  - chegg.com
+  - coursehero.com
+  - scribd.com
+  - pinterest.com
+  - documen.pub
+  - iresearchnet.com
+  deny_domains_shopping:
+  - amazon.com
+  - amazon.co.uk
+  - barnesandnoble.com
+  - ecampus.com
+  - bookshop.org
+  - ebay.com
+  - abebooks.com

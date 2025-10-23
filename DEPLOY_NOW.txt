@@ -1,0 +1,34 @@
+═══════════════════════════════════════════════════════════
+  v7.4 DEPLOYMENT - FIXED COMMAND
+═══════════════════════════════════════════════════════════
+
+STEP 1: Copy files and create functions folder
+────────────────────────────────────────────────────────────
+
+cd ~/Library/CloudStorage/Dropbox/Fergi/AI\ Wrangling/References/ && mkdir -p netlify/functions && cp ~/Downloads/rr_v74.html rr_v60.html && cp ~/Downloads/health.ts netlify/functions/ && cp ~/Downloads/netlify.toml . && cp ~/Downloads/v74_IMPLEMENTATION.md . && cp ~/Downloads/DEPLOY_v74.md . && cp ~/Downloads/v74_SUMMARY.md .
+
+STEP 2: Deploy
+────────────────────────────────────────────────────────────
+
+netlify deploy --prod --dir="." --message "v7.4 - Fix parsing and health function"
+
+═══════════════════════════════════════════════════════════
+
+This will:
+✓ Create netlify/functions folder if needed
+✓ Copy health.ts function (fixes "Failed to fetch")
+✓ Copy netlify.toml configuration
+✓ Copy v7.4 HTML and docs
+✓ Deploy everything
+
+After deployment:
+✓ "Ping" button should show "Connected (v7.4)"
+✓ No more "Failed to fetch" errors
+✓ Core features work (parsing, editing, export)
+✓ Health check works
+
+Note: AI features (query generation, search, ranking) need
+additional functions (llm-chat.ts, llm-rank.ts, search-google.ts)
+which aren't included yet. That's OK - the main fix is the parsing.
+
+═══════════════════════════════════════════════════════════
