@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v9.8</title>
+    <title>Reference Refinement v9.9</title>
     <style>
         /* CSS Variables */
         :root {
@@ -894,7 +894,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v9.8</h1>
+            <h1>Reference Refinement v9.9</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -935,14 +935,6 @@
                 <div class="control-group">
                     <label>Load References (decisions.txt)</label>
                     <input type="file" id="fileInput" accept=".txt" onchange="app.loadFile(event, 'decisions')">
-                </div>
-                <div class="control-group">
-                    <label>Actions</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="app.exportFile()">Save decisions.txt</button>
-                        <button onclick="app.exportOverrideLog()" style="background: var(--accent-color);">Export Override Log</button>
-                        <button onclick="app.clearAll()" class="danger">Clear All</button>
-                    </div>
                 </div>
                 <div class="control-group">
                     <label>Display</label>
@@ -987,14 +979,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Edit Reference</h2>
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-left: auto; margin-right: 0.5rem;">
-                    <label style="font-size: 0.85rem; color: var(--text-secondary);">AI Model:</label>
-                    <select id="aiModelSelect" class="form-select" style="font-size: 0.85rem; padding: 0.3rem 0.5rem;" onchange="app.saveModelPreference()">
-                        <option value="claude-3-5-haiku-20241022">Haiku (Fast)</option>
-                        <option value="claude-3-5-sonnet-20241022">Sonnet (Better)</option>
-                    </select>
-                </div>
                 <button class="modal-close" onclick="app.closeModal()">&times;</button>
+            </div>
+
+            <!-- AI Model Selector -->
+            <div style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); background: var(--background); display: flex; align-items: center; gap: 0.75rem;">
+                <label style="font-weight: 600; color: var(--text-primary);">AI Model:</label>
+                <select id="aiModelSelect" class="form-select" style="flex: 1; max-width: 300px;" onchange="app.saveModelPreference()">
+                    <option value="claude-3-5-haiku-20241022">Claude Haiku (Fast & Economical)</option>
+                    <option value="claude-3-5-sonnet-20241022">Claude Sonnet (Better Quality)</option>
+                </select>
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">For Suggest Queries & AutoRank</span>
             </div>
 
             <!-- Tabs -->
