@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v10.1</title>
+    <title>Reference Refinement v10.2</title>
     <style>
         /* CSS Variables */
         :root {
@@ -896,7 +896,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v10.1</h1>
+            <h1>Reference Refinement v10.2</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -2096,23 +2096,43 @@
                 this.addDebugLog('Generating search queries...');
 
                 try {
-                    const prompt = `Generate 5-7 highly specific Google search queries to find this academic reference online. Focus on unique identifying information.
+                    const prompt = `You are helping find PRIMARY and SECONDARY URLs for an academic reference.
 
-Reference Information:
-- Title: ${ref.title || 'Unknown'}
-- Authors: ${ref.authors || 'Unknown'}
-- Year: ${ref.year || 'Unknown'}
-- Journal/Book: ${ref.container_title || 'Unknown'}
-- Publisher: ${ref.publisher || 'Unknown'}
-- DOI: ${ref.doi || 'None'}
-- ISBN: ${ref.isbn || 'None'}
+PRIMARY URL GOALS (in priority order):
+1. PDF of reference (free > paywalled)
+2. Publisher site or sales page for reference
+3. Author's work directly treating this reference
+4. Author biography/CV
+5. Must be authored by or about the author
 
-Relevance Context (Why This Reference Matters):
+SECONDARY URL GOALS (in priority order):
+1. Review of this specific reference
+2. Discussion of reference's key themes (see Relevance text below)
+3. Author CV or biographical material
+
+REFERENCE:
+Title: ${ref.title || 'Unknown'}
+Authors: ${ref.authors || 'Unknown'}
+Year: ${ref.year || 'Unknown'}
+Other Bibliographic Info: ${ref.other || 'None'}
+
+RELEVANCE (why this matters to the manuscript):
 ${ref.relevance_text || 'No context provided'}
 
-Use the relevance context to understand what aspects of this work are most important. Generate queries that will help find the most relevant version of this source.
+Generate 10 search queries optimized for PRIMARY goals and 10 for SECONDARY goals.
+Balance specificity with discoverability.
+Use exact phrases in quotes, DOI/ISBN when available in Other field.
 
-Return only the queries, one per line. Make them specific and use quotation marks for exact phrases.`;
+Return queries grouped as:
+PRIMARY:
+- query 1
+- query 2
+...
+
+SECONDARY:
+- query 1
+- query 2
+...`;
 
                     const model = this.getSelectedModel();
                     const response = await this.apiRequest('/api/llm-chat', {
@@ -2282,30 +2302,58 @@ Return only the queries, one per line. Make them specific and use quotation mark
                 const candidate = ref.searchResults[index];
 
                 // Check if user is overriding AI ranking
-                if (this.aiRankedResults) {
+                if (this.aiRankedResults && this.aiRankedResults.allRankings) {
                     const aiSuggestion = urlType === 'primary' ? this.aiRankedResults.primary : this.aiRankedResults.secondary;
 
                     if (aiSuggestion && candidate.url !== aiSuggestion) {
+                        // Find AI ranking for suggested URL
+                        const aiRanking = this.aiRankedResults.allRankings.find(r =>
+                            ref.searchResults[r.index]?.url === aiSuggestion);
+
+                        // Find AI ranking for user's selected URL
+                        const userRanking = this.aiRankedResults.allRankings.find(r =>
+                            ref.searchResults[r.index]?.url === candidate.url);
+
                         const details = `
                             <p><strong>AI Recommended ${urlType.toUpperCase()} URL:</strong></p>
                             <div style="background: var(--background); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.9rem;">
                                 <a href="${aiSuggestion}" target="_blank" style="color: var(--accent-color);">${aiSuggestion}</a>
+                                ${aiRanking ? `<br><small>P:${aiRanking.primary_score} S:${aiRanking.secondary_score}</small>` : ''}
                             </div>
                             <p style="margin-top: 1rem;"><strong>Your Selected ${urlType.toUpperCase()} URL:</strong></p>
                             <div style="background: var(--background); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.9rem;">
                                 <a href="${candidate.url}" target="_blank" style="color: var(--accent-color);">${candidate.url}</a>
+                                ${userRanking ? `<br><small>P:${userRanking.primary_score} S:${userRanking.secondary_score}</small>` : ''}
                             </div>
                         `;
 
                         await new Promise((resolve) => {
                             this.showOverrideModal(details, (annotation) => {
                                 if (annotation !== null) {
+                                    // Enhanced logging with full context
                                     this.logOverride({
                                         rid: this.currentEditId,
                                         override_type: 'RANKING_' + urlType.toUpperCase(),
-                                        reference_title: ref?.title || 'Unknown',
-                                        ai_suggested_url: aiSuggestion,
-                                        user_final_url: candidate.url,
+                                        reference_metadata: {
+                                            title: ref.title,
+                                            authors: ref.authors,
+                                            year: ref.year,
+                                            has_doi: ref.other?.includes('DOI:') || false,
+                                            has_isbn: ref.other?.includes('ISBN:') || false
+                                        },
+                                        ai_suggested: {
+                                            url: aiSuggestion,
+                                            primary_score: aiRanking?.primary_score || 0,
+                                            secondary_score: aiRanking?.secondary_score || 0,
+                                            primary_fit: aiRanking?.primary_fit || '',
+                                            secondary_fit: aiRanking?.secondary_fit || ''
+                                        },
+                                        user_selected: {
+                                            url: candidate.url,
+                                            was_ranked: userRanking ? this.aiRankedResults.allRankings.indexOf(userRanking) + 1 : 'unranked',
+                                            primary_score: userRanking?.primary_score || 0,
+                                            secondary_score: userRanking?.secondary_score || 0
+                                        },
                                         user_annotation: annotation
                                     });
                                 }
@@ -2368,7 +2416,8 @@ Return only the queries, one per line. Make them specific and use quotation mark
                                 title: ref.title,
                                 authors: ref.authors,
                                 year: ref.year,
-                                container_title: ref.container_title
+                                other: ref.other,
+                                relevance_text: ref.relevance_text
                             },
                             candidates: ref.searchResults,
                             model: model
@@ -2378,39 +2427,42 @@ Return only the queries, one per line. Make them specific and use quotation mark
                     if (response.rankings && response.rankings.length > 0) {
                         this.addDebugLog(`Received ${response.rankings.length} rankings from AI`);
 
-                        // Store AI rankings for override detection
+                        // Store full AI rankings for override detection
                         this.aiRankedResults = {
                             primary: null,
-                            secondary: null
+                            secondary: null,
+                            allRankings: response.rankings
                         };
 
+                        // Find best PRIMARY and SECONDARY recommendations
+                        const bestPrimary = response.rankings.reduce((best, curr) =>
+                            (curr.recommended_as === 'primary' || curr.primary_score > (best?.primary_score || 0)) ? curr : best, null);
+                        const bestSecondary = response.rankings.reduce((best, curr) =>
+                            (curr.recommended_as === 'secondary' || curr.secondary_score > (best?.secondary_score || 0)) ? curr : best, null);
+
                         // Auto-fill top URLs from ranked results
-                        if (response.rankings[0]) {
-                            const topCandidate = ref.searchResults[response.rankings[0].index];
+                        if (bestPrimary) {
+                            const topCandidate = ref.searchResults[bestPrimary.index];
                             if (topCandidate) {
                                 ref.urls.primary = topCandidate.url;
                                 document.getElementById('editPrimaryUrl').value = topCandidate.url;
-                                // Update Current URLs display
                                 document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${topCandidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${topCandidate.url}</a>`;
-                                this.addDebugLog('Primary URL (score: ' + response.rankings[0].score + '): ' + topCandidate.url);
-                                // Store AI suggestion
+                                this.addDebugLog(`Primary URL (P:${bestPrimary.primary_score}, S:${bestPrimary.secondary_score}): ${topCandidate.url}`);
                                 this.aiRankedResults.primary = topCandidate.url;
                             }
                         }
-                        if (response.rankings[1]) {
-                            const secondCandidate = ref.searchResults[response.rankings[1].index];
+                        if (bestSecondary && bestSecondary.index !== bestPrimary?.index) {
+                            const secondCandidate = ref.searchResults[bestSecondary.index];
                             if (secondCandidate) {
                                 ref.urls.secondary = secondCandidate.url;
                                 document.getElementById('editSecondaryUrl').value = secondCandidate.url;
-                                // Update Current URLs display
                                 document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${secondCandidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${secondCandidate.url}</a>`;
-                                this.addDebugLog('Secondary URL (score: ' + response.rankings[1].score + '): ' + secondCandidate.url);
-                                // Store AI suggestion
+                                this.addDebugLog(`Secondary URL (P:${bestSecondary.primary_score}, S:${bestSecondary.secondary_score}): ${secondCandidate.url}`);
                                 this.aiRankedResults.secondary = secondCandidate.url;
                             }
                         }
 
-                        // Update display with scores
+                        // Update display with new scoring
                         const container = document.getElementById('candidatesContainer');
                         response.rankings.forEach((ranking, rank) => {
                             const candidateIndex = ranking.index;
@@ -2422,13 +2474,19 @@ Return only the queries, one per line. Make them specific and use quotation mark
 
                                 const scoreSpan = document.createElement('div');
                                 scoreSpan.className = 'candidate-score';
-                                scoreSpan.textContent = `Score: ${ranking.score}%`;
+                                const dualPurpose = ranking.primary_score > 60 && ranking.secondary_score > 60;
+                                scoreSpan.innerHTML = `
+                                    ${dualPurpose ? '⚡ ' : ''}
+                                    P:${ranking.primary_score} S:${ranking.secondary_score}
+                                    (${ranking.combined_score})
+                                `;
+                                scoreSpan.title = `${ranking.primary_fit || 'N/A'} | ${ranking.secondary_fit || 'N/A'}`;
                                 header.appendChild(scoreSpan);
 
-                                // Highlight top 2
+                                // Highlight recommendations
                                 item.classList.remove('selected-primary', 'selected-secondary');
-                                if (rank === 0) item.classList.add('selected-primary');
-                                if (rank === 1) item.classList.add('selected-secondary');
+                                if (ranking.index === bestPrimary?.index) item.classList.add('selected-primary');
+                                if (ranking.index === bestSecondary?.index) item.classList.add('selected-secondary');
                             }
                         });
 

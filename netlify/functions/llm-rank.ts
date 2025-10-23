@@ -28,7 +28,7 @@ export const handler: Handler = async (event, context) => {
   }
 
   try {
-    const { reference, candidates } = JSON.parse(event.body || '{}');
+    const { reference, candidates, model } = JSON.parse(event.body || '{}');
 
     if (!reference || !candidates || !Array.isArray(candidates)) {
       return {
@@ -38,30 +38,48 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    const prompt = `You are helping rank candidate URLs for an academic reference. 
+    const prompt = `Rank these search results for BOTH primary and secondary URL fitness.
 
-Reference Information:
+PRIMARY CRITERIA (authority-focused):
+- PDF availability (free=100, paywalled=80, none=0)
+- Publisher/official source (=90)
+- Author's own site/paper (=85)
+- Author CV/bio (=70)
+- Wikipedia/authoritative encyclopedia (=60)
+- Social media/X/Twitter (=20)
+
+SECONDARY CRITERIA (theme-focused):
+- Review of this specific work (=100)
+- Discussion of key themes from Relevance text (=90)
+- Related scholarly work (=70)
+- Author bio (=50)
+
+REFERENCE:
 Title: ${reference.title || 'Unknown'}
 Authors: ${reference.authors || 'Unknown'}
 Year: ${reference.year || 'Unknown'}
-Container: ${reference.container_title || 'Unknown'}
-Relevance: ${reference.relevance_text || 'No context provided'}
+Other: ${reference.other || 'Unknown'}
 
-Candidate URLs to rank:
-${candidates.map((c, i) => `${i + 1}. ${c.title}\n   URL: ${c.url}\n   Snippet: ${c.snippet || 'No snippet'}`).join('\n\n')}
+RELEVANCE (why this matters - extract themes for secondary scoring):
+${reference.relevance_text || 'No context provided'}
 
-Rank these candidates from best to worst match for this reference. Consider:
-- Accuracy of match (does it match the title, authors, year?)
-- Source quality (academic, publisher, archive vs random blog)
-- Accessibility (direct access vs paywall)
+CANDIDATES:
+${candidates.map((c, i) => `${i}. ${c.title}\n   URL: ${c.url}\n   Snippet: ${c.snippet || 'No snippet'}`).join('\n\n')}
 
-Return ONLY a JSON array of rankings with this exact format:
+Return JSON array ranked by COMBINED utility (primary_score + secondary_score) / 2:
 [
-  {"index": 0, "score": 95, "reason": "Perfect match..."},
-  {"index": 1, "score": 60, "reason": "Partial match..."}
+  {
+    "index": 0,
+    "primary_score": 95,
+    "secondary_score": 40,
+    "combined_score": 67,
+    "primary_fit": "Official publisher page",
+    "secondary_fit": "No thematic discussion",
+    "recommended_as": "primary"
+  }
 ]
 
-Use index numbers 0-${candidates.length - 1}. Scores 0-100.`;
+Mark duplicates if same URL serves both purposes well. Use index 0-${candidates.length - 1}.`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -71,8 +89,8 @@ Use index numbers 0-${candidates.length - 1}. Scores 0-100.`;
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        model: model || 'claude-3-5-sonnet-20241022',
+        max_tokens: 3000,
         messages: [
           { role: 'user', content: prompt }
         ]
