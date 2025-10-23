@@ -26,11 +26,28 @@ Current: **v9.4**
 
 Deployed on Netlify: https://rrv521-1760738877.netlify.app
 
-### Deploy Commands
+### Quick Deploy (Recommended)
+
+```bash
+./deploy.sh
+```
+
+This script will:
+1. Copy `rr_v90.html` → `rr_v60.html`
+2. Commit changes to Git with your message
+3. Push to GitHub
+4. Deploy to Netlify
+
+### Manual Deploy
 
 ```bash
 # Copy working version to deployment file
 cp rr_v90.html rr_v60.html
+
+# Commit to Git
+git add .
+git commit -m "Your commit message"
+git push
 
 # Deploy to production
 netlify deploy --prod
@@ -65,4 +82,3 @@ See [CLAUDE.md](CLAUDE.md) for detailed development documentation.
 ---
 
 **Built with Claude Code** 🤖
-# reference-refinement
