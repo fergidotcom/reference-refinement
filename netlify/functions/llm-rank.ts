@@ -89,7 +89,7 @@ Mark duplicates if same URL serves both purposes well. Use index 0-${candidates.
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: model || 'claude-3-5-sonnet-20240620',
+        model: model || 'claude-sonnet-4-20250514',
         max_tokens: 3000,
         messages: [
           { role: 'user', content: prompt }
@@ -113,17 +113,40 @@ Mark duplicates if same URL serves both purposes well. Use index 0-${candidates.
     const data = await response.json();
     const resultText = data.content?.[0]?.text || '';
 
-    // Parse JSON from response
-    const jsonMatch = resultText.match(/\[[\s\S]*\]/);
+    console.log('Raw AI response:', resultText.substring(0, 500));
+
+    // Parse JSON from response - try multiple patterns
     let rankings = [];
-    
+    let parseError = null;
+
+    // Try to find JSON array in response
+    const jsonMatch = resultText.match(/\[[\s\S]*\]/);
+
     if (jsonMatch) {
       try {
         rankings = JSON.parse(jsonMatch[0]);
+        console.log('Successfully parsed rankings:', rankings.length);
       } catch (e) {
-        console.error('Failed to parse rankings JSON:', e);
-        rankings = [];
+        parseError = e instanceof Error ? e.message : 'JSON parse error';
+        console.error('Failed to parse rankings JSON:', parseError);
+        console.error('Matched text:', jsonMatch[0].substring(0, 500));
       }
+    } else {
+      console.error('No JSON array found in response');
+      parseError = 'No JSON array found in AI response';
+    }
+
+    // If parsing failed, return error
+    if (rankings.length === 0 && parseError) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          rankings: [],
+          error: `Failed to parse rankings: ${parseError}`,
+          raw_response_preview: resultText.substring(0, 200)
+        })
+      };
     }
 
     return {

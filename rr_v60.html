@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v10.3</title>
+    <title>Reference Refinement v10.10</title>
     <style>
         /* CSS Variables */
         :root {
@@ -644,12 +644,15 @@
         }
 
         .candidate-item {
-            padding: 1rem;
-            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
             background: var(--background);
             border-radius: 6px;
             border: 2px solid transparent;
             transition: all 0.2s;
+            align-items: stretch;
         }
 
         .candidate-item:hover {
@@ -666,18 +669,42 @@
             background: #e8f4fd;
         }
 
+        .candidate-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .candidate-buttons button {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .candidate-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
         .candidate-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .candidate-title {
             font-weight: 600;
             color: var(--primary-color);
             flex: 1;
-            margin-right: 1rem;
+            margin-right: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.3;
         }
 
         .candidate-score {
@@ -690,16 +717,27 @@
         }
 
         .candidate-snippet {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .candidate-url {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--accent-color);
             word-break: break-all;
-            margin-bottom: 0.5rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .candidate-url:hover {
+            text-decoration: underline;
         }
 
         .candidate-actions {
@@ -735,6 +773,62 @@
             white-space: pre-wrap;
             word-break: break-all;
             color: var(--text-primary);
+        }
+
+        /* Debug Panels */
+        .debug-panels-container {
+            overflow-y: auto;
+            max-height: 600px;
+            padding: 0.5rem;
+        }
+
+        .debug-panel {
+            background: var(--background);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .debug-panel-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debug-panel-timestamp {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .debug-panel-content {
+            padding: 1rem;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        .debug-panel-content strong {
+            color: var(--primary-color);
+        }
+
+        .debug-panel.error .debug-panel-header {
+            background: var(--error-color);
+        }
+
+        .debug-panel.success .debug-panel-header {
+            background: var(--success-color);
+        }
+
+        .debug-panel.warning .debug-panel-header {
+            background: var(--warning-color);
         }
 
         /* Toast Notifications */
@@ -896,38 +990,9 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v10.3</h1>
-            <div class="header-controls">
-                <div class="mode-toggle">
-                    <span class="mode-label">Mode:</span>
-                    <div id="modeToggle" class="toggle-switch">
-                        <div class="toggle-slider"></div>
-                    </div>
-                    <span id="modeLabel" class="mode-label">Standalone</span>
-                </div>
-                <div class="api-status">
-                    <div id="statusIndicator" class="status-indicator"></div>
-                    <span id="statusText">Disconnected</span>
-                </div>
-                <button id="pingButton" onclick="app.ping()">Ping</button>
-            </div>
+            <h1>Reference Refinement v10.10</h1>
         </div>
     </header>
-
-    <!-- API Configuration Panel -->
-    <div id="apiConfig" class="api-config">
-        <div class="api-config-inner">
-            <div class="api-input-group">
-                <input id="apiUrl" type="text" class="api-input"
-                    placeholder="Enter backend URL (e.g., http://192.168.1.100:8000 or https://xxx.trycloudflare.com)">
-                <button onclick="app.setApiUrl()">Set URL</button>
-                <button onclick="app.clearApiUrl()" class="secondary">Clear</button>
-            </div>
-            <small style="color: var(--text-secondary);">
-                Leave empty for standalone mode (using Netlify Functions)
-            </small>
-        </div>
-    </div>
 
     <!-- Main Container -->
     <div class="container">
@@ -939,12 +1004,30 @@
                     <input type="file" id="fileInput" accept=".txt" onchange="app.loadFile(event, 'decisions')">
                 </div>
                 <div class="control-group">
+                    <label>AI Model (for Suggest Queries & AutoRank)</label>
+                    <select id="aiModelSelect" class="form-select" onchange="app.saveModelPreference()">
+                        <option value="claude-3-5-haiku-20241022">Claude Haiku (Fast & Economical)</option>
+                        <option value="claude-sonnet-4-20250514" selected>Claude Sonnet 4 (Best Quality)</option>
+                    </select>
+                </div>
+                <div class="control-group">
                     <label>Display</label>
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
                             <input type="checkbox" id="showFinalizedToggle" onchange="app.applyFilters()">
                             <span>Show Finalized References</span>
                         </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Downloads</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="app.downloadDecisions()" class="secondary">
+                            Download decisions.txt
+                        </button>
+                        <button onclick="app.downloadDebugLog()" class="secondary">
+                            Download Session Log
+                        </button>
                     </div>
                 </div>
             </div>
@@ -984,16 +1067,6 @@
                 <button class="modal-close" onclick="app.closeModal()">&times;</button>
             </div>
 
-            <!-- AI Model Selector -->
-            <div style="padding: 0.75rem; border-bottom: 1px solid var(--border-color); background: var(--background); display: flex; align-items: center; gap: 0.75rem;">
-                <label style="font-weight: 600; color: var(--text-primary);">AI Model:</label>
-                <select id="aiModelSelect" class="form-select" style="flex: 1; max-width: 300px;" onchange="app.saveModelPreference()">
-                    <option value="claude-3-5-haiku-20241022">Claude Haiku (Fast & Economical)</option>
-                    <option value="claude-3-5-sonnet-20240620" selected>Claude Sonnet (Better Quality)</option>
-                </select>
-                <span style="font-size: 0.85rem; color: var(--text-secondary);">For Suggest Queries & AutoRank</span>
-            </div>
-
             <!-- Tabs -->
             <div class="modal-tabs">
                 <button class="modal-tab active" onclick="app.switchTab(0)">
@@ -1011,13 +1084,11 @@
                 <!-- Tab 1: Suggest & Query -->
                 <div id="tab0" class="tab-content active">
                     <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
-                        <h3 style="margin-bottom: 0.5rem;">Reference Information</h3>
-
-                        <div class="form-row">
-                            <div class="form-group" style="max-width: 80px; margin-bottom: 0.5rem;">
+                        <div class="form-row" style="grid-template-columns: 80px 1fr;">
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
                                 <input id="editId" type="text" class="form-input" readonly placeholder="RID">
                             </div>
-                            <div class="form-group" style="flex: 1; margin-bottom: 0.5rem;">
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
                                 <input id="editTitle" type="text" class="form-input" placeholder="Title">
                             </div>
                         </div>
@@ -1028,15 +1099,6 @@
                             </div>
                             <div class="form-group" style="margin-bottom: 0.5rem;">
                                 <input id="editYear" type="text" class="form-input" placeholder="Year">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group" style="margin-bottom: 0.5rem;">
-                                <input id="editContainerTitle" type="text" class="form-input" placeholder="Journal/Book Title">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0.5rem;">
-                                <input id="editPublisher" type="text" class="form-input" placeholder="Publisher">
                             </div>
                         </div>
 
@@ -1056,7 +1118,6 @@
                     </div>
 
                     <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
-                        <h3 style="margin-bottom: 0.5rem;">URL Management</h3>
                         <div class="form-group" style="margin-bottom: 0.5rem;">
                             <label class="form-label">Primary URL</label>
                             <input id="editPrimaryUrl" type="url" class="form-input" placeholder="https://...">
@@ -1071,10 +1132,9 @@
                     <textarea id="editRelevanceText" style="display: none;"></textarea>
 
                     <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
-                        <h3 style="margin-bottom: 0.5rem;">Search Queries</h3>
                         <div class="form-group" style="margin-bottom: 0.5rem;">
                             <label class="form-label">Generated Queries</label>
-                            <textarea id="editQueries" class="form-textarea" rows="5"
+                            <textarea id="editQueries" class="form-textarea" rows="11"
                                 placeholder="Click 'Suggest' to generate queries, or enter manually (one per line)..."></textarea>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
@@ -1091,8 +1151,7 @@
                 <!-- Tab 2: Candidates & Autorank -->
                 <div id="tab1" class="tab-content">
                     <div class="modal-section" style="flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0.5rem 0.75rem;">
-                        <h3 style="margin-bottom: 0.5rem;">Search Results</h3>
-                        <div id="candidatesContainer" style="flex: 1; overflow-y: auto; min-height: 500px; max-height: 600px;">
+                        <div id="candidatesContainer" style="flex: 1; overflow-y: auto; min-height: 300px; max-height: 450px;">
                             <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
                                 No search results yet. Run queries in the "Suggest & Query" tab first.
                             </p>
@@ -1100,7 +1159,6 @@
                     </div>
 
                     <div class="modal-section" style="flex-shrink: 0; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
-                        <h3 style="margin-bottom: 0.5rem;">Current URLs</h3>
                         <div id="currentUrlsDisplay" style="padding: 0.5rem; background: var(--background); border-radius: 6px; font-size: 0.85rem;">
                             <div style="margin-bottom: 0.25rem;">
                                 <strong>Primary:</strong> <span id="displayPrimaryUrl" style="color: var(--text-secondary); font-style: italic;">Not set</span>
@@ -1117,46 +1175,34 @@
                             <button onclick="app.rankCandidates()">
                                 <span id="rankBtnText">Autorank Candidates (AI)</span>
                             </button>
-                            <button onclick="app.finalizeReference()" class="success">
-                                Finalize Reference
-                            </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tab 3: Debug & Feedback -->
-                <div id="tab2" class="tab-content">
-                    <div class="modal-section">
-                        <h3>Raw Data</h3>
-                        <div class="debug-section">
-                            <div class="debug-label">Original Source Line</div>
-                            <div id="debugSourceLine" class="debug-content"></div>
-                        </div>
-
-                        <div class="debug-section">
-                            <div class="debug-label">Parsed Fields</div>
-                            <div id="debugParsed" class="debug-content"></div>
-                        </div>
+                <div id="tab2" class="tab-content" style="display: flex; flex-direction: column; overflow: hidden;">
+                    <div id="debugPanelsContainer" class="debug-panels-container" style="flex: 1; overflow-y: auto;">
+                        <!-- Panels will be dynamically added here -->
                     </div>
 
-                    <div class="modal-section">
-                        <h3>Parsing Issues</h3>
-                        <div id="debugIssues" class="debug-section">
-                            <div class="debug-content">No parsing issues detected.</div>
+                    <div style="padding: 0.5rem 0.75rem; border-top: 2px solid var(--border-color); background: var(--background);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;">Full Session Log (Copy/Paste to Save)</h4>
+                            <button onclick="app.copySessionLog()" class="secondary" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">
+                                Copy to Clipboard
+                            </button>
                         </div>
-                    </div>
-
-                    <div class="modal-section">
-                        <h3>Search & Ranking Logs</h3>
-                        <div id="debugLogs" class="debug-section">
-                            <div class="debug-content">No logs yet. Run search and ranking operations to see logs here.</div>
-                        </div>
+                        <textarea id="sessionLogTextarea" readonly
+                            style="width: 100%; height: 120px; font-family: monospace; font-size: 0.75rem;
+                                   padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;
+                                   background: #f8f9fa; resize: vertical;"
+                            placeholder="Session log will appear here as you work..."></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button onclick="app.closeModal()" class="secondary">Cancel</button>
+                <button onclick="app.doneEditing()" class="secondary">Done</button>
                 <button onclick="app.saveReference()" class="success">Save Changes</button>
                 <button onclick="app.finalizeReference()" style="background: var(--warning-color);">Finalize</button>
             </div>
@@ -1205,8 +1251,8 @@
             currentEditId: null,
             currentTab: 0,
             apiBaseUrl: '',
-            isAdvancedMode: false,
-            debugLogs: [],
+            debugPanels: [],  // Array of debug panels for current reference
+            currentSystemLogPanel: null,  // Track current system log panel for consolidation
             overrideLog: [],  // Track query and ranking overrides
             aiSuggestedQuery: null,  // Store AI-suggested query for comparison
             aiRankedResults: null,  // Store AI ranking results for comparison
@@ -1239,20 +1285,12 @@
                     }
                 }
 
-                // Load saved AI model preference (default to Sonnet)
-                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-3-5-sonnet-20240620';
-                document.getElementById('aiModelSelect').value = savedModel;
-
-                // Load saved API URL
-                const savedUrl = localStorage.getItem('rr_api_url');
-                if (savedUrl) {
-                    this.apiBaseUrl = savedUrl;
-                    document.getElementById('apiUrl').value = savedUrl;
-                    this.setMode(true);
+                // Load saved AI model preference (default to Sonnet 4)
+                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-sonnet-4-20250514';
+                const modelSelect = document.getElementById('aiModelSelect');
+                if (modelSelect) {
+                    modelSelect.value = savedModel;
                 }
-
-                // Check connection on load
-                this.ping();
 
                 // Setup event listeners
                 this.setupEventListeners();
@@ -1260,11 +1298,6 @@
 
             // Event Listeners
             setupEventListeners() {
-                // Mode toggle
-                document.getElementById('modeToggle').addEventListener('click', () => {
-                    this.toggleMode();
-                });
-
                 // Close modal on ESC
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') this.closeModal();
@@ -1276,49 +1309,6 @@
                 });
             },
 
-            // Mode Management
-            toggleMode() {
-                this.setMode(!this.isAdvancedMode);
-            },
-
-            setMode(advanced) {
-                this.isAdvancedMode = advanced;
-                const toggle = document.getElementById('modeToggle');
-                const label = document.getElementById('modeLabel');
-                const config = document.getElementById('apiConfig');
-
-                if (advanced) {
-                    toggle.classList.add('active');
-                    label.textContent = 'Advanced';
-                    config.classList.add('visible');
-                } else {
-                    toggle.classList.remove('active');
-                    label.textContent = 'Standalone';
-                    config.classList.remove('visible');
-                    this.apiBaseUrl = '';
-                }
-
-                this.ping();
-            },
-
-            // API Configuration
-            setApiUrl() {
-                const url = document.getElementById('apiUrl').value.trim();
-                if (url) {
-                    this.apiBaseUrl = url.replace(/\/$/, '');
-                    localStorage.setItem('rr_api_url', this.apiBaseUrl);
-                    this.showToast('API URL saved', 'success');
-                    this.ping();
-                }
-            },
-
-            clearApiUrl() {
-                this.apiBaseUrl = '';
-                document.getElementById('apiUrl').value = '';
-                localStorage.removeItem('rr_api_url');
-                this.showToast('API URL cleared', 'success');
-                this.ping();
-            },
 
             // API Client
             async apiRequest(endpoint, options = {}) {
@@ -1364,30 +1354,6 @@
                 }
             },
 
-            // Connection Test
-            async ping() {
-                const indicator = document.getElementById('statusIndicator');
-                const text = document.getElementById('statusText');
-
-                try {
-                    const result = await this.apiRequest('/api/health');
-
-                    if (result.ok) {
-                        indicator.classList.add('connected');
-                        indicator.classList.remove('error');
-                        text.textContent = `Connected (${result.version || 'v9.0'})`;
-                        this.showToast('Connected to backend', 'success');
-                    }
-                } catch (error) {
-                    indicator.classList.remove('connected');
-                    indicator.classList.add('error');
-                    text.textContent = 'Disconnected';
-
-                    if (this.isAdvancedMode) {
-                        this.showToast('Connection failed. Check backend URL.', 'error');
-                    }
-                }
-            },
 
             // File Operations
             loadFile(event, fileType) {
@@ -1897,7 +1863,7 @@
                 if (!ref) return;
 
                 this.currentEditId = id;
-                this.debugLogs = [];
+                this.debugPanels = [];
 
                 // Populate form - Tab 1 (simplified)
                 document.getElementById('editId').value = ref.id;
@@ -1933,43 +1899,25 @@
                     secondaryUrlSpan.innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Not set</span>';
                 }
 
-                // Tab 3 - Debug info
-                document.getElementById('debugSourceLine').textContent = ref.text;
-                document.getElementById('debugParsed').textContent = JSON.stringify({
-                    id: ref.id,
-                    authors: ref.authors,
-                    year: ref.year,
-                    title: ref.title,
-                    other: ref.other,
-                    relevance_text: ref.relevance_text
-                }, null, 2);
-
-                // Check for parsing issues
-                const issues = [];
-                if (!ref.title) issues.push('Missing title');
-                if (!ref.authors) issues.push('Missing authors');
-                if (!ref.year) issues.push('Missing year');
-
-                if (issues.length > 0) {
-                    document.getElementById('debugIssues').innerHTML = `
-                        <div class="debug-content" style="color: var(--danger-color);">
-                            ${issues.map(i => `• ${i}`).join('\n')}
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('debugIssues').innerHTML = `
-                        <div class="debug-content">No parsing issues detected.</div>
-                    `;
-                }
+                // Tab 3 - Initialize Debug Panels
+                this.initializeDebugPanels(ref);
 
                 // Switch to first tab and show modal
                 this.switchTab(0);
                 document.getElementById('editModal').classList.add('visible');
             },
 
+            doneEditing() {
+                // Log debug panels to session log (if needed)
+                // The panels are already being logged as they're created
+                // Just close the modal
+                this.closeModal();
+            },
+
             closeModal() {
                 document.getElementById('editModal').classList.remove('visible');
                 this.currentEditId = null;
+                this.currentSystemLogPanel = null;  // Reset for next edit session
             },
 
             saveReference() {
@@ -1998,7 +1946,7 @@
                 // Auto-save after changes
                 this.autoSave();
 
-                this.closeModal();
+                // Update display but keep modal open
                 this.applyFilters();
             },
 
@@ -2007,13 +1955,28 @@
                 if (!ref) return;
 
                 // Validate: must have at least a primary URL
-                if (!ref.urls.primary) {
+                const primaryUrl = document.getElementById('editPrimaryUrl').value;
+                if (!primaryUrl) {
                     this.showToast('Cannot finalize: Must have at least a Primary URL', 'error');
                     return;
                 }
 
-                // Save current changes first
-                this.saveReference();
+                // Update reference from Tab 1 fields (same as saveReference)
+                ref.title = document.getElementById('editTitle').value;
+                ref.authors = document.getElementById('editAuthors').value;
+                ref.year = document.getElementById('editYear').value;
+                ref.other = document.getElementById('editOther').value;
+                ref.urls.primary = primaryUrl;
+                ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
+                ref.relevance_text = document.getElementById('editRelevanceText').value;
+                ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
+
+                // Rebuild text for display
+                let text = `[${ref.id}] ${ref.authors}`;
+                if (ref.year) text += ` (${ref.year})`;
+                if (ref.title) text += `. ${ref.title}`;
+                if (ref.other) text += `. ${ref.other}`;
+                ref.text = text;
 
                 // Mark as finalized
                 ref.finalized = true;
@@ -2096,7 +2059,7 @@
                 this.addDebugLog('Generating search queries...');
 
                 try {
-                    const prompt = `You are helping find PRIMARY and SECONDARY URLs for an academic reference.
+                    const prompt = `You are helping find URLs for an academic reference. Generate search queries that will find high-quality candidates for both PRIMARY and SECONDARY URL goals.
 
 PRIMARY URL GOALS (in priority order):
 1. PDF of reference (free > paywalled)
@@ -2119,20 +2082,14 @@ Other Bibliographic Info: ${ref.other || 'None'}
 RELEVANCE (why this matters to the manuscript):
 ${ref.relevance_text || 'No context provided'}
 
-Generate 10 search queries optimized for PRIMARY goals and 10 for SECONDARY goals.
-Balance specificity with discoverability.
-Use exact phrases in quotes, DOI/ISBN when available in Other field.
+Generate 10-15 diverse search queries that mix:
+- Bibliography-driven queries (author, title, year, DOI/ISBN if available)
+- Relevance-driven queries (key themes from the Relevance text)
+- Queries targeting both PRIMARY goals (finding the work itself) and SECONDARY goals (reviews/discussions)
 
-Return queries grouped as:
-PRIMARY:
-- query 1
-- query 2
-...
+Balance specificity with discoverability. Use exact phrases in quotes where appropriate.
 
-SECONDARY:
-- query 1
-- query 2
-...`;
+Return ONLY the queries, one per line, without any labels, categories, or grouping headers.`;
 
                     const model = this.getSelectedModel();
                     const response = await this.apiRequest('/api/llm-chat', {
@@ -2144,7 +2101,13 @@ SECONDARY:
                         document.getElementById('editQueries').value = response.result;
                         // Store AI-suggested query for override detection
                         this.aiSuggestedQuery = response.result;
-                        this.addDebugLog('Generated queries:\n' + response.result);
+
+                        // Add debug panel
+                        const panelContent = `<strong>AI Model:</strong> ${model}
+<strong>Queries Generated:</strong>
+${response.result}`;
+                        this.addDebugPanel('Query Generation (AI)', panelContent, 'success');
+
                         this.showToast('Queries generated', 'success');
                     }
                 } catch (error) {
@@ -2274,21 +2237,22 @@ SECONDARY:
 
                     return `
                         <div class="${itemClass}" data-index="${i}" data-url="${r.url}">
-                            <div class="candidate-header">
-                                <div class="candidate-title">${r.title}${badgeHtml}</div>
-                            </div>
-                            <div class="candidate-snippet">${r.snippet}</div>
-                            <div class="candidate-url">${r.url}</div>
-                            <div class="candidate-actions">
+                            <div class="candidate-buttons">
                                 <button onclick="app.selectCandidate(${i}, 'primary')" class="success">
                                     Set as Primary
                                 </button>
                                 <button onclick="app.selectCandidate(${i}, 'secondary')">
                                     Set as Secondary
                                 </button>
-                                <button onclick="window.open('${r.url}', '_blank')" class="secondary">
-                                    Preview
-                                </button>
+                            </div>
+                            <div class="candidate-content">
+                                <div>
+                                    <div class="candidate-header">
+                                        <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                    </div>
+                                    <div class="candidate-snippet">${r.snippet}</div>
+                                </div>
+                                <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
                             </div>
                         </div>
                     `;
@@ -2490,6 +2454,24 @@ SECONDARY:
                             }
                         });
 
+                        // Add debug panel for autorank results
+                        const primaryUrl = bestPrimary ? ref.searchResults[bestPrimary.index]?.url || 'N/A' : 'N/A';
+                        const secondaryUrl = bestSecondary ? ref.searchResults[bestSecondary.index]?.url || 'N/A' : 'N/A';
+                        const panelContent = `<strong>Candidates Ranked:</strong> ${response.rankings.length}
+
+<strong>Primary Recommendation:</strong>
+URL: ${primaryUrl}
+Primary Score: ${bestPrimary?.primary_score || 'N/A'}
+Secondary Score: ${bestPrimary?.secondary_score || 'N/A'}
+Combined Score: ${bestPrimary?.combined_score || 'N/A'}
+
+<strong>Secondary Recommendation:</strong>
+URL: ${secondaryUrl}
+Primary Score: ${bestSecondary?.primary_score || 'N/A'}
+Secondary Score: ${bestSecondary?.secondary_score || 'N/A'}
+Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
+                        this.addDebugPanel('Autorank Results', panelContent, 'success');
+
                         this.showToast('URLs ranked and auto-filled', 'success');
                     } else if (response.error) {
                         this.addDebugLog('Ranking API error: ' + response.error);
@@ -2500,7 +2482,7 @@ SECONDARY:
                     }
                 } catch (error) {
                     const errorMsg = error.message || error.toString();
-                    this.addDebugLog('Ranking error: ' + errorMsg);
+                    this.addDebugPanel('Exception: Autorank Failed', `<strong>Error:</strong> ${errorMsg}`, 'error');
                     this.showToast('Ranking failed. Check Debug tab (Tab 3) for details.', 'error');
                     console.error('Ranking error:', error);
                 } finally {
@@ -2509,13 +2491,210 @@ SECONDARY:
                 }
             },
 
-            // Debug Logging
-            addDebugLog(message) {
+            // Debug Panel System
+            addDebugPanel(title, content, type = '') {
                 const timestamp = new Date().toLocaleTimeString();
-                this.debugLogs.push(`[${timestamp}] ${message}`);
 
-                const logsDiv = document.getElementById('debugLogs');
-                logsDiv.innerHTML = `<div class="debug-content">${this.debugLogs.join('\n\n')}</div>`;
+                // Check if we should consolidate with existing System Log panel
+                if (title === 'System Log' && this.currentSystemLogPanel) {
+                    // Append to existing system log panel
+                    const contentDiv = this.currentSystemLogPanel.querySelector('.debug-panel-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML += '\n' + content;
+                    }
+
+                    // Update the panel data in our array
+                    const lastPanel = this.debugPanels[this.debugPanels.length - 1];
+                    if (lastPanel && lastPanel.title === 'System Log') {
+                        lastPanel.content += '\n' + content;
+                    }
+
+                    // Save to session log
+                    this.saveToSessionLog({timestamp, title, content, type});
+                } else {
+                    // Create new panel
+                    const panel = {
+                        timestamp,
+                        title,
+                        content,
+                        type
+                    };
+
+                    this.debugPanels.push(panel);
+                    this.renderDebugPanel(panel);
+
+                    // If this is a System Log, track it for future consolidation
+                    if (title === 'System Log') {
+                        const container = document.getElementById('debugPanelsContainer');
+                        this.currentSystemLogPanel = container?.lastElementChild;
+                    } else {
+                        // Different panel type resets the system log consolidation
+                        this.currentSystemLogPanel = null;
+                    }
+
+                    // Save to session log
+                    this.saveToSessionLog(panel);
+                }
+
+                // Auto-scroll to latest panel
+                setTimeout(() => {
+                    const container = document.getElementById('debugPanelsContainer');
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }, 100);
+            },
+
+            renderDebugPanel(panel) {
+                const container = document.getElementById('debugPanelsContainer');
+                if (!container) return;
+
+                const panelDiv = document.createElement('div');
+                panelDiv.className = `debug-panel ${panel.type}`;
+                panelDiv.innerHTML = `
+                    <div class="debug-panel-header">
+                        <span>${panel.title}</span>
+                        <span class="debug-panel-timestamp">${panel.timestamp}</span>
+                    </div>
+                    <div class="debug-panel-content">${panel.content}</div>
+                `;
+                container.appendChild(panelDiv);
+            },
+
+            initializeDebugPanels(ref) {
+                this.debugPanels = [];
+                this.currentSystemLogPanel = null;  // Reset consolidation tracker
+                const container = document.getElementById('debugPanelsContainer');
+                if (!container) return;
+                container.innerHTML = '';
+
+                // Panel 1: Raw Reference
+                const rawContent = `${ref.sourceLine || '[No raw data available]'}`;
+                this.addDebugPanel('Raw Reference from decisions.txt', rawContent);
+
+                // Panel 2: Parsed Reference
+                const parsedContent = `<strong>ID:</strong> ${ref.id}
+<strong>Title:</strong> ${ref.title || 'N/A'}
+<strong>Authors:</strong> ${ref.authors || 'N/A'}
+<strong>Year:</strong> ${ref.year || 'N/A'}
+<strong>Other:</strong> ${ref.other || 'N/A'}
+<strong>Primary URL:</strong> ${ref.urls.primary || 'Not set'}
+<strong>Secondary URL:</strong> ${ref.urls.secondary || 'Not set'}
+<strong>Queries:</strong> ${ref.queries.length} queries loaded`;
+                this.addDebugPanel('Parsed Reference Fields', parsedContent);
+            },
+
+            saveToSessionLog(panel) {
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+                const logEntry = {
+                    referenceId: this.currentEditId,
+                    timestamp: panel.timestamp,
+                    title: panel.title,
+                    content: panel.content,
+                    type: panel.type
+                };
+                sessionLog.push(logEntry);
+                localStorage.setItem('rr_session_log', JSON.stringify(sessionLog));
+
+                // Update the session log textarea if it exists
+                this.updateSessionLogTextarea();
+            },
+
+            updateSessionLogTextarea() {
+                const textarea = document.getElementById('sessionLogTextarea');
+                if (!textarea) return;
+
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                // Format log for display
+                let logContent = `Reference Refinement Session Log\n`;
+                logContent += `Total Entries: ${sessionLog.length}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                let currentRef = null;
+                sessionLog.forEach(entry => {
+                    if (entry.referenceId !== currentRef) {
+                        currentRef = entry.referenceId;
+                        logContent += `\n` + `=`.repeat(80) + `\n`;
+                        logContent += `REFERENCE ID: ${currentRef}\n`;
+                        logContent += `=`.repeat(80) + `\n\n`;
+                    }
+
+                    logContent += `[${entry.timestamp}] ${entry.title}\n`;
+                    logContent += `-`.repeat(80) + `\n`;
+                    // Strip HTML tags from content for plain text display
+                    const plainContent = entry.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ');
+                    logContent += `${plainContent}\n\n`;
+                });
+
+                textarea.value = logContent;
+            },
+
+            copySessionLog() {
+                const textarea = document.getElementById('sessionLogTextarea');
+                if (!textarea || !textarea.value) {
+                    this.showToast('No session log to copy', 'warning');
+                    return;
+                }
+
+                textarea.select();
+                document.execCommand('copy');
+                this.showToast('Session log copied to clipboard! Paste it into a file in Dropbox.', 'success');
+            },
+
+            downloadDecisions() {
+                // Export decisions.txt from localStorage
+                this.exportFile();
+            },
+
+            downloadDebugLog() {
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                if (sessionLog.length === 0) {
+                    this.showToast('No debug log data to download', 'warning');
+                    return;
+                }
+
+                // Format log file
+                let logContent = `Reference Refinement Debug Log\n`;
+                logContent += `Generated: ${new Date().toLocaleString()}\n`;
+                logContent += `Total Entries: ${sessionLog.length}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                let currentRef = null;
+                sessionLog.forEach(entry => {
+                    if (entry.referenceId !== currentRef) {
+                        currentRef = entry.referenceId;
+                        logContent += `\n` + `=`.repeat(80) + `\n`;
+                        logContent += `REFERENCE ID: ${currentRef}\n`;
+                        logContent += `=`.repeat(80) + `\n\n`;
+                    }
+
+                    logContent += `[${entry.timestamp}] ${entry.title}\n`;
+                    logContent += `-`.repeat(80) + `\n`;
+                    logContent += `${entry.content}\n\n`;
+                });
+
+                // Download file
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                a.download = `debug_log_${timestamp}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Clear log after download
+                localStorage.removeItem('rr_session_log');
+                this.showToast('Debug log downloaded and cleared', 'success');
+            },
+
+            addDebugLog(message) {
+                // Backward compatibility - convert old log calls to panels
+                this.addDebugPanel('System Log', message);
             },
 
             // Utility

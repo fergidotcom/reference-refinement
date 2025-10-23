@@ -28,7 +28,7 @@ export const handler: Handler = async (event, context) => {
   }
 
   try {
-    const { prompt } = JSON.parse(event.body || '{}');
+    const { prompt, model } = JSON.parse(event.body || '{}');
 
     if (!prompt) {
       return {
@@ -46,7 +46,7 @@ export const handler: Handler = async (event, context) => {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: model || 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         messages: [
           { role: 'user', content: prompt }
