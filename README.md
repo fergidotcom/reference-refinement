@@ -4,7 +4,7 @@ A web-based tool for managing academic references with AI-powered search and ran
 
 ## Version
 
-Current: **v10.2**
+Current: **v10.3**
 
 ## Features
 

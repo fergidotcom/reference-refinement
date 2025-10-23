@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v10.2</title>
+    <title>Reference Refinement v10.3</title>
     <style>
         /* CSS Variables */
         :root {
@@ -896,7 +896,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v10.2</h1>
+            <h1>Reference Refinement v10.3</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -989,7 +989,7 @@
                 <label style="font-weight: 600; color: var(--text-primary);">AI Model:</label>
                 <select id="aiModelSelect" class="form-select" style="flex: 1; max-width: 300px;" onchange="app.saveModelPreference()">
                     <option value="claude-3-5-haiku-20241022">Claude Haiku (Fast & Economical)</option>
-                    <option value="claude-3-5-sonnet-20241022" selected>Claude Sonnet (Better Quality)</option>
+                    <option value="claude-3-5-sonnet-20240620" selected>Claude Sonnet (Better Quality)</option>
                 </select>
                 <span style="font-size: 0.85rem; color: var(--text-secondary);">For Suggest Queries & AutoRank</span>
             </div>
@@ -1240,7 +1240,7 @@
                 }
 
                 // Load saved AI model preference (default to Sonnet)
-                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-3-5-sonnet-20241022';
+                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-3-5-sonnet-20240620';
                 document.getElementById('aiModelSelect').value = savedModel;
 
                 // Load saved API URL
