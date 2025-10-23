@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v10.10</title>
+    <title>Reference Refinement v11.0</title>
+    <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
         :root {
@@ -990,7 +991,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v10.10</h1>
+            <h1>Reference Refinement v11.0</h1>
         </div>
     </header>
 
@@ -1020,15 +1021,19 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>Downloads</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="app.downloadDecisions()" class="secondary">
-                            Download decisions.txt
+                    <label>Dropbox</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button onclick="app.connectDropbox()" id="dropboxConnectBtn" class="secondary">
+                            Connect to Dropbox
                         </button>
-                        <button onclick="app.downloadDebugLog()" class="secondary">
-                            Download Session Log
-                        </button>
+                        <span id="dropboxStatus" style="font-size: 0.85rem; color: var(--text-secondary);">Not connected</span>
                     </div>
+                </div>
+                <div class="control-group">
+                    <label>Session Log</label>
+                    <button onclick="app.saveSessionLogToDropbox()" id="saveLogBtn" class="secondary" disabled>
+                        Save Session Log to Dropbox
+                    </button>
                 </div>
             </div>
         </div>
@@ -1258,8 +1263,22 @@
             aiRankedResults: null,  // Store AI ranking results for comparison
             autoSaveTimeout: null,  // Debounce timer for auto-save
 
+            // Dropbox integration
+            dropboxAppKey: 'q4ldgkwjmhxv6w2',
+            dropboxAccessToken: null,
+            dropboxClient: null,
+
             // Initialize
-            init() {
+            async init() {
+                // Check for OAuth callback
+                this.handleDropboxOAuthCallback();
+
+                // Load Dropbox token
+                this.dropboxAccessToken = localStorage.getItem('rr_dropbox_token');
+                if (this.dropboxAccessToken) {
+                    this.initializeDropbox(this.dropboxAccessToken);
+                }
+
                 // Load override log from localStorage
                 const savedLog = localStorage.getItem('rr_override_log');
                 if (savedLog) {
@@ -1270,18 +1289,33 @@
                     }
                 }
 
-                // Auto-load decisions.txt from localStorage if available
-                const savedDecisions = localStorage.getItem('rr_decisions_backup');
-                const savedTimestamp = localStorage.getItem('rr_decisions_timestamp');
-                if (savedDecisions) {
-                    try {
-                        this.parseDecisions(savedDecisions);
-                        this.applyFilters();
-                        const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'Unknown';
-                        this.showToast(`Auto-loaded backup from ${timestamp}`, 'success');
-                        console.log('Auto-loaded decisions.txt from localStorage');
-                    } catch (e) {
-                        console.error('Failed to auto-load from localStorage:', e);
+                // Try to load decisions.txt from Dropbox first, fallback to localStorage
+                if (this.dropboxClient) {
+                    const content = await this.loadFromDropbox('/decisions.txt');
+                    if (content) {
+                        try {
+                            this.parseDecisions(content);
+                            this.applyFilters();
+                            this.showToast('Auto-loaded from Dropbox', 'success');
+                            console.log('Auto-loaded decisions.txt from Dropbox');
+                        } catch (e) {
+                            console.error('Failed to parse Dropbox content:', e);
+                        }
+                    }
+                } else {
+                    // Fallback to localStorage if Dropbox not connected
+                    const savedDecisions = localStorage.getItem('rr_decisions_backup');
+                    const savedTimestamp = localStorage.getItem('rr_decisions_timestamp');
+                    if (savedDecisions) {
+                        try {
+                            this.parseDecisions(savedDecisions);
+                            this.applyFilters();
+                            const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'Unknown';
+                            this.showToast(`Auto-loaded backup from ${timestamp}`, 'success');
+                            console.log('Auto-loaded decisions.txt from localStorage');
+                        } catch (e) {
+                            console.error('Failed to auto-load from localStorage:', e);
+                        }
                     }
                 }
 
@@ -1946,6 +1980,9 @@
                 // Auto-save after changes
                 this.autoSave();
 
+                // Auto-save to Dropbox if connected
+                this.saveDecisionsToDropbox();
+
                 // Update display but keep modal open
                 this.applyFilters();
             },
@@ -1993,11 +2030,11 @@
                 // Auto-save decisions.txt
                 this.autoSave();
 
-                // Update display (reference will disappear from view if "Show Finalized" is unchecked)
-                this.applyFilters();
+                // Auto-save to Dropbox if connected
+                this.saveDecisionsToDropbox();
 
-                // Close modal
-                this.closeModal();
+                // Update display but keep modal open (reference will disappear from view if "Show Finalized" is unchecked)
+                this.applyFilters();
             },
 
             generateDecisionsEntry(ref, includeFinalized = false) {
@@ -2724,6 +2761,171 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                     toast.classList.remove('visible');
                     setTimeout(() => toast.remove(), 300);
                 }, 3000);
+            },
+
+            // Dropbox Integration
+            handleDropboxOAuthCallback() {
+                const hash = window.location.hash;
+                if (hash && hash.includes('access_token=')) {
+                    const params = new URLSearchParams(hash.substring(1));
+                    const accessToken = params.get('access_token');
+                    if (accessToken) {
+                        this.initializeDropbox(accessToken);
+                        localStorage.setItem('rr_dropbox_token', accessToken);
+                        // Clean up URL
+                        window.location.hash = '';
+                        this.showToast('Connected to Dropbox!', 'success');
+                    }
+                }
+            },
+
+            initializeDropbox(accessToken) {
+                this.dropboxAccessToken = accessToken;
+                this.dropboxClient = new Dropbox.Dropbox({ accessToken });
+                this.updateDropboxUI(true);
+            },
+
+            connectDropbox() {
+                const redirectUri = window.location.origin + window.location.pathname;
+                const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}`;
+                window.location.href = authUrl;
+            },
+
+            disconnectDropbox() {
+                this.dropboxAccessToken = null;
+                this.dropboxClient = null;
+                localStorage.removeItem('rr_dropbox_token');
+                this.updateDropboxUI(false);
+                this.showToast('Disconnected from Dropbox', 'info');
+            },
+
+            updateDropboxUI(connected) {
+                const btn = document.getElementById('dropboxConnectBtn');
+                const status = document.getElementById('dropboxStatus');
+                const saveLogBtn = document.getElementById('saveLogBtn');
+
+                if (connected) {
+                    btn.textContent = 'Disconnect';
+                    btn.onclick = () => this.disconnectDropbox();
+                    status.textContent = '✓ Connected';
+                    status.style.color = 'var(--success-color)';
+                    if (saveLogBtn) saveLogBtn.disabled = false;
+                } else {
+                    btn.textContent = 'Connect to Dropbox';
+                    btn.onclick = () => this.connectDropbox();
+                    status.textContent = 'Not connected';
+                    status.style.color = 'var(--text-secondary)';
+                    if (saveLogBtn) saveLogBtn.disabled = true;
+                }
+            },
+
+            async saveToDropbox(path, content) {
+                if (!this.dropboxClient) {
+                    this.showToast('Not connected to Dropbox', 'error');
+                    return false;
+                }
+
+                try {
+                    await this.dropboxClient.filesUpload({
+                        path: path,
+                        contents: content,
+                        mode: 'overwrite',
+                        autorename: false
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Dropbox save error:', error);
+                    this.showToast('Failed to save to Dropbox: ' + error.message, 'error');
+                    return false;
+                }
+            },
+
+            async saveDecisionsToDropbox() {
+                if (!this.dropboxClient) return;
+
+                // Generate decisions.txt content
+                let content = '';
+                for (const ref of this.references) {
+                    content += this.generateDecisionsEntry(ref, ref.finalized) + '\n';
+                }
+
+                const success = await this.saveToDropbox('/decisions.txt', content);
+                if (success) {
+                    this.showToast('decisions.txt saved to Dropbox', 'success');
+                }
+            },
+
+            async saveSessionLogToDropbox() {
+                if (!this.dropboxClient) {
+                    this.showToast('Not connected to Dropbox', 'error');
+                    return;
+                }
+
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                if (sessionLog.length === 0) {
+                    this.showToast('No session log to save', 'warning');
+                    return;
+                }
+
+                // Format log file
+                let logContent = `Reference Refinement Debug Log\n`;
+                logContent += `Generated: ${new Date().toLocaleString()}\n`;
+                logContent += `Total Entries: ${sessionLog.length}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                let currentRef = null;
+                sessionLog.forEach(entry => {
+                    if (entry.referenceId !== currentRef) {
+                        currentRef = entry.referenceId;
+                        logContent += `\n` + `=`.repeat(80) + `\n`;
+                        logContent += `REFERENCE ID: ${currentRef}\n`;
+                        logContent += `=`.repeat(80) + `\n\n`;
+                    }
+
+                    logContent += `[${entry.timestamp}] ${entry.title}\n`;
+                    logContent += `-`.repeat(80) + `\n`;
+                    logContent += `${entry.content}\n\n`;
+                });
+
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                const success = await this.saveToDropbox(`/debug_logs/session_${timestamp}.txt`, logContent);
+
+                if (success) {
+                    // Clear log after saving
+                    localStorage.removeItem('rr_session_log');
+                    this.updateSessionLogTextarea();
+                    this.showToast('Session log saved to Dropbox and cleared', 'success');
+                }
+            },
+
+            async loadFromDropbox(path) {
+                if (!this.dropboxClient) {
+                    return null;
+                }
+
+                try {
+                    const response = await this.dropboxClient.filesDownload({ path: path });
+                    const blob = response.result.fileBlob;
+                    const text = await blob.text();
+                    return text;
+                } catch (error) {
+                    console.error('Dropbox load error:', error);
+                    // Don't show error toast on startup - file might not exist yet
+                    return null;
+                }
+            },
+
+            async loadDecisionsFromDropbox() {
+                if (!this.dropboxClient) return;
+
+                const content = await this.loadFromDropbox('/decisions.txt');
+                if (content) {
+                    // Parse and load the content
+                    document.getElementById('decisionsInput').value = content;
+                    this.parseDecisions();
+                    this.showToast('decisions.txt loaded from Dropbox', 'success');
+                }
             }
         };
 
