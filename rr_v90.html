@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v9.9</title>
+    <title>Reference Refinement v10.0</title>
     <style>
         /* CSS Variables */
         :root {
@@ -467,7 +467,7 @@
         .modal.visible { display: flex; }
 
         .modal-content {
-            background: var(--card-background);
+            background: #ffffff;
             border-radius: 12px;
             width: 100%;
             max-width: 900px;
@@ -477,6 +477,7 @@
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border-color);
+            opacity: 1;
         }
 
         .modal-header {
@@ -547,6 +548,7 @@
             padding: 0.75rem;
             overflow-y: auto;
             flex: 1;
+            background: #ffffff;
         }
 
         .tab-content {
@@ -894,7 +896,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v9.9</h1>
+            <h1>Reference Refinement v10.0</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -987,7 +989,7 @@
                 <label style="font-weight: 600; color: var(--text-primary);">AI Model:</label>
                 <select id="aiModelSelect" class="form-select" style="flex: 1; max-width: 300px;" onchange="app.saveModelPreference()">
                     <option value="claude-3-5-haiku-20241022">Claude Haiku (Fast & Economical)</option>
-                    <option value="claude-3-5-sonnet-20241022">Claude Sonnet (Better Quality)</option>
+                    <option value="claude-3-5-sonnet-20241022" selected>Claude Sonnet (Better Quality)</option>
                 </select>
                 <span style="font-size: 0.85rem; color: var(--text-secondary);">For Suggest Queries & AutoRank</span>
             </div>
@@ -1013,41 +1015,34 @@
 
                         <div class="form-row">
                             <div class="form-group" style="max-width: 80px; margin-bottom: 0.5rem;">
-                                <label class="form-label">RID</label>
-                                <input id="editId" type="text" class="form-input" readonly>
+                                <input id="editId" type="text" class="form-input" readonly placeholder="RID">
                             </div>
                             <div class="form-group" style="flex: 1; margin-bottom: 0.5rem;">
-                                <label class="form-label">Title</label>
-                                <input id="editTitle" type="text" class="form-input">
+                                <input id="editTitle" type="text" class="form-input" placeholder="Title">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group" style="margin-bottom: 0.5rem;">
-                                <label class="form-label">Authors</label>
-                                <input id="editAuthors" type="text" class="form-input">
+                                <input id="editAuthors" type="text" class="form-input" placeholder="Authors">
                             </div>
                             <div class="form-group" style="margin-bottom: 0.5rem;">
-                                <label class="form-label">Year</label>
-                                <input id="editYear" type="text" class="form-input">
+                                <input id="editYear" type="text" class="form-input" placeholder="Year">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group" style="margin-bottom: 0.5rem;">
-                                <label class="form-label">Journal/Book Title</label>
-                                <input id="editContainerTitle" type="text" class="form-input">
+                                <input id="editContainerTitle" type="text" class="form-input" placeholder="Journal/Book Title">
                             </div>
                             <div class="form-group" style="margin-bottom: 0.5rem;">
-                                <label class="form-label">Publisher</label>
-                                <input id="editPublisher" type="text" class="form-input">
+                                <input id="editPublisher" type="text" class="form-input" placeholder="Publisher">
                             </div>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0.5rem;">
-                            <label class="form-label">Other</label>
                             <input id="editOther" type="text" class="form-input"
-                                placeholder="Vol. 45(3), pp. 123-145, DOI: 10.xxxx/..., ISBN: 978..., Location: NY">
+                                placeholder="Other: Vol. 45(3), pp. 123-145, DOI: 10.xxxx/..., ISBN: 978..., Location: NY">
                         </div>
 
                         <!-- Hidden fields for backward compatibility -->
@@ -1169,8 +1164,8 @@
     </div>
 
     <!-- Override Annotation Modal -->
-    <div id="overrideModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+    <div id="overrideModal" class="modal" style="z-index: 1100;">
+        <div class="modal-content" style="max-width: 600px; background: var(--card-background);">
             <div class="modal-header">
                 <h2 class="modal-title">Why Did You Make This Change?</h2>
                 <button class="modal-close" onclick="app.closeOverrideModal(false)">&times;</button>
@@ -1244,8 +1239,8 @@
                     }
                 }
 
-                // Load saved AI model preference (default to Haiku)
-                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-3-5-haiku-20241022';
+                // Load saved AI model preference (default to Sonnet)
+                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-3-5-sonnet-20241022';
                 document.getElementById('aiModelSelect').value = savedModel;
 
                 // Load saved API URL
