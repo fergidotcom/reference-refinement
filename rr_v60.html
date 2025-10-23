@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v11.3</title>
+    <title>Reference Refinement v11.4</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -991,7 +991,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v11.3</h1>
+            <h1>Reference Refinement v11.4</h1>
         </div>
     </header>
 
@@ -1435,6 +1435,7 @@
                                 urls: {
                                     primary: '',
                                     secondary: '',
+                                    tertiary: ''
                                     },
                                 queries: [],
                                 searchResults: [],
@@ -1503,7 +1504,7 @@
                                 text: trimmed,
                                 finalized: true,
                                 relevance_text: '',
-                                urls: { primary: '', secondary: '' },
+                                urls: { primary: '', secondary: '', tertiary: '' },
                                 queries: [],
                                 searchResults: [],
                                 title: '', authors: '', year: '',
@@ -1585,7 +1586,23 @@
                     ref.finalized = false;
                 }
 
-                // 5. Parse only RID, Authors, Year, Title - everything else is "Other"
+                // 5. Extract URLs
+                const primaryUrlMatch = text.match(/PRIMARY_URL\[([^\]]*)\]/);
+                if (primaryUrlMatch) {
+                    ref.urls.primary = primaryUrlMatch[1].trim();
+                }
+
+                const secondaryUrlMatch = text.match(/SECONDARY_URL\[([^\]]*)\]/);
+                if (secondaryUrlMatch) {
+                    ref.urls.secondary = secondaryUrlMatch[1].trim();
+                }
+
+                const tertiaryUrlMatch = text.match(/TERTIARY_URL\[([^\]]*)\]/);
+                if (tertiaryUrlMatch) {
+                    ref.urls.tertiary = tertiaryUrlMatch[1].trim();
+                }
+
+                // 6. Parse only RID, Authors, Year, Title - everything else is "Other"
                 this.parseSimplifiedBiblio(ref, biblioSection);
             },
 
