@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v10.0</title>
+    <title>Reference Refinement v10.1</title>
     <style>
         /* CSS Variables */
         :root {
@@ -896,7 +896,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v10.0</h1>
+            <h1>Reference Refinement v10.1</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -1544,8 +1544,9 @@
             },
 
             extractReferenceInfo(ref) {
-                // New parser using "Relevance:" as anchor point
-                // Format: [RID] <variable bibliographic fields> Relevance: <text> FLAGS[...] PRIMARY_URL[...] SECONDARY_URL[...]
+                // Simplified parser - only extract RID, Authors, Year, Title
+                // Everything else goes in "Other" field
+                // Format: [RID] Authors (Year). Title. Other bibliographic info. Relevance: text FLAGS[...] URLs[...]
 
                 const text = ref.text;
 
@@ -1556,8 +1557,7 @@
                 let biblioSection = '';
                 if (relevanceIndex > 0) {
                     // Remove [RID] from start to get pure biblio section
-                    const afterId = text.substring(0, relevanceIndex).replace(/^\[\d+\]\s*/, '').trim();
-                    biblioSection = afterId;
+                    biblioSection = text.substring(0, relevanceIndex).replace(/^\[\d+\]\s*/, '').trim();
                 } else {
                     // No "Relevance:" found - treat everything except FLAGS/URLs as biblio
                     const flagsIndex = text.indexOf('FLAGS[');
@@ -1585,107 +1585,63 @@
                     ref.finalized = false;
                 }
 
-                // 5. Parse bibliographic section flexibly
-                this.parseBiblioSection(ref, biblioSection);
+                // 5. Parse only RID, Authors, Year, Title - everything else is "Other"
+                this.parseSimplifiedBiblio(ref, biblioSection);
             },
 
-            parseBiblioSection(ref, biblioSection) {
-                // Extract fields in any order from bibliographic section
+            parseSimplifiedBiblio(ref, biblioSection) {
+                // Simplified parsing: RID, Authors, Year, Title only
+                // Everything else goes into "Other" field
 
-                // Year: 4-digit number in parentheses
+                // Extract Year: (YYYY)
                 const yearMatch = biblioSection.match(/\((\d{4})\)/);
                 ref.year = yearMatch ? yearMatch[1] : '';
 
-                // Author: Text before (Year) or first segment before period
                 if (yearMatch) {
+                    // Authors: Everything before (Year)
                     const beforeYear = biblioSection.substring(0, biblioSection.indexOf(yearMatch[0])).trim();
                     ref.authors = beforeYear.replace(/[,;]\s*$/, '').trim();
+
+                    // Title: First sentence after (Year). up to next period
+                    const afterYear = biblioSection.substring(biblioSection.indexOf(yearMatch[0]) + yearMatch[0].length);
+                    const afterYearCleaned = afterYear.replace(/^[\.\s,;]+/, ''); // Remove leading punctuation
+                    const nextPeriod = afterYearCleaned.indexOf('.');
+
+                    if (nextPeriod > 0) {
+                        ref.title = afterYearCleaned.substring(0, nextPeriod).trim();
+
+                        // Other: Everything after title
+                        const afterTitle = afterYearCleaned.substring(nextPeriod + 1).trim();
+                        ref.other = afterTitle.replace(/[.\s]+$/, '').trim(); // Remove trailing periods/spaces
+                    } else {
+                        // No period found - entire text after year is title
+                        ref.title = afterYearCleaned.trim();
+                        ref.other = '';
+                    }
                 } else {
-                    // No year found, try to extract first segment as author
+                    // No year found - treat first segment as author, rest as other
                     const firstPeriod = biblioSection.indexOf('.');
                     if (firstPeriod > 0) {
                         ref.authors = biblioSection.substring(0, firstPeriod).trim();
+                        ref.other = biblioSection.substring(firstPeriod + 1).trim();
                     } else {
-                        ref.authors = '';
+                        // Just one segment - must be author (like "Amnesty International")
+                        ref.authors = biblioSection.trim();
+                        ref.other = '';
                     }
+                    ref.title = '';
                 }
 
-                // Title: Try multiple heuristics
-                // 1. Text immediately after (Year). up to next period
-                // 2. Longest capitalized segment
-                // 3. Text in quotes or italics
-                let titleCandidates = [];
-
-                if (yearMatch) {
-                    const afterYear = biblioSection.substring(biblioSection.indexOf(yearMatch[0]) + yearMatch[0].length);
-                    const afterYearCleaned = afterYear.replace(/^[\.\s,;]+/, '');
-                    const nextPeriod = afterYearCleaned.indexOf('.');
-                    if (nextPeriod > 0) {
-                        titleCandidates.push(afterYearCleaned.substring(0, nextPeriod).trim());
-                    } else if (afterYearCleaned.length > 0) {
-                        titleCandidates.push(afterYearCleaned.trim());
-                    }
-                }
-
-                // Look for quoted or italicized text
-                const quotedMatch = biblioSection.match(/"([^"]+)"|'([^']+)'|<i>([^<]+)<\/i>|_([^_]+)_/);
-                if (quotedMatch) {
-                    titleCandidates.push((quotedMatch[1] || quotedMatch[2] || quotedMatch[3] || quotedMatch[4]).trim());
-                }
-
-                // Pick longest candidate as title
-                ref.title = titleCandidates.reduce((longest, current) =>
-                    current.length > longest.length ? current : longest, '');
-
-                // DOI: Pattern 10.xxxx/yyyy
-                const doiMatch = biblioSection.match(/(?:doi:|DOI:)?\s*(10\.\d{4,9}\/[^\s,;.]+)/i);
-                ref.doi = doiMatch ? doiMatch[1] : '';
-
-                // ISBN: Pattern ISBN: xxx-xxx-xxx
-                const isbnMatch = biblioSection.match(/ISBN:?\s*([\d-]+)/i);
-                ref.isbn = isbnMatch ? isbnMatch[1] : '';
-
-                // Volume, Issue, Pages: Pattern Vol. 45(3), pp. 123-145 or just 45(3), 123-145
-                const volMatch = biblioSection.match(/Vol\.\s*(\d+)|(?:^|[^\d])(\d+)\(/i);
-                ref.volume = volMatch ? (volMatch[1] || volMatch[2]) : '';
-
-                const issueMatch = biblioSection.match(/\((\d+)\)/);
-                // Make sure this issue is not the year
-                if (issueMatch && issueMatch[1] !== ref.year) {
-                    ref.issue = issueMatch[1];
-                } else {
-                    ref.issue = '';
-                }
-
-                const pagesMatch = biblioSection.match(/pp?\.\s*([\d\-–]+)|pages?\s*([\d\-–]+)/i);
-                ref.pages = pagesMatch ? (pagesMatch[1] || pagesMatch[2]) : '';
-
-                // Edition: Pattern "2nd ed." or "Second Edition"
-                const editionMatch = biblioSection.match(/(\d+(?:st|nd|rd|th)\s*ed(?:ition)?\.?)/i);
-                ref.edition = editionMatch ? editionMatch[1] : '';
-
-                // Container title (journal/book name): Capitalized text that's not author or title
-                // This is harder to extract reliably, using best guess
-                const parts = biblioSection.split(/\.\s+/);
-                for (let part of parts) {
-                    part = part.trim();
-                    // Skip if it's the author, title, or contains DOI/ISBN
-                    if (part && part !== ref.authors && part !== ref.title &&
-                        !part.match(/ISBN|DOI|Vol\.|pp?\./i) &&
-                        part.match(/^[A-Z]/)) {
-                        ref.container_title = part;
-                        break;
-                    }
-                }
-                if (!ref.container_title) ref.container_title = '';
-
-                // Publisher: Look for "Press", "Publisher", or common publisher names
-                const publisherMatch = biblioSection.match(/([A-Z][^,;.]*?(?:Press|Publishers?|University|Books|Publishing))/);
-                ref.publisher = publisherMatch ? publisherMatch[1].trim() : '';
-
-                // Publisher location: Look for pattern "Location: City" or city before publisher
-                const locationMatch = biblioSection.match(/Location:\s*([^,;.]+)|([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)[,:]?\s*(?:Press|Publisher)/);
-                ref.publisher_place = locationMatch ? (locationMatch[1] || locationMatch[2] || '').trim() : '';
+                // Clear all the individual fields - we're not using them anymore
+                ref.container_title = '';
+                ref.publisher = '';
+                ref.volume = '';
+                ref.issue = '';
+                ref.pages = '';
+                ref.edition = '';
+                ref.doi = '';
+                ref.isbn = '';
+                ref.publisher_place = '';
             },
 
             exportFile() {
@@ -1943,36 +1899,14 @@
                 this.currentEditId = id;
                 this.debugLogs = [];
 
-                // Populate form - Tab 1
+                // Populate form - Tab 1 (simplified)
                 document.getElementById('editId').value = ref.id;
                 document.getElementById('editTitle').value = ref.title || '';
                 document.getElementById('editAuthors').value = ref.authors || '';
                 document.getElementById('editYear').value = ref.year || '';
-                document.getElementById('editContainerTitle').value = ref.container_title || '';
-                document.getElementById('editPublisher').value = ref.publisher || '';
-                document.getElementById('editPublisherPlace').value = ref.publisher_place || '';
+                document.getElementById('editOther').value = ref.other || '';
                 document.getElementById('editPrimaryUrl').value = ref.urls.primary || '';
                 document.getElementById('editSecondaryUrl').value = ref.urls.secondary || '';
-                // Populate hidden individual fields for backward compatibility
-                document.getElementById('editVolume').value = ref.volume || '';
-                document.getElementById('editIssue').value = ref.issue || '';
-                document.getElementById('editPages').value = ref.pages || '';
-                document.getElementById('editEdition').value = ref.edition || '';
-                document.getElementById('editDOI').value = ref.doi || '';
-                document.getElementById('editISBN').value = ref.isbn || '';
-                document.getElementById('editPublisherPlace').value = ref.publisher_place || '';
-
-                // Build compound "Other" field (Vol/Issue/Pages/Edition + DOI/ISBN/Location)
-                let otherValue = '';
-                if (ref.volume) otherValue += `Vol. ${ref.volume}`;
-                if (ref.issue) otherValue += `(${ref.issue})`;
-                if (ref.pages) otherValue += `${otherValue ? ', ' : ''}pp. ${ref.pages}`;
-                if (ref.edition) otherValue += `${otherValue ? ', ' : ''}${ref.edition}`;
-                if (ref.doi) otherValue += `${otherValue ? ', ' : ''}DOI: ${ref.doi}`;
-                if (ref.isbn) otherValue += `${otherValue ? ', ' : ''}ISBN: ${ref.isbn}`;
-                if (ref.publisher_place) otherValue += `${otherValue ? ', ' : ''}Location: ${ref.publisher_place}`;
-                document.getElementById('editOther').value = otherValue;
-
                 document.getElementById('editRelevanceText').value = ref.relevance_text || '';
                 document.getElementById('editQueries').value = ref.queries.join('\n');
 
@@ -2003,16 +1937,10 @@
                 document.getElementById('debugSourceLine').textContent = ref.text;
                 document.getElementById('debugParsed').textContent = JSON.stringify({
                     id: ref.id,
-                    title: ref.title,
                     authors: ref.authors,
                     year: ref.year,
-                    container_title: ref.container_title,
-                    publisher: ref.publisher,
-                    volume: ref.volume,
-                    issue: ref.issue,
-                    pages: ref.pages,
-                    doi: ref.doi,
-                    isbn: ref.isbn,
+                    title: ref.title,
+                    other: ref.other,
                     relevance_text: ref.relevance_text
                 }, null, 2);
 
@@ -2048,66 +1976,21 @@
                 const ref = this.references.find(r => r.id === this.currentEditId);
                 if (!ref) return;
 
-                // Update reference from Tab 1 fields
+                // Update reference from Tab 1 fields (simplified - no parsing)
                 ref.title = document.getElementById('editTitle').value;
                 ref.authors = document.getElementById('editAuthors').value;
                 ref.year = document.getElementById('editYear').value;
-                ref.container_title = document.getElementById('editContainerTitle').value;
-                ref.publisher = document.getElementById('editPublisher').value;
-                ref.publisher_place = document.getElementById('editPublisherPlace').value;
+                ref.other = document.getElementById('editOther').value;
                 ref.urls.primary = document.getElementById('editPrimaryUrl').value;
                 ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
-
-                // Parse compound "Other" field (Vol/Issue/Pages/Edition + DOI/ISBN/Location)
-                const otherValue = document.getElementById('editOther').value;
-                ref.volume = '';
-                ref.issue = '';
-                ref.pages = '';
-                ref.edition = '';
-                ref.doi = '';
-                ref.isbn = '';
-                ref.publisher_place = '';
-
-                if (otherValue) {
-                    // Extract volume: "Vol. 45" or just "45"
-                    const volMatch = otherValue.match(/Vol\.\s*(\d+)|^(\d+)/i);
-                    if (volMatch) ref.volume = volMatch[1] || volMatch[2];
-
-                    // Extract issue: "(3)"
-                    const issueMatch = otherValue.match(/\((\d+)\)/);
-                    if (issueMatch) ref.issue = issueMatch[1];
-
-                    // Extract pages: "pp. 123-145" or "123-145"
-                    const pagesMatch = otherValue.match(/pp\.\s*([\d\-–]+)/i);
-                    if (pagesMatch) ref.pages = pagesMatch[1];
-
-                    // Extract edition: "2nd ed." or similar
-                    const editionMatch = otherValue.match(/(\d+(?:st|nd|rd|th)?\s*ed\.?)/i);
-                    if (editionMatch) ref.edition = editionMatch[1];
-
-                    // Extract DOI: "DOI: 10.xxxx/..." or just "10.xxxx/..."
-                    const doiMatch = otherValue.match(/DOI:\s*(10\.\S+)|(?:^|\s)(10\.\d{4,9}\/\S+)/i);
-                    if (doiMatch) ref.doi = doiMatch[1] || doiMatch[2];
-
-                    // Extract ISBN: "ISBN: 978-..." or "ISBN 978..."
-                    const isbnMatch = otherValue.match(/ISBN:?\s*([\d\-]+)/i);
-                    if (isbnMatch) ref.isbn = isbnMatch[1];
-
-                    // Extract Location: "Location: New York" or similar
-                    const locationMatch = otherValue.match(/Location:\s*([^,]+)/i);
-                    if (locationMatch) ref.publisher_place = locationMatch[1].trim();
-                }
-
                 ref.relevance_text = document.getElementById('editRelevanceText').value;
                 ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
 
-                // Rebuild text
+                // Rebuild text for display
                 let text = `[${ref.id}] ${ref.authors}`;
                 if (ref.year) text += ` (${ref.year})`;
                 if (ref.title) text += `. ${ref.title}`;
-                if (ref.container_title) text += `. ${ref.container_title}`;
-                if (ref.publisher) text += `. ${ref.publisher}`;
-
+                if (ref.other) text += `. ${ref.other}`;
                 ref.text = text;
 
                 this.showToast('Reference saved', 'success');
@@ -2155,7 +2038,7 @@
             },
 
             generateDecisionsEntry(ref, includeFinalized = false) {
-                // New single-line format: [RID] Author (Year). Title. ... Relevance: text FLAGS[...] PRIMARY_URL[...] SECONDARY_URL[...]
+                // Simplified single-line format: [RID] Author (Year). Title. Other. Relevance: text FLAGS[...] PRIMARY_URL[...] SECONDARY_URL[...]
 
                 let entry = `[${ref.id}] `;
 
@@ -2174,36 +2057,9 @@
                     entry += `${ref.title}. `;
                 }
 
-                // Add container title if present
-                if (ref.container_title) {
-                    entry += `${ref.container_title}. `;
-                }
-
-                // Add publisher if present
-                if (ref.publisher) {
-                    entry += `${ref.publisher}. `;
-                }
-
-                // Add volume/issue/pages if present
-                if (ref.volume) {
-                    entry += `Vol. ${ref.volume}`;
-                    if (ref.issue) {
-                        entry += `(${ref.issue})`;
-                    }
-                    entry += '. ';
-                }
-                if (ref.pages) {
-                    entry += `pp. ${ref.pages}. `;
-                }
-
-                // Add DOI if present
-                if (ref.doi) {
-                    entry += `DOI: ${ref.doi}. `;
-                }
-
-                // Add ISBN if present
-                if (ref.isbn) {
-                    entry += `ISBN: ${ref.isbn}. `;
+                // Add other bibliographic information if present
+                if (ref.other) {
+                    entry += `${ref.other}. `;
                 }
 
                 // Add relevance text if present
