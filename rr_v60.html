@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v9.5</title>
+    <title>Reference Refinement v9.6</title>
     <style>
         /* CSS Variables */
         :root {
@@ -891,7 +891,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v9.5</h1>
+            <h1>Reference Refinement v9.6</h1>
             <div class="header-controls">
                 <div class="mode-toggle">
                     <span class="mode-label">Mode:</span>
@@ -1163,6 +1163,35 @@
         </div>
     </div>
 
+    <!-- Override Annotation Modal -->
+    <div id="overrideModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Why Did You Make This Change?</h2>
+                <button class="modal-close" onclick="app.closeOverrideModal(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <div id="overrideDetails" style="background: var(--background); padding: 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+                    <div class="form-group">
+                        <label class="form-label">Your explanation (optional but encouraged):</label>
+                        <textarea id="overrideAnnotation" class="form-textarea" rows="4"
+                            placeholder="Example: 'AI query was too generic, needed to focus on the MAGA context' or 'University press is more authoritative than Wikipedia for academic work'"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="app.closeOverrideModal(false)" class="secondary">Skip</button>
+                <button onclick="app.closeOverrideModal(true)" class="success">Log & Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div id="autoSaveIndicator" style="position: fixed; bottom: 20px; right: 20px; background: var(--success-color); color: white; padding: 0.5rem 1rem; border-radius: 6px; box-shadow: var(--shadow-md); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 2000;">
+        ✓ Auto-saved
+    </div>
+
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
@@ -1192,6 +1221,21 @@
                         this.overrideLog = JSON.parse(savedLog);
                     } catch (e) {
                         this.overrideLog = [];
+                    }
+                }
+
+                // Auto-load decisions.txt from localStorage if available
+                const savedDecisions = localStorage.getItem('rr_decisions_backup');
+                const savedTimestamp = localStorage.getItem('rr_decisions_timestamp');
+                if (savedDecisions) {
+                    try {
+                        this.parseDecisions(savedDecisions);
+                        this.applyFilters();
+                        const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'Unknown';
+                        this.showToast(`Auto-loaded backup from ${timestamp}`, 'success');
+                        console.log('Auto-loaded decisions.txt from localStorage');
+                    } catch (e) {
+                        console.error('Failed to auto-load from localStorage:', e);
                     }
                 }
 
@@ -1701,7 +1745,55 @@
                     localStorage.setItem('rr_override_log', JSON.stringify(this.overrideLog));
 
                     console.log('Auto-saved to localStorage');
+
+                    // Show auto-save indicator
+                    this.showAutoSaveIndicator();
                 }, 500);  // 500ms debounce
+            },
+
+            showAutoSaveIndicator() {
+                const indicator = document.getElementById('autoSaveIndicator');
+                indicator.style.opacity = '1';
+                setTimeout(() => {
+                    indicator.style.opacity = '0';
+                }, 2000);
+            },
+
+            showOverrideModal(details, onComplete) {
+                // Show modal with override details
+                document.getElementById('overrideDetails').innerHTML = details;
+                document.getElementById('overrideAnnotation').value = '';
+                document.getElementById('overrideModal').classList.add('visible');
+
+                // Store callback for when modal closes
+                this.overrideModalCallback = onComplete;
+            },
+
+            closeOverrideModal(shouldLog) {
+                const annotation = document.getElementById('overrideAnnotation').value.trim();
+                document.getElementById('overrideModal').classList.remove('visible');
+
+                // Call the stored callback with the result
+                if (this.overrideModalCallback) {
+                    this.overrideModalCallback(shouldLog ? annotation : null);
+                    this.overrideModalCallback = null;
+                }
+            },
+
+            logOverride(overrideData) {
+                // Add override to log
+                const entry = {
+                    timestamp: new Date().toISOString(),
+                    ...overrideData
+                };
+
+                this.overrideLog.push(entry);
+
+                // Save to localStorage
+                localStorage.setItem('rr_override_log', JSON.stringify(this.overrideLog));
+
+                // Log to console for debugging
+                console.log('Override logged:', entry);
             },
 
             // Filtering and Display
@@ -2176,7 +2268,36 @@ Return only the queries, one per line. Make them specific and use quotation mark
             },
 
             async runSearch() {
-                const queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
+                const currentQuery = document.getElementById('editQueries').value;
+
+                // Check if user modified AI-suggested query
+                if (this.aiSuggestedQuery && currentQuery !== this.aiSuggestedQuery) {
+                    const ref = this.references.find(r => r.id === this.currentEditId);
+                    const details = `
+                        <p><strong>AI Suggested Query:</strong></p>
+                        <pre style="background: var(--background); padding: 0.5rem; border-radius: 4px; white-space: pre-wrap; font-size: 0.9rem; max-height: 150px; overflow-y: auto;">${this.aiSuggestedQuery}</pre>
+                        <p style="margin-top: 1rem;"><strong>Your Modified Query:</strong></p>
+                        <pre style="background: var(--background); padding: 0.5rem; border-radius: 4px; white-space: pre-wrap; font-size: 0.9rem; max-height: 150px; overflow-y: auto;">${currentQuery}</pre>
+                    `;
+
+                    await new Promise((resolve) => {
+                        this.showOverrideModal(details, (annotation) => {
+                            if (annotation !== null) {
+                                this.logOverride({
+                                    rid: this.currentEditId,
+                                    override_type: 'QUERY',
+                                    reference_title: ref?.title || 'Unknown',
+                                    ai_suggested_query: this.aiSuggestedQuery,
+                                    user_final_query: currentQuery,
+                                    user_annotation: annotation
+                                });
+                            }
+                            resolve();
+                        });
+                    });
+                }
+
+                const queries = currentQuery.split('\n').filter(q => q.trim());
                 if (queries.length === 0) {
                     this.showToast('Enter search queries first', 'warning');
                     return;
@@ -2283,11 +2404,45 @@ Return only the queries, one per line. Make them specific and use quotation mark
                 }).join('');
             },
 
-            selectCandidate(index, urlType) {
+            async selectCandidate(index, urlType) {
                 const ref = this.references.find(r => r.id === this.currentEditId);
                 if (!ref || !ref.searchResults || !ref.searchResults[index]) return;
 
                 const candidate = ref.searchResults[index];
+
+                // Check if user is overriding AI ranking
+                if (this.aiRankedResults) {
+                    const aiSuggestion = urlType === 'primary' ? this.aiRankedResults.primary : this.aiRankedResults.secondary;
+
+                    if (aiSuggestion && candidate.url !== aiSuggestion) {
+                        const details = `
+                            <p><strong>AI Recommended ${urlType.toUpperCase()} URL:</strong></p>
+                            <div style="background: var(--background); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.9rem;">
+                                <a href="${aiSuggestion}" target="_blank" style="color: var(--accent-color);">${aiSuggestion}</a>
+                            </div>
+                            <p style="margin-top: 1rem;"><strong>Your Selected ${urlType.toUpperCase()} URL:</strong></p>
+                            <div style="background: var(--background); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.9rem;">
+                                <a href="${candidate.url}" target="_blank" style="color: var(--accent-color);">${candidate.url}</a>
+                            </div>
+                        `;
+
+                        await new Promise((resolve) => {
+                            this.showOverrideModal(details, (annotation) => {
+                                if (annotation !== null) {
+                                    this.logOverride({
+                                        rid: this.currentEditId,
+                                        override_type: 'RANKING_' + urlType.toUpperCase(),
+                                        reference_title: ref?.title || 'Unknown',
+                                        ai_suggested_url: aiSuggestion,
+                                        user_final_url: candidate.url,
+                                        user_annotation: annotation
+                                    });
+                                }
+                                resolve();
+                            });
+                        });
+                    }
+                }
 
                 if (urlType === 'primary') {
                     ref.urls.primary = candidate.url;
@@ -2302,6 +2457,9 @@ Return only the queries, one per line. Make them specific and use quotation mark
                     document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${candidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${candidate.url}</a>`;
                     this.showToast('Set as Secondary URL', 'success');
                 }
+
+                // Auto-save after URL change
+                this.autoSave();
 
                 // Update visual selection
                 document.querySelectorAll('.candidate-item').forEach(item => {
@@ -2347,6 +2505,12 @@ Return only the queries, one per line. Make them specific and use quotation mark
                     if (response.rankings && response.rankings.length > 0) {
                         this.addDebugLog(`Received ${response.rankings.length} rankings from AI`);
 
+                        // Store AI rankings for override detection
+                        this.aiRankedResults = {
+                            primary: null,
+                            secondary: null
+                        };
+
                         // Auto-fill top URLs from ranked results
                         if (response.rankings[0]) {
                             const topCandidate = ref.searchResults[response.rankings[0].index];
@@ -2356,6 +2520,8 @@ Return only the queries, one per line. Make them specific and use quotation mark
                                 // Update Current URLs display
                                 document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${topCandidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${topCandidate.url}</a>`;
                                 this.addDebugLog('Primary URL (score: ' + response.rankings[0].score + '): ' + topCandidate.url);
+                                // Store AI suggestion
+                                this.aiRankedResults.primary = topCandidate.url;
                             }
                         }
                         if (response.rankings[1]) {
@@ -2366,6 +2532,8 @@ Return only the queries, one per line. Make them specific and use quotation mark
                                 // Update Current URLs display
                                 document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${secondCandidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${secondCandidate.url}</a>`;
                                 this.addDebugLog('Secondary URL (score: ' + response.rankings[1].score + '): ' + secondCandidate.url);
+                                // Store AI suggestion
+                                this.aiRankedResults.secondary = secondCandidate.url;
                             }
                         }
 
