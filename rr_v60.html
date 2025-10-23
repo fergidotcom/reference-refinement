@@ -2786,8 +2786,11 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
             },
 
             connectDropbox() {
-                const redirectUri = window.location.origin + window.location.pathname;
+                // Use hardcoded redirect URI to avoid any dynamic URL issues
+                const redirectUri = 'https://rrv521-1760738877.netlify.app/rr_v60.html';
                 const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}`;
+                console.log('Dropbox OAuth URL:', authUrl);
+                console.log('Redirect URI:', redirectUri);
                 window.location.href = authUrl;
             },
 
