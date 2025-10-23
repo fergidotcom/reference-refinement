@@ -1,0 +1,285 @@
+{
+  "metadata": {
+    "generated": "10/23/2025, 4:56:34 PM",
+    "total_entries": 145,
+    "parsed_at": "2025-10-23T16:57:25.251135",
+    "references_processed": 6
+  },
+  "references": [
+    {
+      "id": 1,
+      "raw_reference": null,
+      "parsed_fields": {
+        "id": "1",
+        "title": "Authoritarian Ascent In The USA: How MAGA Seeks Permanent Supremacy",
+        "authors": "Ferguson, J.",
+        "year": "2024",
+        "other": "Independently published on Amazon. ISBN: 9798299726562",
+        "primary_url": null,
+        "secondary_url": null
+      },
+      "queries_generated": [],
+      "ai_model": null,
+      "search_results": {
+        "total_unique": 0,
+        "by_query": {
+          "https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=qoqFZVLPQMWMdxuy-jcOsg": 0
+        }
+      },
+      "autorank": {},
+      "user_selections": {},
+      "finalized": false,
+      "finalized_at": null,
+      "override": false,
+      "timeline": []
+    },
+    {
+      "id": 2,
+      "raw_reference": null,
+      "parsed_fields": {
+        "id": "2",
+        "title": "An Invitation to Social Construction",
+        "authors": "Gergen, K. J.",
+        "year": "1999",
+        "other": "SAGE Publications, London. ISBN: 9780803985735",
+        "primary_url": null,
+        "secondary_url": null
+      },
+      "queries_generated": [
+        "\"An Invitation to Social Construction\" Gergen 1999 filetype:pdf"
+      ],
+      "ai_model": "claude-sonnet-4-20250514",
+      "search_results": {
+        "total_unique": 97,
+        "by_query": {
+          "\"An Invitation to Social Construction\" Gergen 1999 filetype:pdf": 10,
+          "Gergen \"An Invitation to Social Construction\" SAGE Publications ISBN 9780803985735": 0,
+          "\"Kenneth Gergen\" \"An Invitation to Social Construction\" 1999 PDF download": 10,
+          "site:sagepub.com \"An Invitation to Social Construction\" Gergen": 10,
+          "\"Kenneth J. Gergen\" curriculum vitae CV biography social construction": 10,
+          "Gergen social construction reality constructed identities institutions": 10,
+          "\"An Invitation to Social Construction\" book review critique analysis": 10,
+          "Kenneth Gergen social constructionism theory constructed realities": 10,
+          "\"social construction\" \"constructed nature\" political social environments Gergen": 10,
+          "social constructivism relativism \"collective human agreement\" interpretation": 10,
+          "Gergen constructivism \"tangible aspects existence\" biological physical principles": 0,
+          "\"An Invitation to Social Construction\" manuscript reference foundational": 10,
+          "\"Kenneth Gergen\" SAGE 1999 social construction publisher page": 10,
+          "social construction theory \"constructed rather than discovered\" Gergen": 10,
+          "Gergen \"social frameworks\" \"products of collective human agreement\" 1999": 0
+        }
+      },
+      "autorank": {
+        "candidates_ranked": 15,
+        "ai_primary": {
+          "url": "https://cdn.bookey.app/files/pdf/book/en/an-invitation-to-social-construction.pdf",
+          "primary_score": 100,
+          "secondary_score": 40
+        },
+        "ai_secondary": {
+          "url": "http://www.scielo.org.co/scielo.php?script=sci_arttext&pid=S1657-92672012000300027",
+          "primary_score": "70",
+          "secondary_score": 90
+        }
+      },
+      "user_selections": {
+        "primary": {
+          "url": "https://methods.sagepub.com/book/mono/preview/an-invitation-to-social-construction-3e.pdf",
+          "query": "Kenneth Gergen social constructionism theory constructed realities",
+          "timestamp": "4:33:44 PM] Raw Reference from decisions.txt\n--------------------------------------------------------------------------------\n[No raw data available]\n\n[4:33:44 PM] Parsed Reference Fields\n--------------------------------------------------------------------------------\n<strong>ID:</strong> 2\n<strong>Title:</strong> An Invitation to Social Construction\n<strong>Authors:</strong> Gergen, K. J.\n<strong>Year:</strong> 1999\n<strong>Other:</strong> SAGE Publications, London. ISBN: 9780803985735\n<strong>Primary URL:</strong> Not set\n<strong>Secondary URL:</strong> Not set\n<strong>Queries:</strong> 0 queries loaded\n\n[4:34:12 PM"
+        },
+        "secondary": {
+          "url": "https://www.swarthmore.edu/sites/default/files/assets/documents/kenneth-gergen/25230_01_Gergen_%282e%29_Ch_01.pdf",
+          "query": "\"An Invitation to Social Construction\" Gergen 1999 filetype:pdf",
+          "timestamp": "4:46:01 PM"
+        }
+      },
+      "finalized": true,
+      "finalized_at": "4:33:44 PM] Raw Reference from decisions.txt\n--------------------------------------------------------------------------------\n[No raw data available]\n\n[4:33:44 PM] Parsed Reference Fields\n--------------------------------------------------------------------------------\n<strong>ID:</strong> 2\n<strong>Title:</strong> An Invitation to Social Construction\n<strong>Authors:</strong> Gergen, K. J.\n<strong>Year:</strong> 1999\n<strong>Other:</strong> SAGE Publications, London. ISBN: 9780803985735\n<strong>Primary URL:</strong> Not set\n<strong>Secondary URL:</strong> Not set\n<strong>Queries:</strong> 0 queries loaded\n\n[4:34:12 PM",
+      "override": true,
+      "timeline": []
+    },
+    {
+      "id": 3,
+      "raw_reference": null,
+      "parsed_fields": {
+        "id": "3",
+        "title": "The Social Construction of Reality: A Treatise in the Sociology of Knowledge",
+        "authors": "Berger, P. L., & Luckmann, T.",
+        "year": "1966",
+        "other": "Doubleday, Garden City, NY. ISBN: 9780385058988",
+        "primary_url": null,
+        "secondary_url": null
+      },
+      "queries_generated": [
+        "\"The Social Construction of Reality\" Berger Luckmann 1966 filetype:pdf"
+      ],
+      "ai_model": "claude-sonnet-4-20250514",
+      "search_results": {
+        "total_unique": 104,
+        "by_query": {
+          "\"The Social Construction of Reality\" Berger Luckmann 1966 filetype:pdf": 10,
+          "Berger Luckmann \"Social Construction of Reality\" Doubleday publisher site": 10,
+          "\"Peter Berger\" \"Thomas Luckmann\" sociology of knowledge PDF download": 10,
+          "ISBN:9780385058988 \"Social Construction of Reality\" purchase": 10,
+          "\"Peter L. Berger\" CV biography sociology Boston University": 10,
+          "\"Thomas Luckmann\" author page phenomenology social construction": 10,
+          "\"Social Construction of Reality\" book review academic journal": 10,
+          "\"Berger and Luckmann\" constructivism objective reality critique": 10,
+          "sociology of knowledge \"collective human interaction\" \"shared beliefs\"": 2,
+          "\"radical constructivism\" vs \"grounded approach\" social construction reality": 10,
+          "\"social constructs\" \"objective reality\" \"physical biological realities\"": 0,
+          "constructivism \"social construction\" \"tangible aspects existence\" balance": 0,
+          "\"Social Construction of Reality\" influence cognitive frameworks social contexts": 10,
+          "\"Berger Luckmann\" phenomenology sociology knowledge Amazon Google Books": 10,
+          "social construction reality \"human biology\" \"cognitive frameworks\" integration": 10
+        }
+      },
+      "autorank": {
+        "candidates_ranked": 16,
+        "ai_primary": {
+          "url": "https://sociologica.unibo.it/article/view/15794/16629",
+          "primary_score": 70,
+          "secondary_score": 90
+        },
+        "ai_secondary": {
+          "url": "https://www.ebsco.com/research-starters/religion-and-philosophy/social-construction-reality",
+          "primary_score": "N/A",
+          "secondary_score": 90
+        }
+      },
+      "user_selections": {
+        "primary": {
+          "url": "https://amstudugm.files.wordpress.com/2011/04/social-construction-of-reality.pdf",
+          "query": "\"Social Construction of Reality\" book review academic journal",
+          "timestamp": "4:46:35 PM] Raw Reference from decisions.txt\n--------------------------------------------------------------------------------\n[No raw data available]\n\n[4:46:35 PM] Parsed Reference Fields\n--------------------------------------------------------------------------------\n<strong>ID:</strong> 3\n<strong>Title:</strong> The Social Construction of Reality: A Treatise in the Sociology of Knowledge\n<strong>Authors:</strong> Berger, P. L., & Luckmann, T.\n<strong>Year:</strong> 1966\n<strong>Other:</strong> Doubleday, Garden City, NY. ISBN: 9780385058988\n<strong>Primary URL:</strong> Not set\n<strong>Secondary URL:</strong> Not set\n<strong>Queries:</strong> 0 queries loaded\n\n[4:46:38 PM"
+        },
+        "secondary": {
+          "url": "https://d-nb.info/1190960494/34",
+          "query": "\"Social Construction of Reality\" book review academic journal",
+          "timestamp": "4:52:39 PM"
+        }
+      },
+      "finalized": true,
+      "finalized_at": "4:46:35 PM] Raw Reference from decisions.txt\n--------------------------------------------------------------------------------\n[No raw data available]\n\n[4:46:35 PM] Parsed Reference Fields\n--------------------------------------------------------------------------------\n<strong>ID:</strong> 3\n<strong>Title:</strong> The Social Construction of Reality: A Treatise in the Sociology of Knowledge\n<strong>Authors:</strong> Berger, P. L., & Luckmann, T.\n<strong>Year:</strong> 1966\n<strong>Other:</strong> Doubleday, Garden City, NY. ISBN: 9780385058988\n<strong>Primary URL:</strong> Not set\n<strong>Secondary URL:</strong> Not set\n<strong>Queries:</strong> 0 queries loaded\n\n[4:46:38 PM",
+      "override": true,
+      "timeline": []
+    },
+    {
+      "id": 4,
+      "raw_reference": null,
+      "parsed_fields": {
+        "id": "4",
+        "title": "Thinking, Fast and Slow",
+        "authors": "Kahneman, D.",
+        "year": "2011",
+        "other": "Farrar, Straus and Giroux, New York. ISBN: 9780374275631",
+        "primary_url": null,
+        "secondary_url": null
+      },
+      "queries_generated": [
+        "\"Thinking Fast and Slow\" Kahneman 2011 filetype:pdf"
+      ],
+      "ai_model": "claude-sonnet-4-20250514",
+      "search_results": {
+        "total_unique": 117,
+        "by_query": {
+          "\"Thinking Fast and Slow\" Kahneman 2011 filetype:pdf": 10,
+          "Kahneman \"Thinking Fast and Slow\" Farrar Straus Giroux publisher": 10,
+          "Daniel Kahneman System 1 System 2 thinking cognitive processes": 10,
+          "\"Daniel Kahneman\" CV biography Princeton University": 10,
+          "Kahneman 9780374275631 ISBN \"Thinking Fast and Slow\"": 10,
+          "\"System 1 System 2\" Kahneman heuristics biases decision making": 10,
+          "\"Thinking Fast and Slow\" review analysis critique": 10,
+          "Kahneman dual process theory automatic intuitive deliberate analytical": 10,
+          "\"cognitive shortcuts\" \"systematic errors judgment\" Kahneman": 0,
+          "Daniel Kahneman Nobel Prize behavioral economics biography": 10,
+          "\"heuristics and biases\" Kahneman cognitive toolkit human cognition": 10,
+          "\"Thinking Fast and Slow\" impact influence academic citations": 10,
+          "Kahneman empirical realities human architecture cognition": 10,
+          "\"dual system theory\" fast slow thinking cognitive psychology": 10,
+          "\"Daniel Kahneman\" publications works bibliography academic": 10
+        }
+      },
+      "autorank": {
+        "candidates_ranked": 15,
+        "ai_primary": {
+          "url": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/",
+          "primary_score": 90,
+          "secondary_score": 30
+        },
+        "ai_secondary": {
+          "url": "https://en.wikipedia.org/wiki/List_of_cognitive_biases",
+          "primary_score": "60",
+          "secondary_score": 90
+        }
+      },
+      "user_selections": {
+        "primary": {
+          "url": "https://archive.org/download/DanielKahnemanThinkingFastAndSlow/Daniel%20Kahneman-Thinking%2C%20Fast%20and%20Slow%20%20.pdf",
+          "query": "Kahneman \"Thinking Fast and Slow\" Farrar Straus Giroux publisher",
+          "timestamp": "4:53:10 PM] Raw Reference from decisions.txt\n--------------------------------------------------------------------------------\n[No raw data available]\n\n[4:53:10 PM] Parsed Reference Fields\n--------------------------------------------------------------------------------\n<strong>ID:</strong> 4\n<strong>Title:</strong> Thinking, Fast and Slow\n<strong>Authors:</strong> Kahneman, D.\n<strong>Year:</strong> 2011\n<strong>Other:</strong> Farrar, Straus and Giroux, New York. ISBN: 9780374275631\n<strong>Primary URL:</strong> Not set\n<strong>Secondary URL:</strong> Not set\n<strong>Queries:</strong> 0 queries loaded\n\n[4:53:18 PM"
+        },
+        "secondary": {
+          "url": "https://scholar.harvard.edu/files/shleifer/files/kahneman_review_jel_final.pdf",
+          "query": "\"Thinking Fast and Slow\" impact influence academic citations",
+          "timestamp": "4:55:44 PM"
+        }
+      },
+      "finalized": true,
+      "finalized_at": "4:53:10 PM] Raw Reference from decisions.txt\n--------------------------------------------------------------------------------\n[No raw data available]\n\n[4:53:10 PM] Parsed Reference Fields\n--------------------------------------------------------------------------------\n<strong>ID:</strong> 4\n<strong>Title:</strong> Thinking, Fast and Slow\n<strong>Authors:</strong> Kahneman, D.\n<strong>Year:</strong> 2011\n<strong>Other:</strong> Farrar, Straus and Giroux, New York. ISBN: 9780374275631\n<strong>Primary URL:</strong> Not set\n<strong>Secondary URL:</strong> Not set\n<strong>Queries:</strong> 0 queries loaded\n\n[4:53:18 PM",
+      "override": true,
+      "timeline": []
+    },
+    {
+      "id": 1,
+      "raw_reference": null,
+      "parsed_fields": {
+        "id": "1",
+        "title": "Authoritarian Ascent In The USA: How MAGA Seeks Permanent Supremacy",
+        "authors": "Ferguson, J.",
+        "year": "2024",
+        "other": "Independently published on Amazon. ISBN: 9798299726562",
+        "primary_url": null,
+        "secondary_url": "https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=qoqFZVLPQMWMdxuy-jcOsg"
+      },
+      "queries_generated": [],
+      "ai_model": null,
+      "search_results": {
+        "total_unique": 0,
+        "by_query": {}
+      },
+      "autorank": {},
+      "user_selections": {},
+      "finalized": false,
+      "finalized_at": null,
+      "override": false,
+      "timeline": []
+    },
+    {
+      "id": 2,
+      "raw_reference": null,
+      "parsed_fields": {
+        "id": "2",
+        "title": "An Invitation to Social Construction",
+        "authors": "Gergen, K. J.",
+        "year": "1999",
+        "other": "SAGE Publications, London. ISBN: 9780803985735",
+        "primary_url": "https://methods.sagepub.com/book/mono/preview/an-invitation-to-social-construction-3e.pdf",
+        "secondary_url": "https://www.swarthmore.edu/sites/default/files/assets/documents/kenneth-gergen/25230_01_Gergen_%282e%29_Ch_01.pdf"
+      },
+      "queries_generated": [],
+      "ai_model": null,
+      "search_results": {
+        "total_unique": 0,
+        "by_query": {}
+      },
+      "autorank": {},
+      "user_selections": {},
+      "finalized": false,
+      "finalized_at": null,
+      "override": false,
+      "timeline": []
+    }
+  ]
+}

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v11.2</title>
+    <title>Reference Refinement v11.3</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -991,7 +991,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v11.2</h1>
+            <h1>Reference Refinement v11.3</h1>
         </div>
     </header>
 
@@ -2119,12 +2119,30 @@ Other Bibliographic Info: ${ref.other || 'None'}
 RELEVANCE (why this matters to the manuscript):
 ${ref.relevance_text || 'No context provided'}
 
+PROVEN EFFECTIVE QUERY PATTERNS (use frequently):
+1. "Exact Title" Author Year filetype:pdf
+2. Author Year "key phrase from title" site:.edu
+3. Author "publication venue" Year publisher
+4. Author topic keywords (medium specificity)
+5. "Title keywords" review academic journal
+
+AVOID (these patterns consistently fail):
+❌ URLs or links (e.g., spotify.com, youtube.com links)
+❌ Combining ISBN + full publisher name + exact title (too specific)
+❌ Multiple overly-specific jargon phrases together
+❌ Queries longer than 120 characters
+❌ More than 2 quoted phrases in one query
+
+QUERY LENGTH GUIDELINES:
+- Optimal: 40-80 characters
+- Maximum: 120 characters
+- Use quotes sparingly (1-2 phrases per query max)
+
 Generate 10-15 diverse search queries that mix:
-- Bibliography-driven queries (author, title, year, DOI/ISBN if available)
+- Bibliography-driven queries (author, title, year)
 - Relevance-driven queries (key themes from the Relevance text)
 - Queries targeting both PRIMARY goals (finding the work itself) and SECONDARY goals (reviews/discussions)
-
-Balance specificity with discoverability. Use exact phrases in quotes where appropriate.
+- Balance: Start specific (exact title + author), include medium-specificity (author + keywords), add broad queries (author + topic)
 
 Return ONLY the queries, one per line, without any labels, categories, or grouping headers.`;
 

@@ -40,13 +40,37 @@ export const handler: Handler = async (event, context) => {
 
     const prompt = `Rank these search results for BOTH primary and secondary URL fitness.
 
-PRIMARY CRITERIA (authority-focused):
-- PDF availability (free=100, paywalled=80, none=0)
-- Publisher/official source (=90)
-- Author's own site/paper (=85)
-- Author CV/bio (=70)
-- Wikipedia/authoritative encyclopedia (=60)
-- Social media/X/Twitter (=20)
+CRITICAL: Distinguish between THE WORK ITSELF vs ABOUT THE WORK.
+- Primary URLs should be the actual reference (book, article, PDF)
+- NOT articles about it, reviews of it, or references to it
+
+PRIMARY CRITERIA (authority & accessibility):
+1. FREE PDF from trusted source (=100):
+   - Institutional repositories: archive.org, dtic.mil, .edu repositories
+   - Academic publishers with free access: methods.sagepub.com, JSTOR open, etc.
+
+2. KNOWN publisher with free PDF (=95):
+   - SAGE, Oxford, Cambridge, MIT Press, etc. with accessible PDFs
+
+3. Institutional archive (=90):
+   - .gov archives, university digital libraries
+
+4. Publisher official page with PDF preview (=85):
+   - Publisher site that shows book/article with preview
+
+5. Publisher official page paywalled (=70):
+   - Official but requires purchase/subscription
+
+6. Author's personal site with PDF (=80)
+
+7. Author CV/bio mentioning work (=60)
+
+PENALTIES:
+- Unknown CDN domains (cdn.*.com): -30 points
+- Articles ABOUT the work (not the work itself): -40 points
+- Aggregators (Google Scholar profiles, ResearchGate): -50 points
+- Random WordPress/blog sites (unless known academic): -20 points
+- Paywalled with no preview: -15 points
 
 SECONDARY CRITERIA (theme-focused):
 - Review of this specific work (=100)

@@ -1,0 +1,237 @@
+{
+  "summary": {
+    "total_references": 6,
+    "finalized": 3,
+    "overridden": 3,
+    "override_rate": 50.0,
+    "finalization_rate": 50.0
+  },
+  "override_patterns": {
+    "total_overrides": 3,
+    "cases": [
+      {
+        "reference_id": 2,
+        "reference_title": "An Invitation to Social Construction",
+        "ai_recommended": {
+          "url": "https://cdn.bookey.app/files/pdf/book/en/an-invitation-to-social-construction.pdf",
+          "primary_score": 100,
+          "secondary_score": 40,
+          "domain": "cdn.bookey.app"
+        },
+        "user_selected": {
+          "url": "https://methods.sagepub.com/book/mono/preview/an-invitation-to-social-construction-3e.pdf",
+          "query": "Kenneth Gergen social constructionism theory constructed realities",
+          "domain": "methods.sagepub.com"
+        }
+      },
+      {
+        "reference_id": 3,
+        "reference_title": "The Social Construction of Reality: A Treatise in the Sociology of Knowledge",
+        "ai_recommended": {
+          "url": "https://sociologica.unibo.it/article/view/15794/16629",
+          "primary_score": 70,
+          "secondary_score": 90,
+          "domain": "sociologica.unibo.it"
+        },
+        "user_selected": {
+          "url": "https://amstudugm.files.wordpress.com/2011/04/social-construction-of-reality.pdf",
+          "query": "\"Social Construction of Reality\" book review academic journal",
+          "domain": "amstudugm.files.wordpress.com"
+        }
+      },
+      {
+        "reference_id": 4,
+        "reference_title": "Thinking, Fast and Slow",
+        "ai_recommended": {
+          "url": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow/",
+          "primary_score": 90,
+          "secondary_score": 30,
+          "domain": "us.macmillan.com"
+        },
+        "user_selected": {
+          "url": "https://archive.org/download/DanielKahnemanThinkingFastAndSlow/Daniel%20Kahneman-Thinking%2C%20Fast%20and%20Slow%20%20.pdf",
+          "query": "Kahneman \"Thinking Fast and Slow\" Farrar Straus Giroux publisher",
+          "domain": "archive.org"
+        }
+      }
+    ],
+    "ai_domain_distribution": {
+      "cdn.bookey.app": 1,
+      "sociologica.unibo.it": 1,
+      "us.macmillan.com": 1
+    },
+    "user_domain_distribution": {
+      "methods.sagepub.com": 1,
+      "amstudugm.files.wordpress.com": 1,
+      "archive.org": 1
+    }
+  },
+  "query_effectiveness": {
+    "total_unique_queries": 46,
+    "winning_queries": [
+      {
+        "reference_id": 2,
+        "query": "Kenneth Gergen social constructionism theory constructed realities",
+        "url": "https://methods.sagepub.com/book/mono/preview/an-invitation-to-social-construction-3e.pdf"
+      },
+      {
+        "reference_id": 3,
+        "query": "\"Social Construction of Reality\" book review academic journal",
+        "url": "https://amstudugm.files.wordpress.com/2011/04/social-construction-of-reality.pdf"
+      },
+      {
+        "reference_id": 4,
+        "query": "Kahneman \"Thinking Fast and Slow\" Farrar Straus Giroux publisher",
+        "url": "https://archive.org/download/DanielKahnemanThinkingFastAndSlow/Daniel%20Kahneman-Thinking%2C%20Fast%20and%20Slow%20%20.pdf"
+      }
+    ],
+    "top_queries": [
+      {
+        "query": "\"Social Construction of Reality\" book review academic journal",
+        "effectiveness": 2.0,
+        "times_used": 1,
+        "times_won": 2,
+        "avg_results": 10.0
+      },
+      {
+        "query": "\"An Invitation to Social Construction\" Gergen 1999 filetype:pdf",
+        "effectiveness": 1.0,
+        "times_used": 1,
+        "times_won": 1,
+        "avg_results": 10.0
+      },
+      {
+        "query": "Kenneth Gergen social constructionism theory constructed realities",
+        "effectiveness": 1.0,
+        "times_used": 1,
+        "times_won": 1,
+        "avg_results": 10.0
+      },
+      {
+        "query": "Kahneman \"Thinking Fast and Slow\" Farrar Straus Giroux publisher",
+        "effectiveness": 1.0,
+        "times_used": 1,
+        "times_won": 1,
+        "avg_results": 10.0
+      },
+      {
+        "query": "\"Thinking Fast and Slow\" impact influence academic citations",
+        "effectiveness": 1.0,
+        "times_used": 1,
+        "times_won": 1,
+        "avg_results": 10.0
+      },
+      {
+        "query": "https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=qoqFZVLPQMWMdxuy-jcOsg",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "Gergen \"An Invitation to Social Construction\" SAGE Publications ISBN 9780803985735",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "\"Kenneth Gergen\" \"An Invitation to Social Construction\" 1999 PDF download",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 10.0
+      },
+      {
+        "query": "site:sagepub.com \"An Invitation to Social Construction\" Gergen",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 10.0
+      },
+      {
+        "query": "\"Kenneth J. Gergen\" curriculum vitae CV biography social construction",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 10.0
+      }
+    ],
+    "ineffective_queries": [
+      {
+        "query": "https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=qoqFZVLPQMWMdxuy-jcOsg",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "Gergen \"An Invitation to Social Construction\" SAGE Publications ISBN 9780803985735",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "Gergen constructivism \"tangible aspects existence\" biological physical principles",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "Gergen \"social frameworks\" \"products of collective human agreement\" 1999",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "\"social constructs\" \"objective reality\" \"physical biological realities\"",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "constructivism \"social construction\" \"tangible aspects existence\" balance",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      },
+      {
+        "query": "\"cognitive shortcuts\" \"systematic errors judgment\" Kahneman",
+        "effectiveness": 0.0,
+        "times_used": 1,
+        "times_won": 0,
+        "avg_results": 0.0
+      }
+    ]
+  },
+  "domain_analysis": {
+    "primary_domains": {
+      "methods.sagepub.com": 1,
+      "amstudugm.files.wordpress.com": 1,
+      "archive.org": 1
+    },
+    "secondary_domains": {
+      "www.swarthmore.edu": 1,
+      "d-nb.info": 1,
+      "scholar.harvard.edu": 1
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "category": "Query Generation",
+      "finding": "7 queries consistently return 0 results",
+      "action": "Remove or refine these query patterns in llm-chat.ts prompt",
+      "examples": [
+        "https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=qoqFZVLPQMWMdxuy-jcOsg",
+        "Gergen \"An Invitation to Social Construction\" SAGE Publications ISBN 9780803985735",
+        "Gergen constructivism \"tangible aspects existence\" biological physical principles"
+      ]
+    }
+  ]
+}
