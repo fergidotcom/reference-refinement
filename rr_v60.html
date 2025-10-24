@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v11.6</title>
+    <title>Reference Refinement v11.7</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -993,7 +993,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v11.6</h1>
+            <h1>Reference Refinement v11.7</h1>
         </div>
     </header>
 
@@ -1272,13 +1272,18 @@
 
             // Initialize
             async init() {
+                console.log('[INIT] Starting application initialization...');
+
                 // Check for OAuth callback
                 this.handleDropboxOAuthCallback();
 
                 // Load Dropbox token
                 this.dropboxAccessToken = localStorage.getItem('rr_dropbox_token');
+                console.log('[INIT] Dropbox token:', this.dropboxAccessToken ? 'Found' : 'Not found');
+
                 if (this.dropboxAccessToken) {
                     this.initializeDropbox(this.dropboxAccessToken);
+                    console.log('[INIT] Dropbox client initialized');
                 }
 
                 // Load override log from localStorage
@@ -1293,32 +1298,45 @@
 
                 // Try to load decisions.txt from Dropbox first, fallback to localStorage
                 if (this.dropboxClient) {
-                    const content = await this.loadFromDropbox('/decisions.txt');
-                    if (content) {
-                        try {
-                            this.parseDecisions(content);
-                            this.applyFilters();
-                            this.showToast('Auto-loaded from Dropbox', 'success');
-                            console.log('Auto-loaded decisions.txt from Dropbox');
-                        } catch (e) {
-                            console.error('Failed to parse Dropbox content:', e);
+                    console.log('[INIT] Attempting to load decisions.txt from Dropbox...');
+                    try {
+                        const content = await this.loadFromDropbox('/decisions.txt');
+                        if (content) {
+                            console.log('[INIT] Loaded decisions.txt from Dropbox, size:', content.length);
+                            try {
+                                this.parseDecisions(content);
+                                this.applyFilters();
+                                this.showToast('Auto-loaded from Dropbox', 'success');
+                                console.log('[INIT] Successfully parsed and displayed decisions.txt from Dropbox');
+                                return; // Success, exit early
+                            } catch (e) {
+                                console.error('[INIT] Failed to parse Dropbox content:', e);
+                                this.showToast('Failed to parse Dropbox file', 'error');
+                            }
+                        } else {
+                            console.log('[INIT] No content returned from Dropbox (file may not exist)');
                         }
+                    } catch (e) {
+                        console.error('[INIT] Error loading from Dropbox:', e);
+                    }
+                }
+
+                // Fallback to localStorage if Dropbox failed or not connected
+                console.log('[INIT] Falling back to localStorage...');
+                const savedDecisions = localStorage.getItem('rr_decisions_backup');
+                const savedTimestamp = localStorage.getItem('rr_decisions_timestamp');
+                if (savedDecisions) {
+                    try {
+                        this.parseDecisions(savedDecisions);
+                        this.applyFilters();
+                        const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'Unknown';
+                        this.showToast(`Auto-loaded backup from ${timestamp}`, 'success');
+                        console.log('[INIT] Successfully auto-loaded from localStorage');
+                    } catch (e) {
+                        console.error('[INIT] Failed to auto-load from localStorage:', e);
                     }
                 } else {
-                    // Fallback to localStorage if Dropbox not connected
-                    const savedDecisions = localStorage.getItem('rr_decisions_backup');
-                    const savedTimestamp = localStorage.getItem('rr_decisions_timestamp');
-                    if (savedDecisions) {
-                        try {
-                            this.parseDecisions(savedDecisions);
-                            this.applyFilters();
-                            const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'Unknown';
-                            this.showToast(`Auto-loaded backup from ${timestamp}`, 'success');
-                            console.log('Auto-loaded decisions.txt from localStorage');
-                        } catch (e) {
-                            console.error('Failed to auto-load from localStorage:', e);
-                        }
-                    }
+                    console.log('[INIT] No backup found in localStorage');
                 }
 
                 // Load saved AI model preference (default to Sonnet 4)
@@ -2480,26 +2498,69 @@ ${response.result}`;
                         const bestSecondary = response.rankings.reduce((best, curr) =>
                             (curr.recommended_as === 'secondary' || curr.secondary_score > (best?.secondary_score || 0)) ? curr : best, null);
 
-                        // Auto-fill top URLs from ranked results
+                        // Check for low scores and flag reference
+                        let flagWarnings = [];
+
+                        if (!bestPrimary || bestPrimary.primary_score <= 60) {
+                            flagWarnings.push(`⚠️ PRIMARY: ${bestPrimary ? `Low confidence (score: ${bestPrimary.primary_score})` : 'No suitable candidate found'}`);
+                            if (bestPrimary?.primary_fit) {
+                                flagWarnings.push(`   Reason: ${bestPrimary.primary_fit}`);
+                            }
+                        }
+
+                        if (!bestSecondary || bestSecondary.secondary_score <= 60) {
+                            flagWarnings.push(`⚠️ SECONDARY: ${bestSecondary ? `Low confidence (score: ${bestSecondary.secondary_score})` : 'No suitable candidate found'}`);
+                            if (bestSecondary?.secondary_fit) {
+                                flagWarnings.push(`   Reason: ${bestSecondary.secondary_fit}`);
+                            }
+                        }
+
+                        // Auto-fill top URLs from ranked results (even if scores are low, so user can review)
                         if (bestPrimary) {
                             const topCandidate = ref.searchResults[bestPrimary.index];
                             if (topCandidate) {
                                 ref.urls.primary = topCandidate.url;
                                 document.getElementById('editPrimaryUrl').value = topCandidate.url;
-                                document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${topCandidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${topCandidate.url}</a>`;
+
+                                // Add warning badge if score is low
+                                const warningBadge = bestPrimary.primary_score <= 60 ?
+                                    ' <span style="background: var(--warning-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">⚠️ LOW SCORE</span>' : '';
+
+                                document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${topCandidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${topCandidate.url}</a>${warningBadge}`;
                                 this.addDebugLog(`Primary URL (P:${bestPrimary.primary_score}, S:${bestPrimary.secondary_score}): ${topCandidate.url}`);
                                 this.aiRankedResults.primary = topCandidate.url;
                             }
+                        } else {
+                            // No primary found
+                            document.getElementById('editPrimaryUrl').value = '';
+                            document.getElementById('displayPrimaryUrl').innerHTML = '<span style="color: var(--warning-color);">⚠️ No suitable primary URL found</span>';
                         }
+
                         if (bestSecondary && bestSecondary.index !== bestPrimary?.index) {
                             const secondCandidate = ref.searchResults[bestSecondary.index];
                             if (secondCandidate) {
                                 ref.urls.secondary = secondCandidate.url;
                                 document.getElementById('editSecondaryUrl').value = secondCandidate.url;
-                                document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${secondCandidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${secondCandidate.url}</a>`;
+
+                                // Add warning badge if score is low
+                                const warningBadge = bestSecondary.secondary_score <= 60 ?
+                                    ' <span style="background: var(--warning-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">⚠️ LOW SCORE</span>' : '';
+
+                                document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${secondCandidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${secondCandidate.url}</a>${warningBadge}`;
                                 this.addDebugLog(`Secondary URL (P:${bestSecondary.primary_score}, S:${bestSecondary.secondary_score}): ${secondCandidate.url}`);
                                 this.aiRankedResults.secondary = secondCandidate.url;
                             }
+                        } else {
+                            // No secondary found
+                            document.getElementById('editSecondaryUrl').value = '';
+                            document.getElementById('displaySecondaryUrl').innerHTML = '<span style="color: var(--warning-color);">⚠️ No suitable secondary URL found</span>';
+                        }
+
+                        // Show warning panel if there are flags
+                        if (flagWarnings.length > 0) {
+                            const warningContent = flagWarnings.join('\n');
+                            this.addDebugPanel('⚠️ URL Selection Flags', warningContent, 'warning');
+                            this.showToast('⚠️ Manual review required - check Debug tab', 'warning');
                         }
 
                         // Sort candidates by scores

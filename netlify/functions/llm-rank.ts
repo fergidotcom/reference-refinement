@@ -40,11 +40,27 @@ export const handler: Handler = async (event, context) => {
 
     const prompt = `Rank these search results for BOTH primary and secondary URL fitness.
 
-CRITICAL: Distinguish between THE WORK ITSELF vs ABOUT THE WORK.
-- Primary URLs should be the actual reference (book, article, PDF)
-- NOT articles about it, reviews of it, or references to it
+CRITICAL MATCHING REQUIREMENTS FOR PRIMARY URLS:
 
-PRIMARY CRITERIA (authority & accessibility):
+1. EXACT TITLE MATCH (MANDATORY):
+   - The candidate title MUST match the reference title exactly or very closely
+   - Acceptable variations: "The Title" vs "Title, The", subtitle omissions, punctuation differences
+   - NOT acceptable: Similar topics, related works, different editions with significantly different titles
+   - If no exact title match exists among candidates: PRIMARY score MUST be ≤ 50 (disqualified)
+
+2. AUTHOR MATCH (MANDATORY):
+   - The candidate MUST be BY or ABOUT the specified author
+   - For multi-author works, at least the first/primary author must match
+   - Author CVs/bios are acceptable only if they mention this specific work
+   - If author doesn't match: PRIMARY score MUST be ≤ 50 (disqualified)
+
+3. WORK ITSELF vs ABOUT THE WORK:
+   - Primary URLs should be the actual reference (book, article, PDF)
+   - NOT articles about it, reviews of it, or references to it (unless no direct source exists)
+
+If a candidate does not meet BOTH title and author requirements, it CANNOT be a primary URL candidate, regardless of domain authority.
+
+PRIMARY CRITERIA (authority & accessibility - only apply if title+author match):
 1. FREE PDF from trusted source (=100):
    - Institutional repositories: archive.org, dtic.mil, .edu repositories
    - Academic publishers with free access: methods.sagepub.com, JSTOR open, etc.
@@ -99,11 +115,19 @@ Return JSON array ranked by COMBINED utility (primary_score + secondary_score) /
     "combined_score": 67,
     "primary_fit": "Official publisher page",
     "secondary_fit": "No thematic discussion",
+    "title_match": "exact",
+    "author_match": true,
     "recommended_as": "primary"
   }
 ]
 
-Mark duplicates if same URL serves both purposes well. Use index 0-${candidates.length - 1}.`;
+IMPORTANT SCORING RULES:
+- If NO candidate has primary_score > 60 with exact title+author match: Include a note in primary_fit explaining why (e.g., "No exact title match found")
+- If NO candidate has secondary_score > 60: Include a note in secondary_fit explaining why
+- Mark the BEST candidate as "primary" even if score is low, so user knows the best available option
+- Mark the BEST secondary candidate similarly
+
+Use index 0-${candidates.length - 1}.`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
