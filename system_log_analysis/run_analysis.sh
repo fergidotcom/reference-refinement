@@ -64,8 +64,14 @@ fi
 echo -e "${GREEN}✓ Parsed successfully${NC}"
 echo ""
 
+# Step 1.5: Archive finalized references
+echo -e "${YELLOW}[1.5/5] Archiving finalized references...${NC}"
+python3 archive_finalized.py "$PARSED_JSON"
+echo -e "${GREEN}✓ Archive updated${NC}"
+echo ""
+
 # Step 2: Analyze overrides
-echo -e "${YELLOW}[2/4] Analyzing override patterns...${NC}"
+echo -e "${YELLOW}[2/5] Analyzing override patterns...${NC}"
 python3 analyze_overrides.py "$PARSED_JSON"
 
 ANALYSIS_JSON="${BATCH_NAME}_parsed_analysis.json"
@@ -76,8 +82,20 @@ fi
 echo -e "${GREEN}✓ Analysis complete${NC}"
 echo ""
 
+# Step 2.5: Learning pattern analysis
+echo -e "${YELLOW}[3/5] Analyzing learning patterns...${NC}"
+python3 analyze_learning_patterns.py "$PARSED_JSON"
+
+LEARNING_JSON="${BATCH_NAME}_parsed_learning_analysis.json"
+if [ ! -f "$LEARNING_JSON" ]; then
+    echo -e "${RED}Error: Learning analysis failed${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ Learning analysis complete${NC}"
+echo ""
+
 # Step 3: Compare with previous batches (if they exist)
-echo -e "${YELLOW}[3/4] Comparing with previous batches...${NC}"
+echo -e "${YELLOW}[4/5] Comparing with previous batches...${NC}"
 
 # Find all previous analysis files
 PREV_ANALYSES=$(ls -1 *_parsed_analysis.json 2>/dev/null | grep -v "^${BATCH_NAME}_" | sort || true)
@@ -101,7 +119,7 @@ fi
 echo ""
 
 # Step 4: Generate summary report
-echo -e "${YELLOW}[4/4] Generating summary report...${NC}"
+echo -e "${YELLOW}[5/5] Generating summary report...${NC}"
 
 REPORT_FILE="${BATCH_NAME}_report.md"
 
@@ -145,6 +163,56 @@ elif override_rate < 80:
 else:
     print("**Status:** ⚠️  BASELINE - System not yet trained")
 print()
+
+PYTHON_SCRIPT
+
+cat >> "$REPORT_FILE" << EOF
+
+---
+
+## Learning Patterns
+
+EOF
+
+# Extract learning patterns
+python3 << PYTHON_SCRIPT >> "$REPORT_FILE"
+import json
+with open('$LEARNING_JSON', 'r') as f:
+    data = json.load(f)
+
+learning = data.get('learning_patterns', {})
+
+# Domain preferences
+domain_prefs = learning.get('domain_preferences', {})
+if domain_prefs.get('highly_preferred'):
+    print("### ✅ Preferred Domains\n")
+    for domain, stats in domain_prefs['highly_preferred'][:3]:
+        print(f"- **{domain}**: User selected {stats['user_selected']} time(s)")
+    print()
+
+if domain_prefs.get('rejected'):
+    print("### ❌ Rejected Domains\n")
+    for domain, stats in domain_prefs['rejected'][:3]:
+        print(f"- **{domain}**: AI recommended but user chose different source")
+    print()
+
+# URL characteristics
+chars = learning.get('url_characteristics', {})
+print("### 📊 User Preferences\n")
+print(f"- **PDF Preference:** {chars.get('pdf_preference', {}).get('percentage', 0):.0f}% of selections")
+print(f"- **Institutional Sources:** {chars.get('institutional_preference', {}).get('percentage', 0):.0f}% of selections")
+print(f"- **Direct Sources:** {chars.get('direct_vs_aggregator', {}).get('percentage_direct', 0):.0f}% (avoids aggregators)")
+print()
+
+# AI failure modes
+failures = learning.get('ai_failure_modes', {})
+if failures:
+    print("### ⚠️ AI Failure Patterns\n")
+    for mode, cases in failures.items():
+        if cases:
+            mode_name = mode.replace('_', ' ').title()
+            print(f"- **{mode_name}:** {len(cases)} occurrence(s)")
+    print()
 
 PYTHON_SCRIPT
 
@@ -204,6 +272,7 @@ cat >> "$REPORT_FILE" << EOF
 
 - **Parsed Data:** \`$PARSED_JSON\`
 - **Analysis:** \`$ANALYSIS_JSON\`
+- **Learning Patterns:** \`$LEARNING_JSON\`
 - **This Report:** \`$REPORT_FILE\`
 EOF
 
@@ -222,6 +291,7 @@ echo ""
 echo -e "📄 Output files:"
 echo -e "   - ${GREEN}$PARSED_JSON${NC}"
 echo -e "   - ${GREEN}$ANALYSIS_JSON${NC}"
+echo -e "   - ${GREEN}$LEARNING_JSON${NC}"
 echo -e "   - ${GREEN}$REPORT_FILE${NC}"
 echo ""
 echo -e "📖 View report: ${YELLOW}cat $REPORT_FILE${NC}"
