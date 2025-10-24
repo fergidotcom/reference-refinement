@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v11.5</title>
+    <title>Reference Refinement v11.6</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -993,7 +993,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v11.5</h1>
+            <h1>Reference Refinement v11.6</h1>
         </div>
     </header>
 
@@ -2502,33 +2502,99 @@ ${response.result}`;
                             }
                         }
 
-                        // Update display with new scoring
-                        const container = document.getElementById('candidatesContainer');
-                        response.rankings.forEach((ranking, rank) => {
-                            const candidateIndex = ranking.index;
-                            const item = container.querySelector(`[data-index="${candidateIndex}"]`);
-                            if (item) {
-                                const header = item.querySelector('.candidate-header');
-                                const existingScore = header.querySelector('.candidate-score');
-                                if (existingScore) existingScore.remove();
+                        // Sort candidates by scores
+                        // First, create a map of index -> ranking for quick lookup
+                        const rankingMap = new Map();
+                        response.rankings.forEach(ranking => {
+                            rankingMap.set(ranking.index, ranking);
+                        });
 
-                                const scoreSpan = document.createElement('div');
-                                scoreSpan.className = 'candidate-score';
-                                const dualPurpose = ranking.primary_score > 60 && ranking.secondary_score > 60;
-                                scoreSpan.innerHTML = `
+                        // Create sorted array of search results with their rankings
+                        const sortedResults = ref.searchResults.map((result, index) => ({
+                            result: result,
+                            originalIndex: index,
+                            ranking: rankingMap.get(index) || { primary_score: 0, secondary_score: 0, combined_score: 0 }
+                        })).sort((a, b) => {
+                            // Sort by primary score first (descending)
+                            if (b.ranking.primary_score !== a.ranking.primary_score) {
+                                return b.ranking.primary_score - a.ranking.primary_score;
+                            }
+                            // Then by secondary score (descending)
+                            return b.ranking.secondary_score - a.ranking.secondary_score;
+                        });
+
+                        // Move AI-designated primary and secondary to the top
+                        const primaryIndex = bestPrimary?.index;
+                        const secondaryIndex = bestSecondary?.index;
+
+                        // Remove designated URLs from their current positions
+                        const primaryItem = sortedResults.find(item => item.originalIndex === primaryIndex);
+                        const secondaryItem = sortedResults.find(item => item.originalIndex === secondaryIndex);
+
+                        if (primaryItem) {
+                            sortedResults.splice(sortedResults.indexOf(primaryItem), 1);
+                        }
+                        if (secondaryItem) {
+                            sortedResults.splice(sortedResults.indexOf(secondaryItem), 1);
+                        }
+
+                        // Add them back at the top
+                        if (secondaryItem) sortedResults.unshift(secondaryItem);
+                        if (primaryItem) sortedResults.unshift(primaryItem);
+
+                        // Re-render candidates in sorted order
+                        const container = document.getElementById('candidatesContainer');
+                        container.innerHTML = sortedResults.map((item, displayIndex) => {
+                            const r = item.result;
+                            const ranking = item.ranking;
+                            const originalIndex = item.originalIndex;
+
+                            // Check if this URL is already assigned
+                            let assignedType = '';
+                            let badgeHtml = '';
+                            if (ref.urls.primary === r.url) {
+                                assignedType = 'primary';
+                                badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                            } else if (ref.urls.secondary === r.url) {
+                                assignedType = 'secondary';
+                                badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                            }
+
+                            const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                            // Add score display
+                            const dualPurpose = ranking.primary_score > 60 && ranking.secondary_score > 60;
+                            const scoreHtml = ranking.primary_score ? `
+                                <div class="candidate-score" title="${ranking.primary_fit || 'N/A'} | ${ranking.secondary_fit || 'N/A'}">
                                     ${dualPurpose ? '⚡ ' : ''}
                                     P:${ranking.primary_score} S:${ranking.secondary_score}
                                     (${ranking.combined_score})
-                                `;
-                                scoreSpan.title = `${ranking.primary_fit || 'N/A'} | ${ranking.secondary_fit || 'N/A'}`;
-                                header.appendChild(scoreSpan);
+                                </div>
+                            ` : '';
 
-                                // Highlight recommendations
-                                item.classList.remove('selected-primary', 'selected-secondary');
-                                if (ranking.index === bestPrimary?.index) item.classList.add('selected-primary');
-                                if (ranking.index === bestSecondary?.index) item.classList.add('selected-secondary');
-                            }
-                        });
+                            return `
+                                <div class="${itemClass}" data-index="${originalIndex}" data-url="${r.url}">
+                                    <div class="candidate-buttons">
+                                        <button onclick="app.selectCandidate(${originalIndex}, 'primary')" class="success">
+                                            Set as Primary
+                                        </button>
+                                        <button onclick="app.selectCandidate(${originalIndex}, 'secondary')">
+                                            Set as Secondary
+                                        </button>
+                                    </div>
+                                    <div class="candidate-content">
+                                        <div>
+                                            <div class="candidate-header">
+                                                <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                                ${scoreHtml}
+                                            </div>
+                                            <div class="candidate-snippet">${r.snippet}</div>
+                                        </div>
+                                        <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
 
                         // Add debug panel for autorank results
                         const primaryUrl = bestPrimary ? ref.searchResults[bestPrimary.index]?.url || 'N/A' : 'N/A';
