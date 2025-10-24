@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v11.7</title>
+    <title>Reference Refinement v12.0</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -993,7 +993,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v11.7</h1>
+            <h1>Reference Refinement v12.0</h1>
         </div>
     </header>
 
@@ -2483,6 +2483,18 @@ ${response.result}`;
                     });
 
                     if (response.rankings && response.rankings.length > 0) {
+                        // Check if Claude performed additional searches
+                        if (response.searches_performed && response.searches_performed > 0) {
+                            this.addDebugLog(`AI performed ${response.searches_performed} additional search(es) to find better candidates`);
+
+                            // Update searchResults with expanded candidate list
+                            if (response.allCandidates && response.allCandidates.length > ref.searchResults.length) {
+                                const newCandidatesCount = response.allCandidates.length - ref.searchResults.length;
+                                ref.searchResults = response.allCandidates;
+                                this.addDebugLog(`Added ${newCandidatesCount} new candidate(s) from AI searches`);
+                            }
+                        }
+
                         this.addDebugLog(`Received ${response.rankings.length} rankings from AI`);
 
                         // Store full AI rankings for override detection
@@ -2660,13 +2672,21 @@ ${response.result}`;
                         // Add debug panel for autorank results
                         const primaryUrl = bestPrimary ? ref.searchResults[bestPrimary.index]?.url || 'N/A' : 'N/A';
                         const secondaryUrl = bestSecondary ? ref.searchResults[bestSecondary.index]?.url || 'N/A' : 'N/A';
-                        const panelContent = `<strong>Candidates Ranked:</strong> ${response.rankings.length}
+
+                        let searchInfo = '';
+                        if (response.searches_performed && response.searches_performed > 0) {
+                            searchInfo = `\n<strong>🔍 AI Searches Performed:</strong> ${response.searches_performed}\n<strong>Total Candidates:</strong> ${ref.searchResults.length} (${response.searches_performed > 0 ? `+${ref.searchResults.length - candidates.length} from AI` : 'original'})\n`;
+                        }
+
+                        const panelContent = `<strong>Candidates Ranked:</strong> ${response.rankings.length}${searchInfo}
 
 <strong>Primary Recommendation:</strong>
 URL: ${primaryUrl}
 Primary Score: ${bestPrimary?.primary_score || 'N/A'}
 Secondary Score: ${bestPrimary?.secondary_score || 'N/A'}
 Combined Score: ${bestPrimary?.combined_score || 'N/A'}
+${bestPrimary?.title_match ? `Title Match: ${bestPrimary.title_match}` : ''}
+${bestPrimary?.author_match !== undefined ? `Author Match: ${bestPrimary.author_match}` : ''}
 
 <strong>Secondary Recommendation:</strong>
 URL: ${secondaryUrl}

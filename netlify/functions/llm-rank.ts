@@ -1,6 +1,39 @@
 import { Handler } from '@netlify/functions';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const GOOGLE_CX = process.env.GOOGLE_CX;
+
+// Helper function to execute Google search
+async function executeSearch(query: string, maxResults: number = 10): Promise<any[]> {
+  if (!GOOGLE_API_KEY || !GOOGLE_CX) {
+    console.error('Google API credentials not configured');
+    return [];
+  }
+
+  try {
+    const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(query)}&num=${maxResults}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error('Google Search API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const results = (data.items || []).map((item: any) => ({
+      title: item.title,
+      url: item.link,
+      snippet: item.snippet,
+      displayUrl: item.displayLink
+    }));
+
+    return results;
+  } catch (error) {
+    console.error('Search execution error:', error);
+    return [];
+  }
+}
 
 export const handler: Handler = async (event, context) => {
   const headers = {
@@ -38,7 +71,43 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    const prompt = `Rank these search results for BOTH primary and secondary URL fitness.
+    // Define tools available to Claude
+    const tools = [
+      {
+        name: "search_web",
+        description: "Search the web to find additional candidates or verify information about existing candidates. Use this when: 1) No exact title/author match found in current candidates, 2) Candidates appear to be reviews/articles ABOUT the work rather than the work itself, 3) Need to verify if a URL is the actual reference or something about it, 4) All scores are low and need better candidates.",
+        input_schema: {
+          type: "object",
+          properties: {
+            query: {
+              type: "string",
+              description: "The search query to execute. Be specific: include exact title in quotes, author name, and publication details."
+            },
+            reason: {
+              type: "string",
+              description: "Why this search is needed (for logging and debugging)"
+            },
+            max_results: {
+              type: "number",
+              description: "Maximum number of results to return (default: 5, max: 10)"
+            }
+          },
+          required: ["query", "reason"]
+        }
+      }
+    ];
+
+    const systemPrompt = `You are an expert at identifying academic references and ranking URLs by their suitability as primary and secondary sources.
+
+You have access to a search_web tool. Use it strategically when:
+- No exact title+author match exists in current candidates
+- Current candidates are articles ABOUT the work, not the work itself
+- Need to verify author or title information
+- All candidates score below 60 and better results are needed
+
+IMPORTANT: Limit tool use to 2-3 searches maximum. Be strategic - don't search unless necessary.`;
+
+    const initialPrompt = `Rank these search results for BOTH primary and secondary URL fitness.
 
 CRITICAL MATCHING REQUIREMENTS FOR PRIMARY URLS:
 
@@ -129,81 +198,179 @@ IMPORTANT SCORING RULES:
 
 Use index 0-${candidates.length - 1}.`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: model || 'claude-sonnet-4-20250514',
-        max_tokens: 3000,
-        messages: [
-          { role: 'user', content: prompt }
-        ]
-      })
-    });
+    // Tool calling loop
+    let allCandidates = [...candidates];
+    const messages: any[] = [{ role: 'user', content: initialPrompt }];
+    let searchCount = 0;
+    const maxSearches = 3;
+    let finalRankings: any[] = [];
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Anthropic API error:', errorText);
-      return {
-        statusCode: 200,
-        headers,
+    while (searchCount < maxSearches) {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
         body: JSON.stringify({
-          rankings: [],
-          error: `Anthropic API error: ${response.status}`
+          model: model || 'claude-sonnet-4-20250514',
+          max_tokens: 4000,
+          system: systemPrompt,
+          tools: tools,
+          messages: messages
         })
-      };
-    }
+      });
 
-    const data = await response.json();
-    const resultText = data.content?.[0]?.text || '';
-
-    console.log('Raw AI response:', resultText.substring(0, 500));
-
-    // Parse JSON from response - try multiple patterns
-    let rankings = [];
-    let parseError = null;
-
-    // Try to find JSON array in response
-    const jsonMatch = resultText.match(/\[[\s\S]*\]/);
-
-    if (jsonMatch) {
-      try {
-        rankings = JSON.parse(jsonMatch[0]);
-        console.log('Successfully parsed rankings:', rankings.length);
-      } catch (e) {
-        parseError = e instanceof Error ? e.message : 'JSON parse error';
-        console.error('Failed to parse rankings JSON:', parseError);
-        console.error('Matched text:', jsonMatch[0].substring(0, 500));
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Anthropic API error:', errorText);
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            rankings: [],
+            error: `Anthropic API error: ${response.status}`
+          })
+        };
       }
-    } else {
-      console.error('No JSON array found in response');
-      parseError = 'No JSON array found in AI response';
+
+      const data = await response.json();
+      console.log('Claude stop_reason:', data.stop_reason);
+
+      // Add assistant's response to message history
+      messages.push({ role: 'assistant', content: data.content });
+
+      // Check if Claude wants to use a tool
+      if (data.stop_reason === 'tool_use') {
+        // Find tool use blocks
+        const toolUseBlocks = data.content.filter((block: any) => block.type === 'tool_use');
+
+        if (toolUseBlocks.length === 0) {
+          break; // No tool use found, exit loop
+        }
+
+        // Execute each tool call
+        const toolResults: any[] = [];
+
+        for (const toolUse of toolUseBlocks) {
+          console.log(`Claude wants to use tool: ${toolUse.name}`, toolUse.input);
+
+          if (toolUse.name === 'search_web') {
+            const { query, reason, max_results = 5 } = toolUse.input;
+            searchCount++;
+
+            console.log(`Executing search #${searchCount}: "${query}" (Reason: ${reason})`);
+
+            // Execute the search
+            const searchResults = await executeSearch(query, Math.min(max_results, 10));
+
+            // Add new candidates to allCandidates array with new indices
+            const startIndex = allCandidates.length;
+            const newCandidates = searchResults.map((result, i) => ({
+              ...result,
+              _newCandidate: true,
+              _sourceQuery: query
+            }));
+
+            allCandidates = allCandidates.concat(newCandidates);
+
+            // Prepare tool result for Claude
+            toolResults.push({
+              type: 'tool_result',
+              tool_use_id: toolUse.id,
+              content: JSON.stringify({
+                found: searchResults.length,
+                message: `Found ${searchResults.length} results. These have been added as candidates ${startIndex}-${allCandidates.length - 1}.`,
+                results: searchResults.map((r, i) => ({
+                  index: startIndex + i,
+                  title: r.title,
+                  url: r.url,
+                  snippet: r.snippet
+                }))
+              })
+            });
+          }
+        }
+
+        // Add tool results to messages
+        messages.push({ role: 'user', content: toolResults });
+
+        // Update the prompt with new candidates
+        const updatedPrompt = `Now rank ALL ${allCandidates.length} candidates (indices 0-${allCandidates.length - 1}), including the ${searchResults.length} new candidates just found.
+
+UPDATED CANDIDATES:
+${allCandidates.map((c, i) => `${i}. ${c.title}\n   URL: ${c.url}\n   Snippet: ${c.snippet || 'No snippet'}${c._newCandidate ? ' [NEW from search]' : ''}`).join('\n\n')}
+
+Return the complete JSON rankings array for ALL candidates now.`;
+
+        messages.push({ role: 'user', content: updatedPrompt });
+
+        // Continue loop to get Claude's next response
+        continue;
+      }
+
+      // If no tool use, extract rankings from text response
+      const resultText = data.content.find((block: any) => block.type === 'text')?.text || '';
+      console.log('Final response length:', resultText.length);
+
+      // Parse JSON from response - try multiple patterns
+      let rankings = [];
+      let parseError = null;
+
+      // Try to find JSON array in response
+      const jsonMatch = resultText.match(/\[[\s\S]*\]/);
+
+      if (jsonMatch) {
+        try {
+          rankings = JSON.parse(jsonMatch[0]);
+          console.log('Successfully parsed rankings:', rankings.length);
+          finalRankings = rankings;
+          break; // Successfully parsed, exit loop
+        } catch (e) {
+          parseError = e instanceof Error ? e.message : 'JSON parse error';
+          console.error('Failed to parse rankings JSON:', parseError);
+        }
+      } else {
+        parseError = 'No JSON array found in AI response';
+        console.error(parseError);
+      }
+
+      // If parsing failed and we haven't exhausted searches, continue loop
+      if (rankings.length === 0 && searchCount < maxSearches) {
+        console.log('Parsing failed, continuing loop to try again...');
+        continue;
+      }
+
+      // If parsing failed and no more searches allowed, return error
+      if (rankings.length === 0) {
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            rankings: [],
+            allCandidates: allCandidates,
+            error: `Failed to parse rankings: ${parseError}`,
+            raw_response_preview: resultText.substring(0, 200),
+            searches_performed: searchCount
+          })
+        };
+      }
+
+      break; // Exit loop
     }
 
-    // If parsing failed, return error
-    if (rankings.length === 0 && parseError) {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          rankings: [],
-          error: `Failed to parse rankings: ${parseError}`,
-          raw_response_preview: resultText.substring(0, 200)
-        })
-      };
-    }
+    // Return final rankings
+    console.log(`Ranking complete. Total candidates: ${allCandidates.length}, Searches performed: ${searchCount}`);
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        rankings,
-        model: data.model,
-        tokens_used: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)
+        rankings: finalRankings,
+        allCandidates: allCandidates,
+        searches_performed: searchCount,
+        model: model || 'claude-sonnet-4-20250514'
       })
     };
 
