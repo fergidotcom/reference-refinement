@@ -7,9 +7,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Reference Refinement Tool** - A web application for managing academic references with AI-powered search and ranking capabilities. The tool helps researchers find and validate URLs for bibliographic references.
 
 **Live URL:** https://rrv521-1760738877.netlify.app
-**Current Version:** v13.0 (check rr_v60.html header for actual version)
+**Current Version:** v13.7 (deployed, but iPad showing v13.4 due to caching issue - see below)
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
 **Last Updated:** October 26, 2025
+
+## ⚠️ ACTIVE ISSUE - iPad Safari Caching (Oct 26, 2025)
+
+**Critical:** iPad Safari is aggressively caching v13.4 and refusing to load v13.7 despite:
+- Multiple deployments verified via curl
+- Clearing Safari cache/history multiple times
+- Using unique deploy URLs that were never accessed before
+- iPad restart attempts
+
+**Deployed Version:** v13.7 (confirmed working via curl)
+**iPad Shows:** v13.4 (stuck in cache)
+
+**What We Fixed in v13.6/v13.7:**
+- Disabled search_web tool in llm-rank.ts (was causing 29s timeouts)
+- Increased batch size to 35 (safe now that search is disabled)
+- Should fix 504 timeout errors during autorank
+
+**Next Steps:**
+1. Test on different browser (Chrome) or device to verify fix works
+2. See `DEPLOYMENT_CACHING_ISSUE.md` for complete details
+3. Once cache cleared, test autorank on References #3 and #4
+
+**DO NOT** redeploy or change version numbers until cache issue is resolved.
 
 ## Architecture
 
