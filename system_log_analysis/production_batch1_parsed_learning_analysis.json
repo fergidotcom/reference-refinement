@@ -1,0 +1,184 @@
+{
+  "learning_patterns": {
+    "domain_preferences": {
+      "highly_preferred": [
+        [
+          "methods.sagepub.com",
+          {
+            "user_selected": 1,
+            "ai_recommended": 0,
+            "user_preference_score": 1,
+            "contexts": [
+              {
+                "ref_id": 2,
+                "title": "An Invitation to Social Construction",
+                "url": "https://methods.sagepub.com/book/mono/preview/an-invitation-to-social-construction-3e.pdf"
+              }
+            ]
+          }
+        ],
+        [
+          "amstudugm.files.wordpress.com",
+          {
+            "user_selected": 1,
+            "ai_recommended": 0,
+            "user_preference_score": 1,
+            "contexts": [
+              {
+                "ref_id": 3,
+                "title": "The Social Construction of Reality: A Treatise in the Sociology of Knowledge",
+                "url": "https://amstudugm.files.wordpress.com/2011/04/social-construction-of-reality.pdf"
+              }
+            ]
+          }
+        ],
+        [
+          "archive.org",
+          {
+            "user_selected": 1,
+            "ai_recommended": 0,
+            "user_preference_score": 1,
+            "contexts": [
+              {
+                "ref_id": 4,
+                "title": "Thinking, Fast and Slow",
+                "url": "https://archive.org/download/DanielKahnemanThinkingFastAndSlow/Daniel%20Kahneman-Thinking%2C%20Fast%20and%20Slow%20%20.pdf"
+              }
+            ]
+          }
+        ]
+      ],
+      "rejected": [
+        [
+          "cdn.bookey.app",
+          {
+            "user_selected": 0,
+            "ai_recommended": 1,
+            "user_preference_score": -1,
+            "contexts": []
+          }
+        ],
+        [
+          "sociologica.unibo.it",
+          {
+            "user_selected": 0,
+            "ai_recommended": 1,
+            "user_preference_score": -1,
+            "contexts": []
+          }
+        ],
+        [
+          "us.macmillan.com",
+          {
+            "user_selected": 0,
+            "ai_recommended": 1,
+            "user_preference_score": -1,
+            "contexts": []
+          }
+        ]
+      ],
+      "tld_analysis": {
+        "com": {
+          "selected": 2,
+          "rejected": 1
+        },
+        "org": {
+          "selected": 1,
+          "rejected": 0
+        },
+        "app": {
+          "selected": 0,
+          "rejected": 1
+        },
+        "it": {
+          "selected": 0,
+          "rejected": 1
+        }
+      }
+    },
+    "url_characteristics": {
+      "pdf_preference": {
+        "selected": 3,
+        "total": 3,
+        "percentage": 100.0
+      },
+      "free_vs_paywalled": {
+        "free_selected": 0,
+        "paywalled_selected": 0
+      },
+      "institutional_preference": {
+        "institutional": 1,
+        "commercial": 2,
+        "percentage": 33.3
+      },
+      "direct_vs_aggregator": {
+        "direct": 3,
+        "aggregator": 0,
+        "percentage_direct": 100.0
+      }
+    },
+    "override_reasons": {},
+    "ai_failure_modes": {
+      "unknown_cdn_over_publisher": [
+        {
+          "ref_id": 2,
+          "ai_cdn": "cdn.bookey.app",
+          "user_publisher": "methods.sagepub.com"
+        }
+      ],
+      "missed_free_archive": [
+        {
+          "ref_id": 4,
+          "ai_domain": "us.macmillan.com",
+          "user_found_in": "archive.org"
+        }
+      ]
+    },
+    "confidence_predictors": {
+      "high_confidence_indicators": {},
+      "low_confidence_indicators": {
+        "Secondary score < 60": 2,
+        "Primary score < 80": 1
+      },
+      "exception_patterns": []
+    },
+    "prompt_refinements": [
+      {
+        "priority": "HIGH",
+        "target": "llm-rank.ts PRIMARY CRITERIA",
+        "action": "Add explicit domain bonuses",
+        "code": "// Preferred domains (learned from user): methods.sagepub.com, amstudugm.files.wordpress.com, archive.org\nif (url.includes('methods.sagepub.com')): +40 points\nif (url.includes('amstudugm.files.wordpress.com')): +35 points\nif (url.includes('archive.org')): +30 points"
+      },
+      {
+        "priority": "MEDIUM",
+        "target": "llm-rank.ts PENALTIES",
+        "action": "Penalize unknown CDN domains",
+        "code": "if (domain.startswith('cdn.') and domain not in known_cdn_list):\n  PRIMARY score -= 40"
+      },
+      {
+        "priority": "MEDIUM",
+        "target": "llm-rank.ts PRIMARY CRITERIA",
+        "action": "Increase PDF bonus",
+        "code": "if (url.endswith('.pdf')):\n  PRIMARY score += 15  // Increased from +10"
+      }
+    ]
+  },
+  "confidence_model": {
+    "auto_finalize_threshold": {
+      "primary_score": 95,
+      "secondary_score": 80,
+      "must_be_in_preferred_domains": true
+    },
+    "flag_for_review_threshold": {
+      "primary_score_below": 70,
+      "secondary_score_below": 60,
+      "or_unknown_domain": true
+    },
+    "preferred_domain_list": [
+      "methods.sagepub.com",
+      "amstudugm.files.wordpress.com",
+      "archive.org"
+    ]
+  },
+  "next_iteration_recommendations": []
+}
