@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v13.3</title>
+    <title>Reference Refinement v13.4</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1034,7 +1034,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v13.3</h1>
+            <h1>Reference Refinement v13.4</h1>
         </div>
     </header>
 
@@ -2963,8 +2963,9 @@ ${queryInfo ? `${queryInfo}` : ''}
                 document.getElementById('rankBtnText').innerHTML = '<span class="loading"></span> Ranking...';
 
                 // Batch processing for large result sets
-                // Reduced from 50 to 35 to stay under 26-second Netlify timeout (v13.3)
-                const batchSize = 35;
+                // Reduced from 50→35→25 to stay under 26-second Netlify timeout (v13.4)
+                // 35 was still timing out (25-28s), 25 should take ~18s safely
+                const batchSize = 25;
                 const totalCandidates = ref.searchResults.length;
                 const numBatches = Math.ceil(totalCandidates / batchSize);
 
