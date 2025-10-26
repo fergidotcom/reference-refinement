@@ -76,7 +76,9 @@ export const handler: Handler = async (event, context) => {
       body: JSON.stringify({
         result,
         model: data.model,
-        tokens_used: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)
+        tokens_used: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0),
+        input_tokens: data.usage?.input_tokens || 0,
+        output_tokens: data.usage?.output_tokens || 0
       })
     };
 

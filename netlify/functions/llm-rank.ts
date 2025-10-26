@@ -226,6 +226,8 @@ Use index 0-${candidates.length - 1}.`;
     let searchCount = 0;
     const maxSearches = 3;
     let finalRankings: any[] = [];
+    let totalInputTokens = 0;
+    let totalOutputTokens = 0;
 
     while (searchCount < maxSearches) {
       const apiPayload: any = {
@@ -265,6 +267,12 @@ Use index 0-${candidates.length - 1}.`;
 
       const data = await response.json();
       console.log('Claude stop_reason:', data.stop_reason);
+
+      // Track token usage
+      if (data.usage) {
+        totalInputTokens += data.usage.input_tokens || 0;
+        totalOutputTokens += data.usage.output_tokens || 0;
+      }
 
       // Add assistant's response to message history
       messages.push({ role: 'assistant', content: data.content });
@@ -416,7 +424,9 @@ Return the complete JSON rankings array for ALL candidates now.`;
         rankings: finalRankings,
         allCandidates: allCandidates,
         searches_performed: searchCount,
-        model: model || 'claude-sonnet-4-20250514'
+        model: model || 'claude-sonnet-4-20250514',
+        input_tokens: totalInputTokens,
+        output_tokens: totalOutputTokens
       })
     };
 

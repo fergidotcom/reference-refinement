@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v13.1</title>
+    <title>Reference Refinement v13.2</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1034,7 +1034,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v13.1</h1>
+            <h1>Reference Refinement v13.2</h1>
         </div>
     </header>
 
@@ -1272,6 +1272,31 @@
                             oninput="app.saveUserNote()"></textarea>
                     </div>
 
+                    <!-- Session Cost Tracker -->
+                    <div id="sessionCostDisplay" style="padding: 0.75rem; background: #e3f2fd; border-bottom: 2px solid var(--accent-color); flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">💰</span>
+                                <h4 style="margin: 0; font-size: 0.9rem; color: var(--accent-color);">Session Cost Tracker</h4>
+                            </div>
+                            <button onclick="app.resetSessionCosts()" class="secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                Reset
+                            </button>
+                        </div>
+                        <div style="font-size: 0.8rem; font-family: monospace; line-height: 1.6;">
+                            <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem;">
+                                <span>Google Searches:</span><span id="costGoogleSearches">0</span>
+                                <span>Claude Query Gen:</span><span id="costClaudeQueryGen">0 calls</span>
+                                <span>Claude Ranking:</span><span id="costClaudeRank">0 calls</span>
+                                <div style="grid-column: 1 / -1; height: 1px; background: var(--border-color); margin: 0.25rem 0;"></div>
+                                <span><strong>Google Cost:</strong></span><span id="costGoogle"><strong>$0.0000</strong></span>
+                                <span><strong>Claude Cost:</strong></span><span id="costClaude"><strong>$0.0000</strong></span>
+                                <div style="grid-column: 1 / -1; height: 1px; background: var(--accent-color); margin: 0.25rem 0;"></div>
+                                <span><strong>Total Session:</strong></span><span id="costTotal"><strong>$0.0000</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="debugPanelsContainer" class="debug-panels-container" style="flex: 1; overflow-y: auto;">
                         <!-- Panels will be dynamically added here -->
                     </div>
@@ -1350,6 +1375,17 @@
             autoSaveTimeout: null,  // Debounce timer for auto-save
             userNoteTimeout: null,  // Debounce timer for user notes
             sortFocus: 'primary',  // Track sort mode: 'primary' or 'secondary'
+
+            // Cost tracking
+            sessionCosts: {
+                googleSearches: 0,
+                claudeQueryGenCalls: 0,
+                claudeQueryGenTokensIn: 0,
+                claudeQueryGenTokensOut: 0,
+                claudeRankCalls: 0,
+                claudeRankTokensIn: 0,
+                claudeRankTokensOut: 0
+            },
 
             // Dropbox integration
             dropboxAppKey: 'q4ldgkwjmhxv6w2',
@@ -1934,6 +1970,79 @@
                 return document.getElementById('aiModelSelect').value;
             },
 
+            // Cost Tracking Functions
+            calculateGoogleCost() {
+                // Google Custom Search: $5 per 1,000 queries (paid tier)
+                return (this.sessionCosts.googleSearches * 0.005).toFixed(4);
+            },
+
+            calculateClaudeCost() {
+                // Claude Sonnet 4 pricing (as of Jan 2025):
+                // Input: $0.003 per 1K tokens
+                // Output: $0.015 per 1K tokens
+                const totalInputTokens = this.sessionCosts.claudeQueryGenTokensIn + this.sessionCosts.claudeRankTokensIn;
+                const totalOutputTokens = this.sessionCosts.claudeQueryGenTokensOut + this.sessionCosts.claudeRankTokensOut;
+
+                const inputCost = (totalInputTokens / 1000) * 0.003;
+                const outputCost = (totalOutputTokens / 1000) * 0.015;
+
+                return (inputCost + outputCost).toFixed(4);
+            },
+
+            calculateTotalSessionCost() {
+                const googleCost = parseFloat(this.calculateGoogleCost());
+                const claudeCost = parseFloat(this.calculateClaudeCost());
+                return (googleCost + claudeCost).toFixed(4);
+            },
+
+            resetSessionCosts() {
+                this.sessionCosts = {
+                    googleSearches: 0,
+                    claudeQueryGenCalls: 0,
+                    claudeQueryGenTokensIn: 0,
+                    claudeQueryGenTokensOut: 0,
+                    claudeRankCalls: 0,
+                    claudeRankTokensIn: 0,
+                    claudeRankTokensOut: 0
+                };
+            },
+
+            trackGoogleSearch(queryCount = 1) {
+                this.sessionCosts.googleSearches += queryCount;
+                this.updateCostDisplay();
+            },
+
+            trackClaudeQueryGen(inputTokens, outputTokens) {
+                this.sessionCosts.claudeQueryGenCalls++;
+                this.sessionCosts.claudeQueryGenTokensIn += inputTokens || 0;
+                this.sessionCosts.claudeQueryGenTokensOut += outputTokens || 0;
+                this.updateCostDisplay();
+            },
+
+            trackClaudeRank(inputTokens, outputTokens) {
+                this.sessionCosts.claudeRankCalls++;
+                this.sessionCosts.claudeRankTokensIn += inputTokens || 0;
+                this.sessionCosts.claudeRankTokensOut += outputTokens || 0;
+                this.updateCostDisplay();
+            },
+
+            updateCostDisplay() {
+                // Update the cost display in Debug tab
+                const googleSearchEl = document.getElementById('costGoogleSearches');
+                const claudeQueryGenEl = document.getElementById('costClaudeQueryGen');
+                const claudeRankEl = document.getElementById('costClaudeRank');
+                const googleCostEl = document.getElementById('costGoogle');
+                const claudeCostEl = document.getElementById('costClaude');
+                const totalCostEl = document.getElementById('costTotal');
+
+                if (googleSearchEl) googleSearchEl.textContent = this.sessionCosts.googleSearches;
+                if (claudeQueryGenEl) claudeQueryGenEl.textContent = `${this.sessionCosts.claudeQueryGenCalls} calls`;
+                if (claudeRankEl) claudeRankEl.textContent = `${this.sessionCosts.claudeRankCalls} calls`;
+                if (googleCostEl) googleCostEl.innerHTML = `<strong>$${this.calculateGoogleCost()}</strong>`;
+                if (claudeCostEl) claudeCostEl.innerHTML = `<strong>$${this.calculateClaudeCost()}</strong>`;
+                if (totalCostEl) totalCostEl.innerHTML = `<strong>$${this.calculateTotalSessionCost()}</strong>`;
+            },
+
             // Filtering and Display
             applyFilters() {
                 // Simplified filtering: Show only non-finalized by default, unless checkbox is checked
@@ -2326,7 +2435,7 @@ QUERY LENGTH GUIDELINES:
 - Maximum: 120 characters
 - Use quotes sparingly (1-2 phrases per query max)
 
-Generate 10-15 diverse search queries that mix:
+Generate 8 diverse search queries that mix:
 - Bibliography-driven queries (author, title, year)
 - Relevance-driven queries (key themes from the Relevance text)
 - Queries targeting both PRIMARY goals (finding the work itself) and SECONDARY goals (reviews/discussions)
@@ -2344,6 +2453,11 @@ Return ONLY the queries, one per line, without any labels, categories, or groupi
                         document.getElementById('editQueries').value = response.result;
                         // Store AI-suggested query for override detection
                         this.aiSuggestedQuery = response.result;
+
+                        // Track cost
+                        if (response.input_tokens && response.output_tokens) {
+                            this.trackClaudeQueryGen(response.input_tokens, response.output_tokens);
+                        }
 
                         // Add debug panel
                         const panelContent = `<strong>AI Model:</strong> ${model}
@@ -2426,6 +2540,9 @@ ${response.result}`;
                     // Deduplicate by URL
                     const unique = Array.from(new Map(results.map(r => [r.url, r])).values());
                     this.addDebugLog(`Total unique results: ${unique.length}`);
+
+                    // Track Google search cost
+                    this.trackGoogleSearch(queries.length);
 
                     // Display results in Tab 2
                     this.displaySearchResults(unique);
@@ -2897,6 +3014,11 @@ ${queryInfo ? `${queryInfo}` : ''}
                             continue;
                         }
 
+                        // Track tokens for this batch
+                        if (response.input_tokens && response.output_tokens) {
+                            this.trackClaudeRank(response.input_tokens, response.output_tokens);
+                        }
+
                         // Adjust indices to account for batch offset
                         const adjustedRankings = response.rankings.map(ranking => ({
                             ...ranking,
@@ -2939,6 +3061,11 @@ ${queryInfo ? `${queryInfo}` : ''}
                         }
 
                         this.addDebugLog(`Received ${response.rankings.length} rankings from AI`);
+
+                        // Track Claude ranking cost
+                        if (response.input_tokens && response.output_tokens) {
+                            this.trackClaudeRank(response.input_tokens, response.output_tokens);
+                        }
 
                         // Store full AI rankings for override detection
                         this.aiRankedResults = {
@@ -3755,6 +3882,25 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                         logContent += `\n`;
                     });
                 }
+
+                // Add session cost summary
+                logContent += `\n\n` + `=`.repeat(80) + `\n`;
+                logContent += `SESSION COST SUMMARY\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+                logContent += `Google API:\n`;
+                logContent += `  Searches Executed: ${this.sessionCosts.googleSearches}\n`;
+                logContent += `  Cost (at $0.005/query): $${this.calculateGoogleCost()}\n\n`;
+                logContent += `Claude API (Sonnet 4):\n`;
+                logContent += `  Query Generation: ${this.sessionCosts.claudeQueryGenCalls} calls\n`;
+                logContent += `    Input Tokens: ${this.sessionCosts.claudeQueryGenTokensIn.toLocaleString()}\n`;
+                logContent += `    Output Tokens: ${this.sessionCosts.claudeQueryGenTokensOut.toLocaleString()}\n`;
+                logContent += `  Ranking: ${this.sessionCosts.claudeRankCalls} calls\n`;
+                logContent += `    Input Tokens: ${this.sessionCosts.claudeRankTokensIn.toLocaleString()}\n`;
+                logContent += `    Output Tokens: ${this.sessionCosts.claudeRankTokensOut.toLocaleString()}\n`;
+                logContent += `  Total Tokens: ${(this.sessionCosts.claudeQueryGenTokensIn + this.sessionCosts.claudeRankTokensIn + this.sessionCosts.claudeQueryGenTokensOut + this.sessionCosts.claudeRankTokensOut).toLocaleString()}\n`;
+                logContent += `  Cost (at $0.003/1K in, $0.015/1K out): $${this.calculateClaudeCost()}\n\n`;
+                logContent += `TOTAL SESSION COST: $${this.calculateTotalSessionCost()}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
 
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
                 const success = await this.saveToDropbox(`/debug_logs/session_${timestamp}.txt`, logContent);
