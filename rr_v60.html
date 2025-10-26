@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Reference Refinement v12.0</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Reference Refinement v13.0</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -345,6 +348,16 @@
 
         .finalized-badge {
             background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .override-badge {
+            background: var(--warning-color);
             color: white;
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
@@ -857,14 +870,42 @@
             pointer-events: auto;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 0.75rem;
-            max-width: 350px;
+            max-width: 400px;
+            min-width: 300px;
         }
 
         .toast.visible { transform: translateX(0); }
         .toast.success { background: var(--success-color); }
         .toast.error { background: var(--danger-color); }
         .toast.warning { background: var(--warning-color); }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.8;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
 
         /* Loading States */
         .loading {
@@ -993,7 +1034,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v12.0</h1>
+            <h1>Reference Refinement v13.0</h1>
         </div>
     </header>
 
@@ -1033,9 +1074,14 @@
                 </div>
                 <div class="control-group">
                     <label>Session Log</label>
-                    <button onclick="app.saveSessionLogToDropbox()" id="saveLogBtn" class="secondary" disabled>
-                        Save Session Log to Dropbox
-                    </button>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="app.saveSessionLogToDropbox()" id="saveLogBtn" class="secondary" disabled>
+                            Save Session Log to Dropbox
+                        </button>
+                        <button onclick="app.clearSessionLog()" class="secondary" style="background: var(--danger-color);">
+                            Clear Log
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1057,6 +1103,10 @@
             <div class="stat-item">
                 <span class="stat-label">Finalized</span>
                 <span id="statFinalized" class="stat-value">0</span>
+            </div>
+            <div class="stat-item" style="color: #f39c12;">
+                <span class="stat-label">AI Overrides</span>
+                <span id="statOverrides" class="stat-value">0</span>
             </div>
         </div>
 
@@ -1188,6 +1238,20 @@
 
                 <!-- Tab 3: Debug & Feedback -->
                 <div id="tab2" class="tab-content" style="display: flex; flex-direction: column; overflow: hidden;">
+                    <!-- User Notes Panel (Always Visible) -->
+                    <div style="padding: 0.75rem; background: #fffbea; border-bottom: 2px solid var(--warning-color); flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.2rem;">📝</span>
+                            <h4 style="margin: 0; font-size: 0.9rem; color: var(--warning-color);">Your Notes (auto-saved to session log)</h4>
+                        </div>
+                        <textarea id="userNotesTextarea"
+                            placeholder="Type observations, questions, or notes here as you work. These will be included in your session log for analysis..."
+                            style="width: 100%; height: 80px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                                   font-size: 0.85rem; padding: 0.5rem; border: 1px solid var(--warning-color);
+                                   border-radius: 4px; background: white; resize: vertical;"
+                            oninput="app.saveUserNote()"></textarea>
+                    </div>
+
                     <div id="debugPanelsContainer" class="debug-panels-container" style="flex: 1; overflow-y: auto;">
                         <!-- Panels will be dynamically added here -->
                     </div>
@@ -1264,24 +1328,35 @@
             aiSuggestedQuery: null,  // Store AI-suggested query for comparison
             aiRankedResults: null,  // Store AI ranking results for comparison
             autoSaveTimeout: null,  // Debounce timer for auto-save
+            userNoteTimeout: null,  // Debounce timer for user notes
 
             // Dropbox integration
             dropboxAppKey: 'q4ldgkwjmhxv6w2',
             dropboxAccessToken: null,
+            dropboxRefreshToken: null,
+            dropboxTokenExpiry: null,
             dropboxClient: null,
+            justReconnectedDropbox: false,  // Flag to prevent data loss on reconnect
 
             // Initialize
             async init() {
                 console.log('[INIT] Starting application initialization...');
 
                 // Check for OAuth callback
-                this.handleDropboxOAuthCallback();
+                await this.handleDropboxOAuthCallback();
 
-                // Load Dropbox token
+                // Load Dropbox tokens
                 this.dropboxAccessToken = localStorage.getItem('rr_dropbox_token');
+                this.dropboxRefreshToken = localStorage.getItem('rr_dropbox_refresh_token');
+                const expiryStr = localStorage.getItem('rr_dropbox_token_expiry');
+                this.dropboxTokenExpiry = expiryStr ? parseInt(expiryStr) : null;
+
                 console.log('[INIT] Dropbox token:', this.dropboxAccessToken ? 'Found' : 'Not found');
+                console.log('[INIT] Refresh token:', this.dropboxRefreshToken ? 'Found' : 'Not found');
 
                 if (this.dropboxAccessToken) {
+                    // Check if token needs refresh
+                    await this.ensureValidDropboxToken();
                     this.initializeDropbox(this.dropboxAccessToken);
                     console.log('[INIT] Dropbox client initialized');
                 }
@@ -1297,7 +1372,8 @@
                 }
 
                 // Try to load decisions.txt from Dropbox first, fallback to localStorage
-                if (this.dropboxClient) {
+                // BUT: Skip auto-load if we just reconnected (to preserve in-memory changes)
+                if (this.dropboxClient && !this.justReconnectedDropbox) {
                     console.log('[INIT] Attempting to load decisions.txt from Dropbox...');
                     try {
                         const content = await this.loadFromDropbox('/decisions.txt');
@@ -1319,6 +1395,10 @@
                     } catch (e) {
                         console.error('[INIT] Error loading from Dropbox:', e);
                     }
+                } else if (this.justReconnectedDropbox) {
+                    console.log('[INIT] Skipping auto-load from Dropbox (just reconnected - preserving in-memory data)');
+                    this.justReconnectedDropbox = false;  // Reset flag
+                    return;  // Keep current in-memory state
                 }
 
                 // Fallback to localStorage if Dropbox failed or not connected
@@ -1640,15 +1720,42 @@
                     ref.authors = beforeYear.replace(/[,;]\s*$/, '').trim();
 
                     // Title: First sentence after (Year). up to next period
+                    // BUT: Skip periods inside edition markers like (2nd ed.), (Rev. ed.), etc.
                     const afterYear = biblioSection.substring(biblioSection.indexOf(yearMatch[0]) + yearMatch[0].length);
                     const afterYearCleaned = afterYear.replace(/^[\.\s,;]+/, ''); // Remove leading punctuation
-                    const nextPeriod = afterYearCleaned.indexOf('.');
 
-                    if (nextPeriod > 0) {
-                        ref.title = afterYearCleaned.substring(0, nextPeriod).trim();
+                    // Find the real title boundary - skip periods inside parentheses with edition keywords
+                    let titleEnd = -1;
+                    let parenDepth = 0;
+                    let inEditionParen = false;
+
+                    for (let i = 0; i < afterYearCleaned.length; i++) {
+                        const char = afterYearCleaned[i];
+
+                        if (char === '(') {
+                            parenDepth++;
+                            // Check if this paren contains edition keywords
+                            const lookAhead = afterYearCleaned.substring(i, Math.min(i + 20, afterYearCleaned.length));
+                            if (/\((\d+(st|nd|rd|th))?\s*(ed\.|edition|rev\.|revised)/i.test(lookAhead)) {
+                                inEditionParen = true;
+                            }
+                        } else if (char === ')') {
+                            parenDepth--;
+                            if (parenDepth === 0) {
+                                inEditionParen = false;
+                            }
+                        } else if (char === '.' && parenDepth === 0 && !inEditionParen) {
+                            // Found a period outside parentheses - this is likely the title boundary
+                            titleEnd = i;
+                            break;
+                        }
+                    }
+
+                    if (titleEnd > 0) {
+                        ref.title = afterYearCleaned.substring(0, titleEnd).trim();
 
                         // Other: Everything after title
-                        const afterTitle = afterYearCleaned.substring(nextPeriod + 1).trim();
+                        const afterTitle = afterYearCleaned.substring(titleEnd + 1).trim();
                         ref.other = afterTitle.replace(/[.\s]+$/, '').trim(); // Remove trailing periods/spaces
                     } else {
                         // No period found - entire text after year is title
@@ -1789,6 +1896,9 @@
                 // Save to localStorage
                 localStorage.setItem('rr_override_log', JSON.stringify(this.overrideLog));
 
+                // Update stats to reflect new override count
+                this.updateStats();
+
                 // Log to console for debugging
                 console.log('Override logged:', entry);
             },
@@ -1841,6 +1951,9 @@
                 const card = document.createElement('div');
                 card.className = 'reference-card' + (ref.finalized ? ' finalized' : '');
 
+                // Check if this reference has any overrides
+                const overrideCount = this.overrideLog.filter(o => o.rid === ref.id).length;
+
                 // Build compact meta info (inline with bullets)
                 let metaHtml = '';
                 const metaParts = [];
@@ -1857,6 +1970,7 @@
                     <div class="reference-header">
                         <span class="reference-id">#${ref.id}</span>
                         ${ref.finalized ? '<span class="finalized-badge">Finalized</span>' : ''}
+                        ${overrideCount > 0 ? `<span class="override-badge" title="${overrideCount} AI override${overrideCount > 1 ? 's' : ''}">🔄 ${overrideCount}</span>` : ''}
                     </div>
                     <div class="reference-content">
                         <h3>${ref.title || 'Untitled'}</h3>
@@ -1901,6 +2015,7 @@
 
                 document.getElementById('statUrls').textContent = withUrls;
                 document.getElementById('statFinalized').textContent = finalized;
+                document.getElementById('statOverrides').textContent = this.overrideLog.length;
             },
 
             // Tab Management
@@ -2356,6 +2471,7 @@ ${response.result}`;
                 if (!ref || !ref.searchResults || !ref.searchResults[index]) return;
 
                 const candidate = ref.searchResults[index];
+                let overrideData = null; // Track override info for session log
 
                 // Check if user is overriding AI ranking
                 if (this.aiRankedResults && this.aiRankedResults.allRankings) {
@@ -2386,7 +2502,15 @@ ${response.result}`;
                         await new Promise((resolve) => {
                             this.showOverrideModal(details, (annotation) => {
                                 if (annotation !== null) {
-                                    // Enhanced logging with full context
+                                    // Store override data for session log
+                                    overrideData = {
+                                        aiSuggestion,
+                                        aiRanking,
+                                        userRanking,
+                                        annotation
+                                    };
+
+                                    // Enhanced logging with full context to override log
                                     this.logOverride({
                                         rid: this.currentEditId,
                                         override_type: 'RANKING_' + urlType.toUpperCase(),
@@ -2446,9 +2570,37 @@ ${response.result}`;
                     item.classList.add(urlType === 'primary' ? 'selected-primary' : 'selected-secondary');
                 }
 
-                // Log selection with query that found it
-                const queryInfo = candidate.query ? `\nFound by query: ${candidate.query}` : '';
-                this.addDebugLog(`Selected as ${urlType} URL: ${candidate.url}${queryInfo}`);
+                // Log selection to session log - enhanced with override info if present
+                const queryInfo = candidate.query ? `Found by query: ${candidate.query}` : '';
+
+                if (overrideData) {
+                    // This was an override - log detailed information to session
+                    const aiRank = overrideData.aiRanking;
+                    const userRank = overrideData.userRanking;
+
+                    const panelContent = `<strong>🔄 AI Override - ${urlType.toUpperCase()} URL</strong>
+
+<strong>AI Recommended:</strong>
+URL: ${overrideData.aiSuggestion}
+Primary Score: ${aiRank?.primary_score || 'N/A'}
+Secondary Score: ${aiRank?.secondary_score || 'N/A'}
+${aiRank?.primary_fit ? `Fit: ${aiRank.primary_fit}` : ''}
+
+<strong>You Selected:</strong>
+URL: ${candidate.url}
+Primary Score: ${userRank?.primary_score || 'N/A'}
+Secondary Score: ${userRank?.secondary_score || 'N/A'}
+${userRank ? `Ranked Position: #${this.aiRankedResults.allRankings.indexOf(userRank) + 1}` : 'Not ranked by AI'}
+${queryInfo ? `${queryInfo}` : ''}
+
+<strong>Your Reason:</strong>
+"${overrideData.annotation}"`;
+
+                    this.addDebugPanel(`URL Override (${urlType})`, panelContent, 'warning');
+                } else {
+                    // Normal selection - simple log
+                    this.addDebugLog(`Selected as ${urlType} URL: ${candidate.url}${queryInfo ? '\n' + queryInfo : ''}`);
+                }
             },
 
             async rankCandidates() {
@@ -2463,24 +2615,85 @@ ${response.result}`;
                 btn.disabled = true;
                 document.getElementById('rankBtnText').innerHTML = '<span class="loading"></span> Ranking...';
 
-                this.addDebugLog('AI ranking candidates...');
+                // Batch processing for large result sets
+                const batchSize = 50;
+                const totalCandidates = ref.searchResults.length;
+                const numBatches = Math.ceil(totalCandidates / batchSize);
+
+                this.addDebugLog(`Ranking ${totalCandidates} candidates in ${numBatches} batch(es)...`);
+
+                if (numBatches > 1) {
+                    this.showToast(`Ranking ${totalCandidates} candidates in ${numBatches} batches...`, 'info');
+                } else if (totalCandidates > 40) {
+                    this.showToast(`Ranking ${totalCandidates} candidates - this may take 15-20 seconds...`, 'info');
+                }
 
                 try {
                     const model = this.getSelectedModel();
-                    const response = await this.apiRequest('/api/llm-rank', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            reference: {
-                                title: ref.title,
-                                authors: ref.authors,
-                                year: ref.year,
-                                other: ref.other,
-                                relevance_text: ref.relevance_text
-                            },
-                            candidates: ref.searchResults,
-                            model: model
-                        })
-                    });
+                    let allRankings = [];
+                    let allCandidates = ref.searchResults;
+
+                    // Process each batch
+                    for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
+                        const startIdx = batchIndex * batchSize;
+                        const endIdx = Math.min(startIdx + batchSize, totalCandidates);
+                        const batchCandidates = ref.searchResults.slice(startIdx, endIdx);
+
+                        if (numBatches > 1) {
+                            this.addDebugLog(`Processing batch ${batchIndex + 1}/${numBatches} (candidates ${startIdx + 1}-${endIdx})...`);
+                            document.getElementById('rankBtnText').innerHTML = `<span class="loading"></span> Batch ${batchIndex + 1}/${numBatches}...`;
+                        }
+
+                        const response = await this.apiRequest('/api/llm-rank', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                reference: {
+                                    title: ref.title,
+                                    authors: ref.authors,
+                                    year: ref.year,
+                                    other: ref.other,
+                                    relevance_text: ref.relevance_text
+                                },
+                                candidates: batchCandidates,
+                                model: model
+                            })
+                        });
+
+                        if (!response.rankings || response.rankings.length === 0) {
+                            if (response.error) {
+                                throw new Error(response.error);
+                            }
+                            this.addDebugLog(`Warning: Batch ${batchIndex + 1} returned no rankings`);
+                            continue;
+                        }
+
+                        // Adjust indices to account for batch offset
+                        const adjustedRankings = response.rankings.map(ranking => ({
+                            ...ranking,
+                            index: ranking.index + startIdx
+                        }));
+
+                        allRankings = allRankings.concat(adjustedRankings);
+
+                        // If Claude performed additional searches in this batch
+                        if (response.searches_performed && response.searches_performed > 0) {
+                            this.addDebugLog(`Batch ${batchIndex + 1}: AI performed ${response.searches_performed} additional search(es)`);
+                            if (response.allCandidates && response.allCandidates.length > batchCandidates.length) {
+                                // New candidates were found - add them to the end
+                                const newCandidates = response.allCandidates.slice(batchCandidates.length);
+                                allCandidates = allCandidates.concat(newCandidates);
+                                ref.searchResults = allCandidates;
+                                this.addDebugLog(`Added ${newCandidates.length} new candidate(s) from AI searches`);
+                            }
+                        }
+                    }
+
+                    // Create a response object that matches the expected format
+                    const response = {
+                        rankings: allRankings,
+                        allCandidates: allCandidates,
+                        searches_performed: allRankings.filter(r => r._newCandidate).length
+                    };
 
                     if (response.rankings && response.rankings.length > 0) {
                         // Check if Claude performed additional searches
@@ -2697,8 +2910,23 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
 
                         this.showToast('URLs ranked and auto-filled', 'success');
                     } else if (response.error) {
-                        this.addDebugLog('Ranking API error: ' + response.error);
-                        this.showToast('Ranking failed: ' + response.error, 'error');
+                        // Enhanced error panel with full details
+                        let errorDetails = `<strong>Error:</strong> ${response.error}\n\n`;
+
+                        if (response.raw_response_preview) {
+                            errorDetails += `<strong>AI Response Preview:</strong>\n${response.raw_response_preview}\n\n`;
+                        }
+
+                        if (response.allCandidates) {
+                            errorDetails += `<strong>Candidates Sent:</strong> ${response.allCandidates.length}\n`;
+                        }
+
+                        if (response.searches_performed !== undefined) {
+                            errorDetails += `<strong>Searches Performed:</strong> ${response.searches_performed}\n`;
+                        }
+
+                        this.addDebugPanel('Ranking API Error', errorDetails, 'error');
+                        this.showToast('Ranking failed: ' + response.error.substring(0, 100), 'error');
                     } else {
                         this.addDebugLog('No rankings returned from API');
                         this.showToast('No rankings returned', 'warning');
@@ -2865,6 +3093,21 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                 this.showToast('Session log copied to clipboard! Paste it into a file in Dropbox.', 'success');
             },
 
+            clearSessionLog() {
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                if (sessionLog.length === 0) {
+                    this.showToast('Session log is already empty', 'info');
+                    return;
+                }
+
+                if (confirm(`Clear session log with ${sessionLog.length} entries? This cannot be undone.`)) {
+                    localStorage.removeItem('rr_session_log');
+                    this.updateSessionLogTextarea();
+                    this.showToast('Session log cleared', 'success');
+                }
+            },
+
             downloadDecisions() {
                 // Export decisions.txt from localStorage
                 this.exportFile();
@@ -2920,6 +3163,27 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                 this.addDebugPanel('System Log', message);
             },
 
+            saveUserNote() {
+                // Auto-save user notes to session log
+                clearTimeout(this.userNoteTimeout);
+                this.userNoteTimeout = setTimeout(() => {
+                    const textarea = document.getElementById('userNotesTextarea');
+                    if (!textarea) return;
+
+                    const note = textarea.value.trim();
+                    if (!note) return;
+
+                    // Save to session log with special type
+                    const timestamp = new Date().toLocaleTimeString();
+                    this.saveToSessionLog({
+                        timestamp,
+                        title: '📝 User Note',
+                        content: note,
+                        type: 'USER_NOTE'
+                    });
+                }, 1000); // Debounce for 1 second
+            },
+
             // Utility
             clearAll() {
                 if (confirm('Clear all references? This cannot be undone.')) {
@@ -2937,30 +3201,134 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                toast.textContent = message;
 
+                // Create message span
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'toast-message';
+                messageSpan.textContent = message;
+
+                // Create close button
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'toast-close';
+                closeBtn.innerHTML = '&times;';
+                closeBtn.setAttribute('aria-label', 'Close notification');
+                closeBtn.onclick = () => {
+                    toast.classList.remove('visible');
+                    setTimeout(() => toast.remove(), 300);
+                };
+
+                toast.appendChild(messageSpan);
+                toast.appendChild(closeBtn);
                 container.appendChild(toast);
 
                 setTimeout(() => toast.classList.add('visible'), 10);
 
-                setTimeout(() => {
-                    toast.classList.remove('visible');
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
+                // Auto-dismiss only success messages after 5 seconds
+                // Warning and error messages stay until manually dismissed
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        toast.classList.remove('visible');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 5000);
+                }
             },
 
             // Dropbox Integration
-            handleDropboxOAuthCallback() {
-                const hash = window.location.hash;
-                if (hash && hash.includes('access_token=')) {
-                    const params = new URLSearchParams(hash.substring(1));
-                    const accessToken = params.get('access_token');
-                    if (accessToken) {
-                        this.initializeDropbox(accessToken);
-                        localStorage.setItem('rr_dropbox_token', accessToken);
-                        // Clean up URL
-                        window.location.hash = '';
-                        this.showToast('Connected to Dropbox!', 'success');
+            async handleDropboxOAuthCallback() {
+                // Check for authorization code (PKCE Flow)
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const state = urlParams.get('state');
+                const error = urlParams.get('error');
+                const errorDescription = urlParams.get('error_description');
+
+                // Check if Dropbox returned an error
+                if (error) {
+                    console.error('[DROPBOX] OAuth error:', error, errorDescription);
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    this.showToast(`Dropbox OAuth error: ${error}${errorDescription ? ' - ' + errorDescription : ''}`, 'error');
+                    return;
+                }
+
+                if (code) {
+                    console.log('[DROPBOX] Authorization code received, exchanging for tokens...');
+
+                    // Retrieve the PKCE verifier from state parameter
+                    let codeVerifier = null;
+                    let source = 'none';
+
+                    if (state && state.startsWith('pkce:')) {
+                        // Extract verifier from state parameter
+                        codeVerifier = state.substring(5); // Remove "pkce:" prefix
+                        source = 'state parameter';
+                        console.log('[DROPBOX] PKCE verifier retrieved from state parameter');
+                    } else {
+                        // Fallback: try old storage methods (for backwards compatibility)
+                        console.warn('[DROPBOX] State parameter missing, trying storage fallback...');
+
+                        codeVerifier = this.getCookie('rr_pkce_verifier');
+                        if (codeVerifier) source = 'cookie';
+
+                        if (!codeVerifier) {
+                            codeVerifier = sessionStorage.getItem('rr_pkce_verifier');
+                            if (codeVerifier) source = 'sessionStorage';
+                        }
+
+                        if (!codeVerifier) {
+                            codeVerifier = localStorage.getItem('rr_pkce_verifier');
+                            if (codeVerifier) source = 'localStorage';
+                        }
+                    }
+
+                    if (!codeVerifier) {
+                        console.error('[DROPBOX] PKCE verifier not found in state parameter or storage');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        this.showToast('OAuth error: PKCE verifier missing. Please try connecting again.', 'error');
+                        return;
+                    }
+
+                    console.log('[DROPBOX] PKCE verifier retrieved successfully from', source);
+
+                    try {
+                        // Exchange code for tokens via our Netlify Function
+                        const response = await this.apiRequest('/api/dropbox-oauth', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                code: code,
+                                code_verifier: codeVerifier
+                            })
+                        });
+
+                        if (response.access_token) {
+                            // Store tokens
+                            this.dropboxAccessToken = response.access_token;
+                            this.dropboxRefreshToken = response.refresh_token;
+                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
+
+                            localStorage.setItem('rr_dropbox_token', response.access_token);
+                            localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
+                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
+
+                            this.initializeDropbox(response.access_token);
+
+                            // Set flag to prevent auto-load (preserve in-memory data)
+                            this.justReconnectedDropbox = true;
+
+                            // Clean up URL (remove ?code= and ?state= parameters)
+                            window.history.replaceState({}, document.title, window.location.pathname);
+
+                            console.log('[DROPBOX] Successfully connected! Token expires in', response.expires_in, 'seconds');
+                            this.showToast('Connected to Dropbox! Your tokens will auto-refresh.', 'success');
+                        } else {
+                            throw new Error(response.error || 'Failed to exchange code for tokens');
+                        }
+                    } catch (error) {
+                        console.error('[DROPBOX] Token exchange failed:', error);
+
+                        // Clean up URL on error
+                        window.history.replaceState({}, document.title, window.location.pathname);
+
+                        this.showToast('Failed to connect to Dropbox: ' + error.message + '. Please try again.', 'error');
                     }
                 }
             },
@@ -2971,21 +3339,123 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                 this.updateDropboxUI(true);
             },
 
-            connectDropbox() {
-                // Use hardcoded redirect URI to avoid any dynamic URL issues
+            async connectDropbox() {
+                // Generate PKCE code verifier and challenge
+                const codeVerifier = this.generateCodeVerifier();
+                const codeChallenge = await this.generateCodeChallenge(codeVerifier);
+
+                console.log('[DROPBOX] Initiating PKCE OAuth flow with state parameter');
+
+                // Encode verifier in OAuth state parameter (survives Safari redirects)
+                const stateWithVerifier = `pkce:${codeVerifier}`;
+
+                // Use PKCE flow (required for public clients)
                 const redirectUri = 'https://rrv521-1760738877.netlify.app/rr_v60.html';
-                const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}`;
-                console.log('Dropbox OAuth URL:', authUrl);
-                console.log('Redirect URI:', redirectUri);
+                const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&token_access_type=offline&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${encodeURIComponent(stateWithVerifier)}`;
+
+                console.log('[DROPBOX] Redirecting to Dropbox for authorization');
                 window.location.href = authUrl;
+            },
+
+            getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            },
+
+            deleteCookie(name) {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            },
+
+            generateCodeVerifier() {
+                // Generate a random string for PKCE
+                const array = new Uint8Array(32);
+                crypto.getRandomValues(array);
+                return btoa(String.fromCharCode.apply(null, Array.from(array)))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            },
+
+            async generateCodeChallenge(verifier) {
+                // Hash the verifier using SHA-256
+                const encoder = new TextEncoder();
+                const data = encoder.encode(verifier);
+                const hash = await crypto.subtle.digest('SHA-256', data);
+                return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(hash))))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
             },
 
             disconnectDropbox() {
                 this.dropboxAccessToken = null;
+                this.dropboxRefreshToken = null;
+                this.dropboxTokenExpiry = null;
                 this.dropboxClient = null;
                 localStorage.removeItem('rr_dropbox_token');
+                localStorage.removeItem('rr_dropbox_refresh_token');
+                localStorage.removeItem('rr_dropbox_token_expiry');
                 this.updateDropboxUI(false);
                 this.showToast('Disconnected from Dropbox', 'info');
+            },
+
+            async ensureValidDropboxToken() {
+                // Check if we need to refresh the token
+                // Refresh if token expires in less than 5 minutes
+                const fiveMinutes = 5 * 60 * 1000;
+
+                if (!this.dropboxTokenExpiry || !this.dropboxRefreshToken) {
+                    console.log('[DROPBOX] No expiry time or refresh token - skipping refresh');
+                    return;
+                }
+
+                const timeUntilExpiry = this.dropboxTokenExpiry - Date.now();
+
+                if (timeUntilExpiry < fiveMinutes) {
+                    console.log('[DROPBOX] Token expires soon, refreshing... (expires in', Math.floor(timeUntilExpiry / 1000), 'seconds)');
+
+                    try {
+                        const response = await this.apiRequest('/api/dropbox-oauth', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                grant_type: 'refresh_token',
+                                refresh_token: this.dropboxRefreshToken
+                            })
+                        });
+
+                        if (response.access_token) {
+                            // Update tokens
+                            this.dropboxAccessToken = response.access_token;
+                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
+
+                            // Update refresh token if a new one was provided
+                            if (response.refresh_token) {
+                                this.dropboxRefreshToken = response.refresh_token;
+                                localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
+                            }
+
+                            localStorage.setItem('rr_dropbox_token', response.access_token);
+                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
+
+                            // Update the Dropbox client with new token
+                            if (this.dropboxClient) {
+                                this.dropboxClient = new Dropbox.Dropbox({ accessToken: response.access_token });
+                            }
+
+                            console.log('[DROPBOX] Token refreshed successfully, new expiry in:', response.expires_in, 'seconds');
+                        } else {
+                            throw new Error(response.error || 'Failed to refresh token');
+                        }
+                    } catch (error) {
+                        console.error('[DROPBOX] Token refresh failed:', error);
+                        this.showToast('Dropbox token refresh failed. Please reconnect.', 'warning');
+                        // Don't clear tokens yet - let user reconnect manually
+                    }
+                } else {
+                    console.log('[DROPBOX] Token still valid for', Math.floor(timeUntilExpiry / 60000), 'minutes');
+                }
             },
 
             updateDropboxUI(connected) {
@@ -3014,6 +3484,9 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                     return false;
                 }
 
+                // Ensure token is valid before making request
+                await this.ensureValidDropboxToken();
+
                 try {
                     await this.dropboxClient.filesUpload({
                         path: path,
@@ -3024,6 +3497,23 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                     return true;
                 } catch (error) {
                     console.error('Dropbox save error:', error);
+
+                    // Check if this is a 401 (token expired) error
+                    if (error.status === 401 || (error.error && error.error.error && error.error.error['.tag'] === 'invalid_access_token')) {
+                        // Token expired - auto-disconnect and prompt to reconnect
+                        this.dropboxAccessToken = null;
+                        this.dropboxClient = null;
+                        localStorage.removeItem('rr_dropbox_token');
+                        this.updateDropboxUI(false);
+
+                        // Show friendly reconnect prompt
+                        const reconnect = confirm('Your Dropbox session has expired. Would you like to reconnect now?');
+                        if (reconnect) {
+                            this.connectDropbox();
+                        }
+                        return false;
+                    }
+
                     this.showToast('Failed to save to Dropbox: ' + error.message, 'error');
                     return false;
                 }
@@ -3077,6 +3567,53 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                     logContent += `${entry.content}\n\n`;
                 });
 
+                // Add override summary section if there are any overrides
+                if (this.overrideLog.length > 0) {
+                    logContent += `\n\n` + `=`.repeat(80) + `\n`;
+                    logContent += `AI OVERRIDE DECISIONS SUMMARY (${this.overrideLog.length} total)\n`;
+                    logContent += `=`.repeat(80) + `\n\n`;
+
+                    this.overrideLog.forEach((override, index) => {
+                        logContent += `Override #${index + 1}\n`;
+                        logContent += `-`.repeat(80) + `\n`;
+                        logContent += `Timestamp: ${new Date(override.timestamp).toLocaleString()}\n`;
+                        logContent += `Reference ID: ${override.rid}\n`;
+                        logContent += `Type: ${override.override_type}\n`;
+
+                        if (override.reference_metadata) {
+                            logContent += `\nReference:\n`;
+                            logContent += `  Title: ${override.reference_metadata.title}\n`;
+                            logContent += `  Authors: ${override.reference_metadata.authors}\n`;
+                            logContent += `  Year: ${override.reference_metadata.year}\n`;
+                        }
+
+                        if (override.ai_suggested) {
+                            logContent += `\nAI Recommended:\n`;
+                            logContent += `  URL: ${override.ai_suggested.url}\n`;
+                            logContent += `  Primary Score: ${override.ai_suggested.primary_score}\n`;
+                            logContent += `  Secondary Score: ${override.ai_suggested.secondary_score}\n`;
+                            if (override.ai_suggested.primary_fit) {
+                                logContent += `  Fit: ${override.ai_suggested.primary_fit}\n`;
+                            }
+                        }
+
+                        if (override.user_selected) {
+                            logContent += `\nYou Selected:\n`;
+                            logContent += `  URL: ${override.user_selected.url}\n`;
+                            logContent += `  Primary Score: ${override.user_selected.primary_score}\n`;
+                            logContent += `  Secondary Score: ${override.user_selected.secondary_score}\n`;
+                            logContent += `  Ranked Position: ${override.user_selected.was_ranked}\n`;
+                        }
+
+                        if (override.user_annotation) {
+                            logContent += `\nYour Reason:\n`;
+                            logContent += `  "${override.user_annotation}"\n`;
+                        }
+
+                        logContent += `\n`;
+                    });
+                }
+
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
                 const success = await this.saveToDropbox(`/debug_logs/session_${timestamp}.txt`, logContent);
 
@@ -3092,6 +3629,9 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
                 if (!this.dropboxClient) {
                     return null;
                 }
+
+                // Ensure token is valid before making request
+                await this.ensureValidDropboxToken();
 
                 try {
                     const response = await this.dropboxClient.filesDownload({ path: path });

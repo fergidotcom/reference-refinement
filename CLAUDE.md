@@ -7,8 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Reference Refinement Tool** - A web application for managing academic references with AI-powered search and ranking capabilities. The tool helps researchers find and validate URLs for bibliographic references.
 
 **Live URL:** https://rrv521-1760738877.netlify.app
-**Current Version:** v8.0 (check rr_v60.html header for actual version)
+**Current Version:** v13.0 (check rr_v60.html header for actual version)
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
+**Last Updated:** October 26, 2025
 
 ## Architecture
 
@@ -22,8 +23,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Netlify Functions** (TypeScript): Serverless API endpoints in `netlify/functions/`
   - `health.ts` - Health check endpoint
   - `llm-chat.ts` - Anthropic Claude API for query generation
-  - `llm-rank.ts` - Anthropic Claude API for ranking search results
+  - `llm-rank.ts` - Anthropic Claude API for ranking search results (enhanced in v13.0)
   - `search-google.ts` - Google Custom Search integration
+  - `dropbox-oauth.ts` - **NEW in v13.0** - Dropbox OAuth token exchange with PKCE support
   - `resolve-urls.ts` - URL resolution and validation
   - `proxy-fetch.ts` - CORS proxy for fetching external URLs
 
@@ -126,13 +128,29 @@ All API calls should use absolute URLs to avoid 404 errors.
 
 ## Environment Variables
 
-Required environment variables (in `.env`):
+Required environment variables (set in Netlify Dashboard):
 - `GOOGLE_API_KEY` - Google Custom Search API key
 - `GOOGLE_CX` - Google Custom Search Engine ID
-- `OPENAI_API_KEY` - OpenAI API key (currently unused, using Anthropic instead)
-- Note: Netlify Functions use Anthropic API, not OpenAI
+- `ANTHROPIC_API_KEY` - Anthropic Claude API key (used for query generation and ranking)
+- `DROPBOX_APP_SECRET` - **NEW in v13.0** - Dropbox app secret for OAuth token exchange
 
 **WARNING:** The `.env` file in this repo contains actual API keys. Never commit these to git.
+
+### Dropbox Integration Details (v13.0+)
+
+**Dropbox App Configuration:**
+- **App Name:** Reference Refinement
+- **App Key:** `q4ldgkwjmhxv6w2` (hardcoded in frontend and dropbox-oauth.ts)
+- **App Secret:** Stored as `DROPBOX_APP_SECRET` environment variable in Netlify
+- **Permission Type:** App Folder (scoped access to `/Apps/Reference Refinement/`)
+- **OAuth 2 Redirect URIs:** `https://rrv521-1760738877.netlify.app/rr_v60.html`
+- **OAuth Flow:** PKCE (Proof Key for Code Exchange) for enhanced security
+- **Token Storage:** Access token and refresh token in browser localStorage
+- **Token Refresh:** Automatic via dropbox-oauth.ts function when token expires
+
+**Dropbox File Paths:**
+- `/decisions.txt` - Main working file (auto-saved on Save/Finalize)
+- `/debug_logs/session_TIMESTAMP.txt` - Session logs (manual save from Debug tab)
 
 ## Deployment Architecture
 
@@ -245,7 +263,17 @@ The project has gone through multiple iterations:
 - v6.x: FastAPI backend with client/server architecture
 - v7.x: Transition to Netlify Functions, fix API URL issues
 - v7.4: Fixed title parsing bug, added finalization workflow
-- v8.0: Current version (check rr_v60.html for actual version)
+- v8.0-v11.x: Iterative improvements to UI, ranking, and debug logging
+- v12.0: AI-Powered Search During Ranking with web search tool
+- **v13.0 (Current)**: Major enhancements:
+  - **Dropbox OAuth with PKCE** - Secure token exchange via serverless function
+  - **Enhanced llm-rank.ts** - Disables search tool for large candidate sets (50+) to prevent timeouts
+  - **User Notes Panel** - Capture observations in Debug tab (auto-saved to session log)
+  - **Toast Improvements** - Close buttons and better layout
+  - **Override Tracking** - Statistics panel shows AI override count
+  - **Token Refresh** - Automatic Dropbox token refresh when expired
+  - **Increased Timeout** - Function timeout raised to 26 seconds (Netlify max)
+  - **Cache Busting** - Meta tags to prevent browser caching issues
 
 See `v74_SUMMARY.md` and related version docs for detailed change history.
 

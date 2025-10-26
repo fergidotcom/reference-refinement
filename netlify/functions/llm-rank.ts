@@ -97,15 +97,20 @@ export const handler: Handler = async (event, context) => {
       }
     ];
 
+    // Disable search tool for large candidate sets to prevent timeouts
+    const disableSearch = candidates.length >= 50;
+
     const systemPrompt = `You are an expert at identifying academic references and ranking URLs by their suitability as primary and secondary sources.
 
-You have access to a search_web tool. Use it strategically when:
+${disableSearch
+  ? 'IMPORTANT: You already have a large set of candidates to evaluate. DO NOT use the search_web tool - just rank the existing candidates.'
+  : `You have access to a search_web tool. Use it strategically when:
 - No exact title+author match exists in current candidates
 - Current candidates are articles ABOUT the work, not the work itself
 - Need to verify author or title information
 - All candidates score below 60 and better results are needed
 
-IMPORTANT: Limit tool use to 2-3 searches maximum. Be strategic - don't search unless necessary.`;
+IMPORTANT: Limit tool use to 2-3 searches maximum. Be strategic - don't search unless necessary.`}`;
 
     const initialPrompt = `Rank these search results for BOTH primary and secondary URL fitness.
 
@@ -206,6 +211,18 @@ Use index 0-${candidates.length - 1}.`;
     let finalRankings: any[] = [];
 
     while (searchCount < maxSearches) {
+      const apiPayload: any = {
+        model: model || 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: systemPrompt,
+        messages: messages
+      };
+
+      // Only include tools if search is enabled (< 50 candidates)
+      if (!disableSearch) {
+        apiPayload.tools = tools;
+      }
+
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -213,13 +230,7 @@ Use index 0-${candidates.length - 1}.`;
           'x-api-key': ANTHROPIC_API_KEY,
           'anthropic-version': '2023-06-01'
         },
-        body: JSON.stringify({
-          model: model || 'claude-sonnet-4-20250514',
-          max_tokens: 4000,
-          system: systemPrompt,
-          tools: tools,
-          messages: messages
-        })
+        body: JSON.stringify(apiPayload)
       });
 
       if (!response.ok) {
@@ -252,6 +263,7 @@ Use index 0-${candidates.length - 1}.`;
 
         // Execute each tool call
         const toolResults: any[] = [];
+        let totalNewCandidates = 0;
 
         for (const toolUse of toolUseBlocks) {
           console.log(`Claude wants to use tool: ${toolUse.name}`, toolUse.input);
@@ -274,6 +286,7 @@ Use index 0-${candidates.length - 1}.`;
             }));
 
             allCandidates = allCandidates.concat(newCandidates);
+            totalNewCandidates += newCandidates.length;
 
             // Prepare tool result for Claude
             toolResults.push({
@@ -297,7 +310,7 @@ Use index 0-${candidates.length - 1}.`;
         messages.push({ role: 'user', content: toolResults });
 
         // Update the prompt with new candidates
-        const updatedPrompt = `Now rank ALL ${allCandidates.length} candidates (indices 0-${allCandidates.length - 1}), including the ${searchResults.length} new candidates just found.
+        const updatedPrompt = `Now rank ALL ${allCandidates.length} candidates (indices 0-${allCandidates.length - 1}), including the ${totalNewCandidates} new candidates just found.
 
 UPDATED CANDIDATES:
 ${allCandidates.map((c, i) => `${i}. ${c.title}\n   URL: ${c.url}\n   Snippet: ${c.snippet || 'No snippet'}${c._newCandidate ? ' [NEW from search]' : ''}`).join('\n\n')}
@@ -336,6 +349,22 @@ Return the complete JSON rankings array for ALL candidates now.`;
         console.error(parseError);
       }
 
+      // If search is disabled (large candidate set), don't retry - just fail with error
+      if (disableSearch && rankings.length === 0) {
+        console.log('Search disabled and parsing failed - returning error');
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            rankings: [],
+            allCandidates: allCandidates,
+            error: `Failed to parse rankings for ${allCandidates.length} candidates: ${parseError}`,
+            raw_response_preview: resultText.substring(0, 500),
+            searches_performed: searchCount
+          })
+        };
+      }
+
       // If parsing failed and we haven't exhausted searches, continue loop
       if (rankings.length === 0 && searchCount < maxSearches) {
         console.log('Parsing failed, continuing loop to try again...');
@@ -351,7 +380,7 @@ Return the complete JSON rankings array for ALL candidates now.`;
             rankings: [],
             allCandidates: allCandidates,
             error: `Failed to parse rankings: ${parseError}`,
-            raw_response_preview: resultText.substring(0, 200),
+            raw_response_preview: resultText.substring(0, 500),
             searches_performed: searchCount
           })
         };

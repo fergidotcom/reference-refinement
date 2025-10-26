@@ -12,10 +12,10 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  
-  # Function timeout (10 seconds)
+
+  # Function timeout (26 seconds - Netlify max)
   [functions."*"]
-    timeout = 10
+    timeout = 26
 
 # Redirects - API endpoints to functions
 [[redirects]]
@@ -36,6 +36,11 @@
 [[redirects]]
   from = "/api/search/google"
   to = "/.netlify/functions/search-google"
+  status = 200
+
+[[redirects]]
+  from = "/api/dropbox-oauth"
+  to = "/.netlify/functions/dropbox-oauth"
   status = 200
 
 # Default redirect - serve main app
