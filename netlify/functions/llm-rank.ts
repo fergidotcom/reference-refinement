@@ -162,11 +162,28 @@ PENALTIES:
 - Random WordPress/blog sites (unless known academic): -20 points
 - Paywalled with no preview: -15 points
 
-SECONDARY CRITERIA (theme-focused):
-- Review of this specific work (=100)
-- Discussion of key themes from Relevance text (=90)
-- Related scholarly work (=70)
-- Author bio (=50)
+SECONDARY CRITERIA (backup sources - must still relate to the work):
+CRITICAL: Secondary URLs are BACKUP sources for the same work, NOT just authoritative sites discussing similar themes.
+A secondary URL should still be ABOUT this specific work or author, just from a different source/format.
+
+ACCEPTABLE SECONDARY URLS:
+- Alternative format of the same work (e.g., HTML vs PDF, different edition) (=100)
+- Review/critique of THIS specific work (=100)
+- Author's CV/bio page that discusses THIS specific work (=90)
+- Publisher's alternative page for the same work (=90)
+- Related work BY THE SAME AUTHOR on similar topic (=70)
+- Scholarly discussion that extensively cites THIS specific work (=60)
+
+DISQUALIFIED (score ≤30 even if high domain authority):
+- Articles about similar themes but NOT mentioning this work or author
+- Law review / journal articles on related topics by different authors
+- Generic academic discussions of similar concepts
+- Any URL where neither the title NOR author appears in the snippet/title
+
+EXAMPLE:
+Reference: Gergen, K.J. (1999). An Invitation to Social Construction
+✓ GOOD Secondary: ResearchGate article "The Social Constructionist Movement in Modern Psychology" by Gergen
+✗ BAD Secondary: Law review article discussing "social construction" but NOT by/about Gergen
 
 REFERENCE:
 Title: ${reference.title || 'Unknown'}

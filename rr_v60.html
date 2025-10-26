@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v13.0</title>
+    <title>Reference Refinement v13.1</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1034,7 +1034,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v13.0</h1>
+            <h1>Reference Refinement v13.1</h1>
         </div>
     </header>
 
@@ -1120,7 +1120,12 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Edit Reference</h2>
+                <div style="flex: 1;">
+                    <h2 class="modal-title">Edit Reference</h2>
+                    <div id="modalReferenceInfo" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem; line-height: 1.3;">
+                        <!-- Reference title and author will be displayed here -->
+                    </div>
+                </div>
                 <button class="modal-close" onclick="app.closeModal()">&times;</button>
             </div>
 
@@ -1208,6 +1213,21 @@
                 <!-- Tab 2: Candidates & Autorank -->
                 <div id="tab1" class="tab-content">
                     <div class="modal-section" style="flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0.5rem 0.75rem;">
+                        <!-- Sort Toggle -->
+                        <div id="sortToggleContainer" style="display: none; margin-bottom: 0.75rem; padding: 0.5rem; background: var(--background); border-radius: 6px;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Sort by:</span>
+                                <div style="display: flex; gap: 0.25rem; background: white; border-radius: 6px; padding: 0.25rem; border: 1px solid var(--border-color);">
+                                    <button id="sortByPrimary" onclick="app.setSortFocus('primary')" style="padding: 0.4rem 1rem; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600; background: var(--accent-color); color: white; transition: all 0.2s;">
+                                        Primary Score
+                                    </button>
+                                    <button id="sortBySecondary" onclick="app.setSortFocus('secondary')" style="padding: 0.4rem 1rem; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600; background: transparent; color: var(--text-secondary); transition: all 0.2s;">
+                                        Secondary Score
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="candidatesContainer" style="flex: 1; overflow-y: auto; min-height: 300px; max-height: 450px;">
                             <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
                                 No search results yet. Run queries in the "Suggest & Query" tab first.
@@ -1329,6 +1349,7 @@
             aiRankedResults: null,  // Store AI ranking results for comparison
             autoSaveTimeout: null,  // Debounce timer for auto-save
             userNoteTimeout: null,  // Debounce timer for user notes
+            sortFocus: 'primary',  // Track sort mode: 'primary' or 'secondary'
 
             // Dropbox integration
             dropboxAppKey: 'q4ldgkwjmhxv6w2',
@@ -2050,6 +2071,10 @@
 
                 this.currentEditId = id;
                 this.debugPanels = [];
+                this.sortFocus = 'primary';  // Reset sort focus to primary
+
+                // Hide sort toggle initially (will show when candidates are loaded)
+                document.getElementById('sortToggleContainer').style.display = 'none';
 
                 // Populate form - Tab 1 (simplified)
                 document.getElementById('editId').value = ref.id;
@@ -2061,6 +2086,17 @@
                 document.getElementById('editSecondaryUrl').value = ref.urls.secondary || '';
                 document.getElementById('editRelevanceText').value = ref.relevance_text || '';
                 document.getElementById('editQueries').value = ref.queries.join('\n');
+
+                // Update modal header with reference info
+                const modalReferenceInfo = document.getElementById('modalReferenceInfo');
+                let refInfo = '';
+                if (ref.authors) refInfo += `<strong>${ref.authors}</strong>`;
+                if (ref.year) refInfo += ` (${ref.year})`;
+                if (ref.title) {
+                    if (refInfo) refInfo += ' — ';
+                    refInfo += `<em>${ref.title}</em>`;
+                }
+                modalReferenceInfo.innerHTML = refInfo || '<span style="font-style: italic;">No title/author info</span>';
 
                 // Tab 2 - Clear candidates and populate URL displays
                 document.getElementById('candidatesContainer').innerHTML = `
@@ -2464,6 +2500,200 @@ ${response.result}`;
                         </div>
                     `;
                 }).join('');
+
+                // Show sort toggle if we have results
+                if (results.length > 0) {
+                    document.getElementById('sortToggleContainer').style.display = 'block';
+                }
+            },
+
+            setSortFocus(focus) {
+                this.sortFocus = focus;
+
+                // Update button styles
+                const primaryBtn = document.getElementById('sortByPrimary');
+                const secondaryBtn = document.getElementById('sortBySecondary');
+
+                if (focus === 'primary') {
+                    primaryBtn.style.background = 'var(--accent-color)';
+                    primaryBtn.style.color = 'white';
+                    secondaryBtn.style.background = 'transparent';
+                    secondaryBtn.style.color = 'var(--text-secondary)';
+                } else {
+                    secondaryBtn.style.background = 'var(--accent-color)';
+                    secondaryBtn.style.color = 'white';
+                    primaryBtn.style.background = 'transparent';
+                    primaryBtn.style.color = 'var(--text-secondary)';
+                }
+
+                // Re-render candidates with new sort
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (ref && ref.searchResults) {
+                    this.renderCandidates(ref.searchResults, ref.rankings || null);
+                }
+            },
+
+            renderCandidates(candidates, rankings = null) {
+                const container = document.getElementById('candidatesContainer');
+                const ref = this.references.find(r => r.id === this.currentEditId);
+
+                if (!candidates || candidates.length === 0) {
+                    container.innerHTML = `
+                        <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                            No results found. Try different queries.
+                        </p>
+                    `;
+                    document.getElementById('sortToggleContainer').style.display = 'none';
+                    return;
+                }
+
+                // Show sort toggle
+                document.getElementById('sortToggleContainer').style.display = 'block';
+
+                // If we have rankings, deduplicate and sort
+                if (rankings && rankings.length > 0) {
+                    // Create ranking map
+                    const rankingMap = new Map();
+                    rankings.forEach(ranking => {
+                        rankingMap.set(ranking.index, ranking);
+                    });
+
+                    // Deduplicate by URL
+                    const urlMap = new Map();
+                    candidates.forEach((result, index) => {
+                        const ranking = rankingMap.get(index) || { primary_score: 0, secondary_score: 0, combined_score: 0 };
+                        if (!urlMap.has(result.url)) {
+                            urlMap.set(result.url, { result, originalIndex: index, ranking });
+                        } else {
+                            const existing = urlMap.get(result.url);
+                            if (ranking.combined_score > existing.ranking.combined_score) {
+                                urlMap.set(result.url, { result, originalIndex: index, ranking });
+                            }
+                        }
+                    });
+
+                    // Sort based on current focus
+                    let sortedResults = Array.from(urlMap.values()).sort((a, b) => {
+                        if (this.sortFocus === 'primary') {
+                            // Sort by primary score first
+                            if (b.ranking.primary_score !== a.ranking.primary_score) {
+                                return b.ranking.primary_score - a.ranking.primary_score;
+                            }
+                            return b.ranking.secondary_score - a.ranking.secondary_score;
+                        } else {
+                            // Sort by secondary score first
+                            if (b.ranking.secondary_score !== a.ranking.secondary_score) {
+                                return b.ranking.secondary_score - a.ranking.secondary_score;
+                            }
+                            return b.ranking.primary_score - a.ranking.primary_score;
+                        }
+                    });
+
+                    // Move designated URL to top based on current focus
+                    if (this.sortFocus === 'primary' && ref.urls.primary) {
+                        const designatedItem = sortedResults.find(item => item.result.url === ref.urls.primary);
+                        if (designatedItem) {
+                            sortedResults = sortedResults.filter(item => item.result.url !== ref.urls.primary);
+                            sortedResults.unshift(designatedItem);
+                        }
+                    } else if (this.sortFocus === 'secondary' && ref.urls.secondary) {
+                        const designatedItem = sortedResults.find(item => item.result.url === ref.urls.secondary);
+                        if (designatedItem) {
+                            sortedResults = sortedResults.filter(item => item.result.url !== ref.urls.secondary);
+                            sortedResults.unshift(designatedItem);
+                        }
+                    }
+
+                    // Render ranked candidates
+                    container.innerHTML = sortedResults.map((item) => {
+                        const r = item.result;
+                        const ranking = item.ranking;
+                        const originalIndex = item.originalIndex;
+
+                        let assignedType = '';
+                        let badgeHtml = '';
+                        if (ref.urls.primary === r.url) {
+                            assignedType = 'primary';
+                            badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                        } else if (ref.urls.secondary === r.url) {
+                            assignedType = 'secondary';
+                            badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                        }
+
+                        const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                        const dualPurpose = ranking.primary_score > 60 && ranking.secondary_score > 60;
+                        const scoreHtml = ranking.primary_score ? `
+                            <div class="candidate-score" title="${ranking.primary_fit || 'N/A'} | ${ranking.secondary_fit || 'N/A'}">
+                                ${dualPurpose ? '⚡ ' : ''}
+                                P:${ranking.primary_score} S:${ranking.secondary_score}
+                                (${ranking.combined_score})
+                            </div>
+                        ` : '';
+
+                        return `
+                            <div class="${itemClass}" data-index="${originalIndex}" data-url="${r.url}">
+                                <div class="candidate-buttons">
+                                    <button onclick="app.selectCandidate(${originalIndex}, 'primary')" class="success">
+                                        Set as Primary
+                                    </button>
+                                    <button onclick="app.selectCandidate(${originalIndex}, 'secondary')">
+                                        Set as Secondary
+                                    </button>
+                                </div>
+                                <div class="candidate-content">
+                                    <div>
+                                        <div class="candidate-header">
+                                            <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                            ${scoreHtml}
+                                        </div>
+                                        <div class="candidate-snippet">${r.snippet}</div>
+                                    </div>
+                                    <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    // No rankings, just display in original order
+                    container.innerHTML = candidates.map((r, i) => {
+                        let assignedType = '';
+                        let badgeHtml = '';
+                        if (ref) {
+                            if (ref.urls.primary === r.url) {
+                                assignedType = 'primary';
+                                badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                            } else if (ref.urls.secondary === r.url) {
+                                assignedType = 'secondary';
+                                badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                            }
+                        }
+
+                        const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                        return `
+                            <div class="${itemClass}" data-index="${i}" data-url="${r.url}">
+                                <div class="candidate-buttons">
+                                    <button onclick="app.selectCandidate(${i}, 'primary')" class="success">
+                                        Set as Primary
+                                    </button>
+                                    <button onclick="app.selectCandidate(${i}, 'secondary')">
+                                        Set as Secondary
+                                    </button>
+                                </div>
+                                <div class="candidate-content">
+                                    <div>
+                                        <div class="candidate-header">
+                                            <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                        </div>
+                                        <div class="candidate-snippet">${r.snippet}</div>
+                                    </div>
+                                    <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
             },
 
             async selectCandidate(index, urlType) {
@@ -2788,99 +3018,11 @@ ${queryInfo ? `${queryInfo}` : ''}
                             this.showToast('⚠️ Manual review required - check Debug tab', 'warning');
                         }
 
-                        // Sort candidates by scores
-                        // First, create a map of index -> ranking for quick lookup
-                        const rankingMap = new Map();
-                        response.rankings.forEach(ranking => {
-                            rankingMap.set(ranking.index, ranking);
-                        });
+                        // Store rankings for the reference
+                        ref.rankings = response.rankings;
 
-                        // Create sorted array of search results with their rankings
-                        const sortedResults = ref.searchResults.map((result, index) => ({
-                            result: result,
-                            originalIndex: index,
-                            ranking: rankingMap.get(index) || { primary_score: 0, secondary_score: 0, combined_score: 0 }
-                        })).sort((a, b) => {
-                            // Sort by primary score first (descending)
-                            if (b.ranking.primary_score !== a.ranking.primary_score) {
-                                return b.ranking.primary_score - a.ranking.primary_score;
-                            }
-                            // Then by secondary score (descending)
-                            return b.ranking.secondary_score - a.ranking.secondary_score;
-                        });
-
-                        // Move AI-designated primary and secondary to the top
-                        const primaryIndex = bestPrimary?.index;
-                        const secondaryIndex = bestSecondary?.index;
-
-                        // Remove designated URLs from their current positions
-                        const primaryItem = sortedResults.find(item => item.originalIndex === primaryIndex);
-                        const secondaryItem = sortedResults.find(item => item.originalIndex === secondaryIndex);
-
-                        if (primaryItem) {
-                            sortedResults.splice(sortedResults.indexOf(primaryItem), 1);
-                        }
-                        if (secondaryItem) {
-                            sortedResults.splice(sortedResults.indexOf(secondaryItem), 1);
-                        }
-
-                        // Add them back at the top
-                        if (secondaryItem) sortedResults.unshift(secondaryItem);
-                        if (primaryItem) sortedResults.unshift(primaryItem);
-
-                        // Re-render candidates in sorted order
-                        const container = document.getElementById('candidatesContainer');
-                        container.innerHTML = sortedResults.map((item, displayIndex) => {
-                            const r = item.result;
-                            const ranking = item.ranking;
-                            const originalIndex = item.originalIndex;
-
-                            // Check if this URL is already assigned
-                            let assignedType = '';
-                            let badgeHtml = '';
-                            if (ref.urls.primary === r.url) {
-                                assignedType = 'primary';
-                                badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
-                            } else if (ref.urls.secondary === r.url) {
-                                assignedType = 'secondary';
-                                badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
-                            }
-
-                            const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
-
-                            // Add score display
-                            const dualPurpose = ranking.primary_score > 60 && ranking.secondary_score > 60;
-                            const scoreHtml = ranking.primary_score ? `
-                                <div class="candidate-score" title="${ranking.primary_fit || 'N/A'} | ${ranking.secondary_fit || 'N/A'}">
-                                    ${dualPurpose ? '⚡ ' : ''}
-                                    P:${ranking.primary_score} S:${ranking.secondary_score}
-                                    (${ranking.combined_score})
-                                </div>
-                            ` : '';
-
-                            return `
-                                <div class="${itemClass}" data-index="${originalIndex}" data-url="${r.url}">
-                                    <div class="candidate-buttons">
-                                        <button onclick="app.selectCandidate(${originalIndex}, 'primary')" class="success">
-                                            Set as Primary
-                                        </button>
-                                        <button onclick="app.selectCandidate(${originalIndex}, 'secondary')">
-                                            Set as Secondary
-                                        </button>
-                                    </div>
-                                    <div class="candidate-content">
-                                        <div>
-                                            <div class="candidate-header">
-                                                <div class="candidate-title">${r.title}${badgeHtml}</div>
-                                                ${scoreHtml}
-                                            </div>
-                                            <div class="candidate-snippet">${r.snippet}</div>
-                                        </div>
-                                        <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
+                        // Render candidates using the new function (supports sort toggle)
+                        this.renderCandidates(ref.searchResults, response.rankings);
 
                         // Add debug panel for autorank results
                         const primaryUrl = bestPrimary ? ref.searchResults[bestPrimary.index]?.url || 'N/A' : 'N/A';
