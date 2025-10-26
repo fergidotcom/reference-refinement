@@ -1,0 +1,3957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Reference Refinement v13.7</title>
+    <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --background: #f5f7fa;
+            --card-background: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: #dcdfe6;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+            --tab-active: #3498db;
+            --tab-inactive: #95a5a6;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.25rem;
+        }
+
+        .mode-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-color);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        /* API Status */
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+        }
+
+        .status-indicator.connected { background: var(--success-color); }
+        .status-indicator.error { background: var(--danger-color); }
+
+        /* API Config Panel */
+        .api-config {
+            background: var(--card-background);
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            display: none;
+        }
+
+        .api-config.visible { display: block; }
+
+        .api-config-inner {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .api-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .api-input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Buttons */
+        button {
+            padding: 0.5rem 1rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active { transform: translateY(0); }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: var(--text-secondary);
+        }
+
+        button.success {
+            background: var(--success-color);
+        }
+
+        button.danger {
+            background: var(--danger-color);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Controls Section */
+        .controls {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-row:last-child { margin-bottom: 0; }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(90deg, var(--primary-color), #34495e);
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Reference Grid */
+        .references-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        /* Reference Card */
+        .reference-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .reference-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-color);
+        }
+
+        .reference-card.finalized {
+            background: #e8f5e9;
+            border-color: var(--success-color);
+        }
+
+        .reference-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        .reference-id {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .finalized-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .override-badge {
+            background: var(--warning-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reference-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .reference-authors {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .reference-year {
+            display: inline-block;
+            background: var(--background);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reference-relevance {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #fff9e6;
+            border-left: 3px solid var(--warning-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-style: italic;
+            border-radius: 4px;
+        }
+
+        .reference-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .reference-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .reference-actions button {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        /* URLs Section */
+        .urls-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .url-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--background);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .url-type {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            background: var(--primary-color);
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .url-type.primary { background: var(--success-color); }
+        .url-type.secondary { background: var(--accent-color); }
+
+        .url-link {
+            flex: 1;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .url-link:hover { text-decoration: underline; }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            padding: 1rem;
+            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.visible { display: flex; }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        /* Tabs */
+        .modal-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            background: var(--background);
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .modal-tab:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .modal-tab.active {
+            color: var(--tab-active);
+            border-bottom-color: var(--tab-active);
+            background: var(--card-background);
+        }
+
+        .modal-body {
+            padding: 0.75rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            background: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #tab1.tab-content.active {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .modal-section {
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-section:last-child { margin-bottom: 0; }
+
+        .modal-section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-select {
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Candidates List */
+        .candidates-list {
+            min-height: 600px;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .candidate-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            background: var(--background);
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            align-items: stretch;
+        }
+
+        .candidate-item:hover {
+            border-color: var(--accent-color);
+        }
+
+        .candidate-item.selected-primary {
+            border-color: var(--success-color);
+            background: #e8f5e9;
+        }
+
+        .candidate-item.selected-secondary {
+            border-color: var(--accent-color);
+            background: #e8f4fd;
+        }
+
+        .candidate-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .candidate-buttons button {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .candidate-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .candidate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.3rem;
+        }
+
+        .candidate-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            flex: 1;
+            margin-right: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .candidate-score {
+            background: var(--warning-color);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .candidate-snippet {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .candidate-url {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            word-break: break-all;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .candidate-url:hover {
+            text-decoration: underline;
+        }
+
+        .candidate-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .candidate-actions button {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* Debug Section */
+        .debug-section {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .debug-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .debug-content {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--text-primary);
+        }
+
+        /* Debug Panels */
+        .debug-panels-container {
+            overflow-y: auto;
+            max-height: 600px;
+            padding: 0.5rem;
+        }
+
+        .debug-panel {
+            background: var(--background);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .debug-panel-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debug-panel-timestamp {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .debug-panel-content {
+            padding: 1rem;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        .debug-panel-content strong {
+            color: var(--primary-color);
+        }
+
+        .debug-panel.error .debug-panel-header {
+            background: var(--error-color);
+        }
+
+        .debug-panel.success .debug-panel-header {
+            background: var(--success-color);
+        }
+
+        .debug-panel.warning .debug-panel-header {
+            background: var(--warning-color);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            max-width: 400px;
+            min-width: 300px;
+        }
+
+        .toast.visible { transform: translateX(0); }
+        .toast.success { background: var(--success-color); }
+        .toast.error { background: var(--danger-color); }
+        .toast.warning { background: var(--warning-color); }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.8;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+
+            .header-controls {
+                justify-content: center;
+            }
+
+            .control-row {
+                flex-direction: column;
+            }
+
+            .control-group {
+                min-width: 100%;
+            }
+
+            .stats-bar {
+                justify-content: space-around;
+            }
+
+            .modal-content {
+                margin: 0.5rem;
+                max-height: calc(100vh - 1rem);
+            }
+
+            .toast-container {
+                left: 1rem;
+                right: 1rem;
+                bottom: 1rem;
+            }
+
+            .toast {
+                max-width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-tabs {
+                flex-direction: column;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .controls,
+            .reference-actions,
+            .modal,
+            .toast-container {
+                display: none !important;
+            }
+
+            .reference-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus Indicators */
+        *:focus-visible {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>Reference Refinement v13.4</h1>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- File Controls -->
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label>Load References (decisions.txt)</label>
+                    <input type="file" id="fileInput" accept=".txt" onchange="app.loadFile(event, 'decisions')">
+                </div>
+                <div class="control-group">
+                    <label>AI Model (for Suggest Queries & AutoRank)</label>
+                    <select id="aiModelSelect" class="form-select" onchange="app.saveModelPreference()">
+                        <option value="claude-3-5-haiku-20241022">Claude Haiku (Fast & Economical)</option>
+                        <option value="claude-sonnet-4-20250514" selected>Claude Sonnet 4 (Best Quality)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Display</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                            <input type="checkbox" id="showFinalizedToggle" onchange="app.applyFilters()">
+                            <span>Show Finalized References</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Dropbox</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button onclick="app.connectDropbox()" id="dropboxConnectBtn" class="secondary">
+                            Connect to Dropbox
+                        </button>
+                        <span id="dropboxStatus" style="font-size: 0.85rem; color: var(--text-secondary);">Not connected</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Session Log</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="app.saveSessionLogToDropbox()" id="saveLogBtn" class="secondary" disabled>
+                            Save Session Log to Dropbox
+                        </button>
+                        <button onclick="app.clearSessionLog()" class="secondary" style="background: var(--danger-color);">
+                            Clear Log
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">Total</span>
+                <span id="statTotal" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Filtered</span>
+                <span id="statFiltered" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">With URLs</span>
+                <span id="statUrls" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Finalized</span>
+                <span id="statFinalized" class="stat-value">0</span>
+            </div>
+            <div class="stat-item" style="color: #f39c12;">
+                <span class="stat-label">AI Overrides</span>
+                <span id="statOverrides" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <!-- References Grid -->
+        <div id="referencesGrid" class="references-grid">
+            <!-- References will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Edit Modal with Tabs -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="flex: 1;">
+                    <h2 class="modal-title">Edit Reference</h2>
+                    <div id="modalReferenceInfo" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem; line-height: 1.3;">
+                        <!-- Reference title and author will be displayed here -->
+                    </div>
+                </div>
+                <button class="modal-close" onclick="app.closeModal()">&times;</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" onclick="app.switchTab(0)">
+                    Suggest & Query
+                </button>
+                <button class="modal-tab" onclick="app.switchTab(1)">
+                    Candidates & Autorank
+                </button>
+                <button class="modal-tab" onclick="app.switchTab(2)">
+                    Debug & Feedback
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab 1: Suggest & Query -->
+                <div id="tab0" class="tab-content active">
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <div class="form-row" style="grid-template-columns: 80px 1fr;">
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <input id="editId" type="text" class="form-input" readonly placeholder="RID">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <input id="editTitle" type="text" class="form-input" placeholder="Title">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <input id="editAuthors" type="text" class="form-input" placeholder="Authors">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <input id="editYear" type="text" class="form-input" placeholder="Year">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <input id="editOther" type="text" class="form-input"
+                                placeholder="Other: Vol. 45(3), pp. 123-145, DOI: 10.xxxx/..., ISBN: 978..., Location: NY">
+                        </div>
+
+                        <!-- Hidden fields for backward compatibility -->
+                        <input id="editVolume" type="hidden">
+                        <input id="editIssue" type="hidden">
+                        <input id="editPages" type="hidden">
+                        <input id="editEdition" type="hidden">
+                        <input id="editDOI" type="hidden">
+                        <input id="editISBN" type="hidden">
+                        <input id="editPublisherPlace" type="hidden">
+                    </div>
+
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Primary URL</label>
+                            <input id="editPrimaryUrl" type="url" class="form-input" placeholder="https://...">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Secondary URL</label>
+                            <input id="editSecondaryUrl" type="url" class="form-input" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <!-- Hidden relevance text field for backend use -->
+                    <textarea id="editRelevanceText" style="display: none;"></textarea>
+
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label">Generated Queries</label>
+                            <textarea id="editQueries" class="form-textarea" rows="11"
+                                placeholder="Click 'Suggest' to generate queries, or enter manually (one per line)..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="app.generateQueries()">
+                                <span id="suggestBtnText">Suggest Queries (AI)</span>
+                            </button>
+                            <button onclick="app.runSearch()" class="success">
+                                <span id="queryBtnText">Query & Search</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Candidates & Autorank -->
+                <div id="tab1" class="tab-content">
+                    <div class="modal-section" style="flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0.5rem 0.75rem;">
+                        <!-- Sort Toggle -->
+                        <div id="sortToggleContainer" style="display: none; margin-bottom: 0.75rem; padding: 0.5rem; background: var(--background); border-radius: 6px;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Sort by:</span>
+                                <div style="display: flex; gap: 0.25rem; background: white; border-radius: 6px; padding: 0.25rem; border: 1px solid var(--border-color);">
+                                    <button id="sortByPrimary" onclick="app.setSortFocus('primary')" style="padding: 0.4rem 1rem; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600; background: var(--accent-color); color: white; transition: all 0.2s;">
+                                        Primary Score
+                                    </button>
+                                    <button id="sortBySecondary" onclick="app.setSortFocus('secondary')" style="padding: 0.4rem 1rem; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: 600; background: transparent; color: var(--text-secondary); transition: all 0.2s;">
+                                        Secondary Score
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="candidatesContainer" style="flex: 1; overflow-y: auto; min-height: 300px; max-height: 450px;">
+                            <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                                No search results yet. Run queries in the "Suggest & Query" tab first.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="modal-section" style="flex-shrink: 0; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <div id="currentUrlsDisplay" style="padding: 0.5rem; background: var(--background); border-radius: 6px; font-size: 0.85rem;">
+                            <div style="margin-bottom: 0.25rem;">
+                                <strong>Primary:</strong> <span id="displayPrimaryUrl" style="color: var(--text-secondary); font-style: italic;">Not set</span>
+                            </div>
+                            <div>
+                                <strong>Secondary:</strong> <span id="displaySecondaryUrl" style="color: var(--text-secondary); font-style: italic;">Not set</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section" style="flex-shrink: 0; padding: 0.5rem 0.75rem;">
+                        <h3 style="margin-bottom: 0.5rem;">Actions</h3>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button onclick="app.rankCandidates()">
+                                <span id="rankBtnText">Autorank Candidates (AI)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Debug & Feedback -->
+                <div id="tab2" class="tab-content" style="display: flex; flex-direction: column; overflow: hidden;">
+                    <!-- User Notes Panel (Always Visible) -->
+                    <div style="padding: 0.75rem; background: #fffbea; border-bottom: 2px solid var(--warning-color); flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.2rem;">📝</span>
+                            <h4 style="margin: 0; font-size: 0.9rem; color: var(--warning-color);">Your Notes (auto-saved to session log)</h4>
+                        </div>
+                        <textarea id="userNotesTextarea"
+                            placeholder="Type observations, questions, or notes here as you work. These will be included in your session log for analysis..."
+                            style="width: 100%; height: 80px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                                   font-size: 0.85rem; padding: 0.5rem; border: 1px solid var(--warning-color);
+                                   border-radius: 4px; background: white; resize: vertical;"
+                            oninput="app.saveUserNote()"></textarea>
+                    </div>
+
+                    <!-- Session Cost Tracker -->
+                    <div id="sessionCostDisplay" style="padding: 0.75rem; background: #e3f2fd; border-bottom: 2px solid var(--accent-color); flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">💰</span>
+                                <h4 style="margin: 0; font-size: 0.9rem; color: var(--accent-color);">Session Cost Tracker</h4>
+                            </div>
+                            <button onclick="app.resetSessionCosts()" class="secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                Reset
+                            </button>
+                        </div>
+                        <div style="font-size: 0.8rem; font-family: monospace; line-height: 1.6;">
+                            <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem;">
+                                <span>Google Searches:</span><span id="costGoogleSearches">0</span>
+                                <span>Claude Query Gen:</span><span id="costClaudeQueryGen">0 calls</span>
+                                <span>Claude Ranking:</span><span id="costClaudeRank">0 calls</span>
+                                <div style="grid-column: 1 / -1; height: 1px; background: var(--border-color); margin: 0.25rem 0;"></div>
+                                <span><strong>Google Cost:</strong></span><span id="costGoogle"><strong>$0.0000</strong></span>
+                                <span><strong>Claude Cost:</strong></span><span id="costClaude"><strong>$0.0000</strong></span>
+                                <div style="grid-column: 1 / -1; height: 1px; background: var(--accent-color); margin: 0.25rem 0;"></div>
+                                <span><strong>Total Session:</strong></span><span id="costTotal"><strong>$0.0000</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="debugPanelsContainer" class="debug-panels-container" style="flex: 1; overflow-y: auto;">
+                        <!-- Panels will be dynamically added here -->
+                    </div>
+
+                    <div style="padding: 0.5rem 0.75rem; border-top: 2px solid var(--border-color); background: var(--background);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;">Full Session Log (Copy/Paste to Save)</h4>
+                            <button onclick="app.copySessionLog()" class="secondary" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">
+                                Copy to Clipboard
+                            </button>
+                        </div>
+                        <textarea id="sessionLogTextarea" readonly
+                            style="width: 100%; height: 120px; font-family: monospace; font-size: 0.75rem;
+                                   padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;
+                                   background: #f8f9fa; resize: vertical;"
+                            placeholder="Session log will appear here as you work..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="app.doneEditing()" class="secondary">Done</button>
+                <button onclick="app.saveReference()" class="success">Save Changes</button>
+                <button onclick="app.finalizeReference()" style="background: var(--warning-color);">Finalize</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Override Annotation Modal -->
+    <div id="overrideModal" class="modal" style="z-index: 1100;">
+        <div class="modal-content" style="max-width: 600px; background: var(--card-background);">
+            <div class="modal-header">
+                <h2 class="modal-title">Why Did You Make This Change?</h2>
+                <button class="modal-close" onclick="app.closeOverrideModal(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <div id="overrideDetails" style="background: var(--background); padding: 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+                    <div class="form-group">
+                        <label class="form-label">Your explanation (optional but encouraged):</label>
+                        <textarea id="overrideAnnotation" class="form-textarea" rows="4"
+                            placeholder="Example: 'AI query was too generic, needed to focus on the MAGA context' or 'University press is more authoritative than Wikipedia for academic work'"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="app.closeOverrideModal(false)" class="secondary">Skip</button>
+                <button onclick="app.closeOverrideModal(true)" class="success">Log & Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div id="autoSaveIndicator" style="position: fixed; bottom: 20px; right: 20px; background: var(--success-color); color: white; padding: 0.5rem 1rem; border-radius: 6px; box-shadow: var(--shadow-md); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 2000;">
+        ✓ Auto-saved
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JavaScript Application -->
+    <script>
+        // Application State
+        const app = {
+            references: [],
+            finalizedReferences: [],
+            filteredReferences: [],
+            currentEditId: null,
+            currentTab: 0,
+            apiBaseUrl: '',
+            debugPanels: [],  // Array of debug panels for current reference
+            currentSystemLogPanel: null,  // Track current system log panel for consolidation
+            overrideLog: [],  // Track query and ranking overrides
+            aiSuggestedQuery: null,  // Store AI-suggested query for comparison
+            aiRankedResults: null,  // Store AI ranking results for comparison
+            autoSaveTimeout: null,  // Debounce timer for auto-save
+            userNoteTimeout: null,  // Debounce timer for user notes
+            sortFocus: 'primary',  // Track sort mode: 'primary' or 'secondary'
+
+            // Cost tracking
+            sessionCosts: {
+                googleSearches: 0,
+                claudeQueryGenCalls: 0,
+                claudeQueryGenTokensIn: 0,
+                claudeQueryGenTokensOut: 0,
+                claudeRankCalls: 0,
+                claudeRankTokensIn: 0,
+                claudeRankTokensOut: 0
+            },
+
+            // Dropbox integration
+            dropboxAppKey: 'q4ldgkwjmhxv6w2',
+            dropboxAccessToken: null,
+            dropboxRefreshToken: null,
+            dropboxTokenExpiry: null,
+            dropboxClient: null,
+            justReconnectedDropbox: false,  // Flag to prevent data loss on reconnect
+
+            // Initialize
+            async init() {
+                console.log('[INIT] Starting application initialization...');
+
+                // Check for OAuth callback
+                await this.handleDropboxOAuthCallback();
+
+                // Load Dropbox tokens
+                this.dropboxAccessToken = localStorage.getItem('rr_dropbox_token');
+                this.dropboxRefreshToken = localStorage.getItem('rr_dropbox_refresh_token');
+                const expiryStr = localStorage.getItem('rr_dropbox_token_expiry');
+                this.dropboxTokenExpiry = expiryStr ? parseInt(expiryStr) : null;
+
+                console.log('[INIT] Dropbox token:', this.dropboxAccessToken ? 'Found' : 'Not found');
+                console.log('[INIT] Refresh token:', this.dropboxRefreshToken ? 'Found' : 'Not found');
+
+                if (this.dropboxAccessToken) {
+                    // Check if token needs refresh
+                    await this.ensureValidDropboxToken();
+                    this.initializeDropbox(this.dropboxAccessToken);
+                    console.log('[INIT] Dropbox client initialized');
+                }
+
+                // Load override log from localStorage
+                const savedLog = localStorage.getItem('rr_override_log');
+                if (savedLog) {
+                    try {
+                        this.overrideLog = JSON.parse(savedLog);
+                    } catch (e) {
+                        this.overrideLog = [];
+                    }
+                }
+
+                // Try to load decisions.txt from Dropbox first, fallback to localStorage
+                // BUT: Skip auto-load if we just reconnected (to preserve in-memory changes)
+                if (this.dropboxClient && !this.justReconnectedDropbox) {
+                    console.log('[INIT] Attempting to load decisions.txt from Dropbox...');
+                    try {
+                        const content = await this.loadFromDropbox('/decisions.txt');
+                        if (content) {
+                            console.log('[INIT] Loaded decisions.txt from Dropbox, size:', content.length);
+                            try {
+                                this.parseDecisions(content);
+                                this.applyFilters();
+                                this.showToast('Auto-loaded from Dropbox', 'success');
+                                console.log('[INIT] Successfully parsed and displayed decisions.txt from Dropbox');
+                                return; // Success, exit early
+                            } catch (e) {
+                                console.error('[INIT] Failed to parse Dropbox content:', e);
+                                this.showToast('Failed to parse Dropbox file', 'error');
+                            }
+                        } else {
+                            console.log('[INIT] No content returned from Dropbox (file may not exist)');
+                        }
+                    } catch (e) {
+                        console.error('[INIT] Error loading from Dropbox:', e);
+                    }
+                } else if (this.justReconnectedDropbox) {
+                    console.log('[INIT] Skipping auto-load from Dropbox (just reconnected - preserving in-memory data)');
+                    this.justReconnectedDropbox = false;  // Reset flag
+                    return;  // Keep current in-memory state
+                }
+
+                // Fallback to localStorage if Dropbox failed or not connected
+                console.log('[INIT] Falling back to localStorage...');
+                const savedDecisions = localStorage.getItem('rr_decisions_backup');
+                const savedTimestamp = localStorage.getItem('rr_decisions_timestamp');
+                if (savedDecisions) {
+                    try {
+                        this.parseDecisions(savedDecisions);
+                        this.applyFilters();
+                        const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'Unknown';
+                        this.showToast(`Auto-loaded backup from ${timestamp}`, 'success');
+                        console.log('[INIT] Successfully auto-loaded from localStorage');
+                    } catch (e) {
+                        console.error('[INIT] Failed to auto-load from localStorage:', e);
+                    }
+                } else {
+                    console.log('[INIT] No backup found in localStorage');
+                }
+
+                // Load saved AI model preference (default to Sonnet 4)
+                const savedModel = localStorage.getItem('rr_ai_model') || 'claude-sonnet-4-20250514';
+                const modelSelect = document.getElementById('aiModelSelect');
+                if (modelSelect) {
+                    modelSelect.value = savedModel;
+                }
+
+                // Setup event listeners
+                this.setupEventListeners();
+            },
+
+            // Event Listeners
+            setupEventListeners() {
+                // Close modal on ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeModal();
+                });
+
+                // Close modal on background click
+                document.getElementById('editModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'editModal') this.closeModal();
+                });
+            },
+
+
+            // API Client
+            async apiRequest(endpoint, options = {}) {
+                // When in standalone mode (no custom backend), use absolute Netlify URL
+                // because the HTML may be served from claude.ai artifacts
+                const NETLIFY_URL = 'https://rrv521-1760738877.netlify.app';
+
+                let url;
+                if (this.apiBaseUrl) {
+                    // Advanced mode - use custom backend
+                    url = `${this.apiBaseUrl}${endpoint}`;
+                } else {
+                    // Standalone mode - use absolute Netlify URL
+                    // Convert /api/ to /.netlify/functions/
+                    const functionPath = endpoint.replace('/api/', '/');
+                    url = `${NETLIFY_URL}/.netlify/functions${functionPath}`;
+                }
+
+                const defaultOptions = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                try {
+                    console.log('API Request:', url, options);
+                    const response = await fetch(url, { ...defaultOptions, ...options });
+
+                    console.log('API Response status:', response.status);
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('API Error response:', errorText);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('API Response data:', data);
+                    return data;
+                } catch (error) {
+                    console.error('API request failed:', error);
+                    throw error;
+                }
+            },
+
+
+            // File Operations
+            loadFile(event, fileType) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        if (fileType === 'decisions') {
+                            this.parseDecisions(e.target.result);
+                            this.showToast(`Loaded ${this.references.length} references`, 'success');
+                        } else if (fileType === 'final') {
+                            this.parseFinal(e.target.result);
+                            this.showToast(`Loaded ${this.finalizedReferences.length} finalized references`, 'success');
+                        }
+                        this.applyFilters();
+                    } catch (error) {
+                        this.showToast('Failed to parse file', 'error');
+                        console.error('Parse error:', error);
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            parseDecisions(content) {
+                this.references = [];
+                const lines = content.split('\n');
+                let currentRef = null;
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+
+                    // Reference ID line
+                    if (trimmed.startsWith('[') && trimmed.includes(']') && trimmed.match(/\[\d+\]/)) {
+                        if (currentRef) this.references.push(currentRef);
+
+                        const idMatch = trimmed.match(/\[(\d+)\]/);
+                        if (idMatch) {
+                            currentRef = {
+                                id: idMatch[1],
+                                text: trimmed,
+                                finalized: false,
+                                relevance_text: '',
+                                urls: {
+                                    primary: '',
+                                    secondary: '',
+                                    tertiary: ''
+                                    },
+                                queries: [],
+                                searchResults: [],
+                                // Bibliographic fields
+                                title: '',
+                                authors: '',
+                                year: '',
+                                container_title: '',
+                                publisher: '',
+                                publisher_place: '',
+                                volume: '',
+                                issue: '',
+                                pages: '',
+                                edition: '',
+                                doi: '',
+                                isbn: ''
+                            };
+
+                            // Extract basic info
+                            this.extractReferenceInfo(currentRef);
+                        }
+                    }
+                    // FINALIZED flag
+                    else if (trimmed === '[FINALIZED]' && currentRef) {
+                        currentRef.finalized = true;
+                    }
+                    // URL lines
+                    else if (trimmed.startsWith('Primary URL:') && currentRef) {
+                        currentRef.urls.primary = trimmed.replace('Primary URL:', '').trim();
+                    }
+                    else if (trimmed.startsWith('Secondary URL:') && currentRef) {
+                        currentRef.urls.secondary = trimmed.replace('Secondary URL:', '').trim();
+                    }
+                    // Relevance text (not a rating)
+                    else if (trimmed.startsWith('Relevance:') && currentRef) {
+                        const relevanceText = trimmed.replace('Relevance:', '').trim();
+                        // Only store if it's not a rating keyword
+                        if (!['high', 'medium', 'low', 'remove', 'unknown'].includes(relevanceText.toLowerCase())) {
+                            currentRef.relevance_text = relevanceText;
+                        }
+                    }
+                    // Query lines
+                    else if (trimmed.startsWith('Q:') && currentRef) {
+                        currentRef.queries.push(trimmed.substring(2).trim());
+                    }
+                }
+
+                if (currentRef) this.references.push(currentRef);
+            },
+
+            parseFinal(content) {
+                this.finalizedReferences = [];
+                const lines = content.split('\n');
+                let currentRef = null;
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+
+                    if (trimmed.startsWith('[') && trimmed.includes(']')) {
+                        if (currentRef) this.finalizedReferences.push(currentRef);
+
+                        const idMatch = trimmed.match(/\[(\d+)\]/);
+                        if (idMatch) {
+                            currentRef = {
+                                id: idMatch[1],
+                                text: trimmed,
+                                finalized: true,
+                                relevance_text: '',
+                                urls: { primary: '', secondary: '', tertiary: '' },
+                                queries: [],
+                                searchResults: [],
+                                title: '', authors: '', year: '',
+                                container_title: '', publisher: '', publisher_place: '',
+                                volume: '', issue: '', pages: '', edition: '',
+                                doi: '', isbn: ''
+                            };
+                            this.extractReferenceInfo(currentRef);
+                        }
+                    }
+                    else if (trimmed.startsWith('Primary URL:') && currentRef) {
+                        currentRef.urls.primary = trimmed.replace('Primary URL:', '').trim();
+                    }
+                    else if (trimmed.startsWith('Secondary URL:') && currentRef) {
+                        currentRef.urls.secondary = trimmed.replace('Secondary URL:', '').trim();
+                    }
+                    // Relevance text
+                    else if (trimmed.startsWith('Relevance:') && currentRef) {
+                        const relevanceText = trimmed.replace('Relevance:', '').trim();
+                        if (!['high', 'medium', 'low', 'remove', 'unknown'].includes(relevanceText.toLowerCase())) {
+                            currentRef.relevance_text = relevanceText;
+                        }
+                    }
+                }
+
+                if (currentRef) this.finalizedReferences.push(currentRef);
+
+                // Merge finalized references into main references
+                for (const finalRef of this.finalizedReferences) {
+                    const existingRef = this.references.find(r => r.id === finalRef.id);
+                    if (existingRef) {
+                        existingRef.finalized = true;
+                        existingRef.urls = finalRef.urls;
+                    } else {
+                        this.references.push(finalRef);
+                    }
+                }
+            },
+
+            extractReferenceInfo(ref) {
+                // Simplified parser - only extract RID, Authors, Year, Title
+                // Everything else goes in "Other" field
+                // Format: [RID] Authors (Year). Title. Other bibliographic info. Relevance: text FLAGS[...] URLs[...]
+
+                const text = ref.text;
+
+                // 1. Find "Relevance:" as anchor point
+                const relevanceIndex = text.indexOf('Relevance:');
+
+                // 2. Extract bibliographic section (everything before "Relevance:")
+                let biblioSection = '';
+                if (relevanceIndex > 0) {
+                    // Remove [RID] from start to get pure biblio section
+                    biblioSection = text.substring(0, relevanceIndex).replace(/^\[\d+\]\s*/, '').trim();
+                } else {
+                    // No "Relevance:" found - treat everything except FLAGS/URLs as biblio
+                    const flagsIndex = text.indexOf('FLAGS[');
+                    const urlIndex = text.indexOf('PRIMARY_URL[');
+                    const endIndex = flagsIndex > 0 ? flagsIndex : (urlIndex > 0 ? urlIndex : text.length);
+                    biblioSection = text.substring(0, endIndex).replace(/^\[\d+\]\s*/, '').trim();
+                }
+
+                // 3. Extract relevance text (between "Relevance:" and FLAGS/URLs/EOL)
+                if (relevanceIndex > 0) {
+                    const afterRelevance = text.substring(relevanceIndex + 10); // Skip "Relevance:"
+                    const flagsMatch = afterRelevance.match(/^(.*?)(?=FLAGS\[|PRIMARY_URL\[|SECONDARY_URL\[|$)/);
+                    ref.relevance_text = flagsMatch ? flagsMatch[1].trim() : afterRelevance.trim();
+                } else {
+                    ref.relevance_text = '';
+                }
+
+                // 4. Extract FLAGS
+                const flagsMatch = text.match(/FLAGS\[([^\]]*)\]/);
+                if (flagsMatch) {
+                    const flagsContent = flagsMatch[1];
+                    const flags = flagsContent.split(',').map(f => f.trim());
+                    ref.finalized = flags.includes('FINALIZED');
+                } else {
+                    ref.finalized = false;
+                }
+
+                // 5. Extract URLs
+                const primaryUrlMatch = text.match(/PRIMARY_URL\[([^\]]*)\]/);
+                if (primaryUrlMatch) {
+                    ref.urls.primary = primaryUrlMatch[1].trim();
+                }
+
+                const secondaryUrlMatch = text.match(/SECONDARY_URL\[([^\]]*)\]/);
+                if (secondaryUrlMatch) {
+                    ref.urls.secondary = secondaryUrlMatch[1].trim();
+                }
+
+                const tertiaryUrlMatch = text.match(/TERTIARY_URL\[([^\]]*)\]/);
+                if (tertiaryUrlMatch) {
+                    ref.urls.tertiary = tertiaryUrlMatch[1].trim();
+                }
+
+                // 6. Parse only RID, Authors, Year, Title - everything else is "Other"
+                this.parseSimplifiedBiblio(ref, biblioSection);
+            },
+
+            parseSimplifiedBiblio(ref, biblioSection) {
+                // Simplified parsing: RID, Authors, Year, Title only
+                // Everything else goes into "Other" field
+
+                // Extract Year: (YYYY)
+                const yearMatch = biblioSection.match(/\((\d{4})\)/);
+                ref.year = yearMatch ? yearMatch[1] : '';
+
+                if (yearMatch) {
+                    // Authors: Everything before (Year)
+                    const beforeYear = biblioSection.substring(0, biblioSection.indexOf(yearMatch[0])).trim();
+                    ref.authors = beforeYear.replace(/[,;]\s*$/, '').trim();
+
+                    // Title: First sentence after (Year). up to next period
+                    // BUT: Skip periods inside edition markers like (2nd ed.), (Rev. ed.), etc.
+                    const afterYear = biblioSection.substring(biblioSection.indexOf(yearMatch[0]) + yearMatch[0].length);
+                    const afterYearCleaned = afterYear.replace(/^[\.\s,;]+/, ''); // Remove leading punctuation
+
+                    // Find the real title boundary - skip periods inside parentheses with edition keywords
+                    let titleEnd = -1;
+                    let parenDepth = 0;
+                    let inEditionParen = false;
+
+                    for (let i = 0; i < afterYearCleaned.length; i++) {
+                        const char = afterYearCleaned[i];
+
+                        if (char === '(') {
+                            parenDepth++;
+                            // Check if this paren contains edition keywords
+                            const lookAhead = afterYearCleaned.substring(i, Math.min(i + 20, afterYearCleaned.length));
+                            if (/\((\d+(st|nd|rd|th))?\s*(ed\.|edition|rev\.|revised)/i.test(lookAhead)) {
+                                inEditionParen = true;
+                            }
+                        } else if (char === ')') {
+                            parenDepth--;
+                            if (parenDepth === 0) {
+                                inEditionParen = false;
+                            }
+                        } else if (char === '.' && parenDepth === 0 && !inEditionParen) {
+                            // Found a period outside parentheses - this is likely the title boundary
+                            titleEnd = i;
+                            break;
+                        }
+                    }
+
+                    if (titleEnd > 0) {
+                        ref.title = afterYearCleaned.substring(0, titleEnd).trim();
+
+                        // Other: Everything after title
+                        const afterTitle = afterYearCleaned.substring(titleEnd + 1).trim();
+                        ref.other = afterTitle.replace(/[.\s]+$/, '').trim(); // Remove trailing periods/spaces
+                    } else {
+                        // No period found - entire text after year is title
+                        ref.title = afterYearCleaned.trim();
+                        ref.other = '';
+                    }
+                } else {
+                    // No year found - treat first segment as author, rest as other
+                    const firstPeriod = biblioSection.indexOf('.');
+                    if (firstPeriod > 0) {
+                        ref.authors = biblioSection.substring(0, firstPeriod).trim();
+                        ref.other = biblioSection.substring(firstPeriod + 1).trim();
+                    } else {
+                        // Just one segment - must be author (like "Amnesty International")
+                        ref.authors = biblioSection.trim();
+                        ref.other = '';
+                    }
+                    ref.title = '';
+                }
+
+                // Clear all the individual fields - we're not using them anymore
+                ref.container_title = '';
+                ref.publisher = '';
+                ref.volume = '';
+                ref.issue = '';
+                ref.pages = '';
+                ref.edition = '';
+                ref.doi = '';
+                ref.isbn = '';
+                ref.publisher_place = '';
+            },
+
+            exportFile() {
+                // Export all references to decisions.txt format
+                let content = '';
+                const filename = 'decisions.txt';
+
+                for (const ref of this.references) {
+                    content += this.generateDecisionsEntry(ref, ref.finalized) + '\n';
+                }
+
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showToast('decisions.txt saved', 'success');
+
+                // Also save to localStorage as backup
+                localStorage.setItem('rr_decisions_backup', content);
+                localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
+            },
+
+            exportOverrideLog() {
+                // Export override log in JSONL format
+                if (!this.overrideLog || this.overrideLog.length === 0) {
+                    this.showToast('No overrides logged yet', 'info');
+                    return;
+                }
+
+                const content = this.overrideLog.map(entry => JSON.stringify(entry)).join('\n');
+                const filename = `override_log_${new Date().toISOString().split('T')[0]}.jsonl`;
+
+                const blob = new Blob([content], { type: 'application/x-jsonlines' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showToast('Override log exported', 'success');
+            },
+
+            autoSave() {
+                // Debounced auto-save to localStorage
+                clearTimeout(this.autoSaveTimeout);
+                this.autoSaveTimeout = setTimeout(() => {
+                    // Save references to localStorage
+                    const content = this.references.map(ref =>
+                        this.generateDecisionsEntry(ref, ref.finalized)
+                    ).join('\n');
+
+                    localStorage.setItem('rr_decisions_backup', content);
+                    localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
+
+                    // Save override log
+                    localStorage.setItem('rr_override_log', JSON.stringify(this.overrideLog));
+
+                    console.log('Auto-saved to localStorage');
+
+                    // Show auto-save indicator
+                    this.showAutoSaveIndicator();
+                }, 500);  // 500ms debounce
+            },
+
+            showAutoSaveIndicator() {
+                const indicator = document.getElementById('autoSaveIndicator');
+                indicator.style.opacity = '1';
+                setTimeout(() => {
+                    indicator.style.opacity = '0';
+                }, 2000);
+            },
+
+            showOverrideModal(details, onComplete) {
+                // Show modal with override details
+                document.getElementById('overrideDetails').innerHTML = details;
+                document.getElementById('overrideAnnotation').value = '';
+                document.getElementById('overrideModal').classList.add('visible');
+
+                // Store callback for when modal closes
+                this.overrideModalCallback = onComplete;
+            },
+
+            closeOverrideModal(shouldLog) {
+                const annotation = document.getElementById('overrideAnnotation').value.trim();
+                document.getElementById('overrideModal').classList.remove('visible');
+
+                // Call the stored callback with the result
+                if (this.overrideModalCallback) {
+                    this.overrideModalCallback(shouldLog ? annotation : null);
+                    this.overrideModalCallback = null;
+                }
+            },
+
+            logOverride(overrideData) {
+                // Add override to log
+                const entry = {
+                    timestamp: new Date().toISOString(),
+                    ...overrideData
+                };
+
+                this.overrideLog.push(entry);
+
+                // Save to localStorage
+                localStorage.setItem('rr_override_log', JSON.stringify(this.overrideLog));
+
+                // Update stats to reflect new override count
+                this.updateStats();
+
+                // Log to console for debugging
+                console.log('Override logged:', entry);
+            },
+
+            saveModelPreference() {
+                const model = document.getElementById('aiModelSelect').value;
+                localStorage.setItem('rr_ai_model', model);
+                console.log('Saved AI model preference:', model);
+            },
+
+            getSelectedModel() {
+                return document.getElementById('aiModelSelect').value;
+            },
+
+            // Cost Tracking Functions
+            calculateGoogleCost() {
+                // Google Custom Search: $5 per 1,000 queries (paid tier)
+                return (this.sessionCosts.googleSearches * 0.005).toFixed(4);
+            },
+
+            calculateClaudeCost() {
+                // Claude Sonnet 4 pricing (as of Jan 2025):
+                // Input: $0.003 per 1K tokens
+                // Output: $0.015 per 1K tokens
+                const totalInputTokens = this.sessionCosts.claudeQueryGenTokensIn + this.sessionCosts.claudeRankTokensIn;
+                const totalOutputTokens = this.sessionCosts.claudeQueryGenTokensOut + this.sessionCosts.claudeRankTokensOut;
+
+                const inputCost = (totalInputTokens / 1000) * 0.003;
+                const outputCost = (totalOutputTokens / 1000) * 0.015;
+
+                return (inputCost + outputCost).toFixed(4);
+            },
+
+            calculateTotalSessionCost() {
+                const googleCost = parseFloat(this.calculateGoogleCost());
+                const claudeCost = parseFloat(this.calculateClaudeCost());
+                return (googleCost + claudeCost).toFixed(4);
+            },
+
+            resetSessionCosts() {
+                this.sessionCosts = {
+                    googleSearches: 0,
+                    claudeQueryGenCalls: 0,
+                    claudeQueryGenTokensIn: 0,
+                    claudeQueryGenTokensOut: 0,
+                    claudeRankCalls: 0,
+                    claudeRankTokensIn: 0,
+                    claudeRankTokensOut: 0
+                };
+            },
+
+            trackGoogleSearch(queryCount = 1) {
+                this.sessionCosts.googleSearches += queryCount;
+                this.updateCostDisplay();
+            },
+
+            trackClaudeQueryGen(inputTokens, outputTokens) {
+                this.sessionCosts.claudeQueryGenCalls++;
+                this.sessionCosts.claudeQueryGenTokensIn += inputTokens || 0;
+                this.sessionCosts.claudeQueryGenTokensOut += outputTokens || 0;
+                this.updateCostDisplay();
+            },
+
+            trackClaudeRank(inputTokens, outputTokens) {
+                this.sessionCosts.claudeRankCalls++;
+                this.sessionCosts.claudeRankTokensIn += inputTokens || 0;
+                this.sessionCosts.claudeRankTokensOut += outputTokens || 0;
+                this.updateCostDisplay();
+            },
+
+            updateCostDisplay() {
+                // Update the cost display in Debug tab
+                const googleSearchEl = document.getElementById('costGoogleSearches');
+                const claudeQueryGenEl = document.getElementById('costClaudeQueryGen');
+                const claudeRankEl = document.getElementById('costClaudeRank');
+                const googleCostEl = document.getElementById('costGoogle');
+                const claudeCostEl = document.getElementById('costClaude');
+                const totalCostEl = document.getElementById('costTotal');
+
+                if (googleSearchEl) googleSearchEl.textContent = this.sessionCosts.googleSearches;
+                if (claudeQueryGenEl) claudeQueryGenEl.textContent = `${this.sessionCosts.claudeQueryGenCalls} calls`;
+                if (claudeRankEl) claudeRankEl.textContent = `${this.sessionCosts.claudeRankCalls} calls`;
+                if (googleCostEl) googleCostEl.innerHTML = `<strong>$${this.calculateGoogleCost()}</strong>`;
+                if (claudeCostEl) claudeCostEl.innerHTML = `<strong>$${this.calculateClaudeCost()}</strong>`;
+                if (totalCostEl) totalCostEl.innerHTML = `<strong>$${this.calculateTotalSessionCost()}</strong>`;
+            },
+
+            // Filtering and Display
+            applyFilters() {
+                // Simplified filtering: Show only non-finalized by default, unless checkbox is checked
+                const showFinalized = document.getElementById('showFinalizedToggle')?.checked || false;
+
+                this.filteredReferences = this.references.filter(ref => {
+                    // Filter by finalized status
+                    if (!showFinalized && ref.finalized) return false;
+                    return true;
+                });
+
+                // Always sort by ID ascending
+                this.filteredReferences.sort((a, b) => {
+                    const aId = parseInt(a.id) || 0;
+                    const bId = parseInt(b.id) || 0;
+                    return aId - bId;
+                });
+
+                // Display
+                this.renderReferences();
+                this.updateStats();
+            },
+
+
+            renderReferences() {
+                const grid = document.getElementById('referencesGrid');
+                grid.innerHTML = '';
+
+                for (const ref of this.filteredReferences) {
+                    const card = this.createReferenceCard(ref);
+                    grid.appendChild(card);
+                }
+            },
+
+            createReferenceCard(ref) {
+                const card = document.createElement('div');
+                card.className = 'reference-card' + (ref.finalized ? ' finalized' : '');
+
+                // Check if this reference has any overrides
+                const overrideCount = this.overrideLog.filter(o => o.rid === ref.id).length;
+
+                // Build compact meta info (inline with bullets)
+                let metaHtml = '';
+                const metaParts = [];
+                if (ref.container_title) metaParts.push(`${ref.container_title}`);
+                if (ref.publisher) metaParts.push(ref.publisher);
+                if (ref.volume) metaParts.push(`Vol. ${ref.volume}${ref.issue ? '(' + ref.issue + ')' : ''}`);
+                if (ref.pages) metaParts.push(`pp. ${ref.pages}`);
+                if (ref.isbn) metaParts.push(`ISBN: ${ref.isbn}`);
+                if (metaParts.length > 0) {
+                    metaHtml = `<div class="reference-meta">${metaParts.join(' • ')}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="reference-header">
+                        <span class="reference-id">#${ref.id}</span>
+                        ${ref.finalized ? '<span class="finalized-badge">Finalized</span>' : ''}
+                        ${overrideCount > 0 ? `<span class="override-badge" title="${overrideCount} AI override${overrideCount > 1 ? 's' : ''}">🔄 ${overrideCount}</span>` : ''}
+                    </div>
+                    <div class="reference-content">
+                        <h3>${ref.title || 'Untitled'}</h3>
+                        <div class="reference-authors">${ref.authors || 'Unknown authors'}</div>
+                        ${ref.year ? `<span class="reference-year">${ref.year}</span>` : ''}
+                        ${metaHtml}
+                        ${ref.relevance_text ? `<div class="reference-relevance">${ref.relevance_text}</div>` : ''}
+                    </div>
+                    ${this.createUrlsSection(ref)}
+                    <div class="reference-actions">
+                        <button onclick="app.editReference('${ref.id}')">Edit</button>
+                        ${ref.urls.primary ? `<button onclick="window.open('${ref.urls.primary}', '_blank')" class="success">Primary URL</button>` : ''}
+                        ${ref.urls.secondary ? `<button onclick="window.open('${ref.urls.secondary}', '_blank')" style="background: var(--accent-color);">Secondary URL</button>` : ''}
+                    </div>
+                `;
+                return card;
+            },
+
+            createUrlsSection(ref) {
+                const urls = [];
+                if (ref.urls.primary) urls.push({ type: 'primary', label: 'Primary', url: ref.urls.primary });
+                if (ref.urls.secondary) urls.push({ type: 'secondary', label: 'Secondary', url: ref.urls.secondary });
+
+                if (urls.length === 0) return '';
+
+                const urlsHtml = urls.map(u => `
+                    <div class="url-item">
+                        <span class="url-type ${u.type}">${u.label}</span>
+                        <a href="${u.url}" target="_blank" class="url-link">${u.url}</a>
+                    </div>
+                `).join('');
+
+                return `<div class="urls-section">${urlsHtml}</div>`;
+            },
+
+            updateStats() {
+                document.getElementById('statTotal').textContent = this.references.length;
+                document.getElementById('statFiltered').textContent = this.filteredReferences.length;
+
+                const withUrls = this.references.filter(r => r.urls.primary || r.urls.secondary).length;
+                const finalized = this.references.filter(r => r.finalized).length;
+
+                document.getElementById('statUrls').textContent = withUrls;
+                document.getElementById('statFinalized').textContent = finalized;
+                document.getElementById('statOverrides').textContent = this.overrideLog.length;
+            },
+
+            // Tab Management
+            switchTab(tabIndex) {
+                this.currentTab = tabIndex;
+
+                // Update tab buttons
+                const tabs = document.querySelectorAll('.modal-tab');
+                tabs.forEach((tab, index) => {
+                    if (index === tabIndex) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+
+                // Update tab content
+                const contents = document.querySelectorAll('.tab-content');
+                contents.forEach((content, index) => {
+                    if (index === tabIndex) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            },
+
+            // Edit Modal
+            editReference(id) {
+                const ref = this.references.find(r => r.id === id);
+                if (!ref) return;
+
+                this.currentEditId = id;
+                this.debugPanels = [];
+                this.sortFocus = 'primary';  // Reset sort focus to primary
+
+                // Hide sort toggle initially (will show when candidates are loaded)
+                document.getElementById('sortToggleContainer').style.display = 'none';
+
+                // Populate form - Tab 1 (simplified)
+                document.getElementById('editId').value = ref.id;
+                document.getElementById('editTitle').value = ref.title || '';
+                document.getElementById('editAuthors').value = ref.authors || '';
+                document.getElementById('editYear').value = ref.year || '';
+                document.getElementById('editOther').value = ref.other || '';
+                document.getElementById('editPrimaryUrl').value = ref.urls.primary || '';
+                document.getElementById('editSecondaryUrl').value = ref.urls.secondary || '';
+                document.getElementById('editRelevanceText').value = ref.relevance_text || '';
+                document.getElementById('editQueries').value = ref.queries.join('\n');
+
+                // Update modal header with reference info
+                const modalReferenceInfo = document.getElementById('modalReferenceInfo');
+                let refInfo = '';
+                if (ref.authors) refInfo += `<strong>${ref.authors}</strong>`;
+                if (ref.year) refInfo += ` (${ref.year})`;
+                if (ref.title) {
+                    if (refInfo) refInfo += ' — ';
+                    refInfo += `<em>${ref.title}</em>`;
+                }
+                modalReferenceInfo.innerHTML = refInfo || '<span style="font-style: italic;">No title/author info</span>';
+
+                // Tab 2 - Clear candidates and populate URL displays
+                document.getElementById('candidatesContainer').innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                        No search results yet. Run queries in the "Suggest & Query" tab first.
+                    </p>
+                `;
+
+                // Update Current URLs display
+                const primaryUrlSpan = document.getElementById('displayPrimaryUrl');
+                const secondaryUrlSpan = document.getElementById('displaySecondaryUrl');
+
+                if (ref.urls.primary) {
+                    primaryUrlSpan.innerHTML = `<a href="${ref.urls.primary}" target="_blank" style="color: var(--success-color); text-decoration: none;">${ref.urls.primary}</a>`;
+                } else {
+                    primaryUrlSpan.innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Not set</span>';
+                }
+
+                if (ref.urls.secondary) {
+                    secondaryUrlSpan.innerHTML = `<a href="${ref.urls.secondary}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${ref.urls.secondary}</a>`;
+                } else {
+                    secondaryUrlSpan.innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Not set</span>';
+                }
+
+                // Tab 3 - Initialize Debug Panels
+                this.initializeDebugPanels(ref);
+
+                // Switch to first tab and show modal
+                this.switchTab(0);
+                document.getElementById('editModal').classList.add('visible');
+            },
+
+            doneEditing() {
+                // Log debug panels to session log (if needed)
+                // The panels are already being logged as they're created
+                // Just close the modal
+                this.closeModal();
+            },
+
+            closeModal() {
+                document.getElementById('editModal').classList.remove('visible');
+                this.currentEditId = null;
+                this.currentSystemLogPanel = null;  // Reset for next edit session
+            },
+
+            saveReference() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref) return;
+
+                // Update reference from Tab 1 fields (simplified - no parsing)
+                ref.title = document.getElementById('editTitle').value;
+                ref.authors = document.getElementById('editAuthors').value;
+                ref.year = document.getElementById('editYear').value;
+                ref.other = document.getElementById('editOther').value;
+                ref.urls.primary = document.getElementById('editPrimaryUrl').value;
+                ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
+                ref.relevance_text = document.getElementById('editRelevanceText').value;
+                ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
+
+                // Rebuild text for display
+                let text = `[${ref.id}] ${ref.authors}`;
+                if (ref.year) text += ` (${ref.year})`;
+                if (ref.title) text += `. ${ref.title}`;
+                if (ref.other) text += `. ${ref.other}`;
+                ref.text = text;
+
+                this.showToast('Reference saved', 'success');
+
+                // Auto-save after changes
+                this.autoSave();
+
+                // Auto-save to Dropbox if connected
+                this.saveDecisionsToDropbox();
+
+                // Update display but keep modal open
+                this.applyFilters();
+            },
+
+            finalizeReference() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref) return;
+
+                // Validate: must have at least a primary URL
+                const primaryUrl = document.getElementById('editPrimaryUrl').value;
+                if (!primaryUrl) {
+                    this.showToast('Cannot finalize: Must have at least a Primary URL', 'error');
+                    return;
+                }
+
+                // Update reference from Tab 1 fields (same as saveReference)
+                ref.title = document.getElementById('editTitle').value;
+                ref.authors = document.getElementById('editAuthors').value;
+                ref.year = document.getElementById('editYear').value;
+                ref.other = document.getElementById('editOther').value;
+                ref.urls.primary = primaryUrl;
+                ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
+                ref.relevance_text = document.getElementById('editRelevanceText').value;
+                ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
+
+                // Rebuild text for display
+                let text = `[${ref.id}] ${ref.authors}`;
+                if (ref.year) text += ` (${ref.year})`;
+                if (ref.title) text += `. ${ref.title}`;
+                if (ref.other) text += `. ${ref.other}`;
+                ref.text = text;
+
+                // Mark as finalized
+                ref.finalized = true;
+
+                // Generate updated decisions.txt entry with FLAGS[FINALIZED]
+                const decisionsEntry = this.generateDecisionsEntry(ref, true);
+
+                // Show entry in debug log
+                this.addDebugLog('=== FINALIZED REFERENCE ===');
+                this.addDebugLog('\nDecisions.txt entry:\n' + decisionsEntry);
+
+                this.showToast('Reference finalized! FLAGS[FINALIZED] added.', 'success');
+
+                // Auto-save decisions.txt
+                this.autoSave();
+
+                // Auto-save to Dropbox if connected
+                this.saveDecisionsToDropbox();
+
+                // Update display but keep modal open (reference will disappear from view if "Show Finalized" is unchecked)
+                this.applyFilters();
+            },
+
+            generateDecisionsEntry(ref, includeFinalized = false) {
+                // Simplified single-line format: [RID] Author (Year). Title. Other. Relevance: text FLAGS[...] PRIMARY_URL[...] SECONDARY_URL[...]
+
+                let entry = `[${ref.id}] `;
+
+                // Add author if present
+                if (ref.authors) {
+                    entry += `${ref.authors} `;
+                }
+
+                // Add year if present
+                if (ref.year) {
+                    entry += `(${ref.year}). `;
+                }
+
+                // Add title if present
+                if (ref.title) {
+                    entry += `${ref.title}. `;
+                }
+
+                // Add other bibliographic information if present
+                if (ref.other) {
+                    entry += `${ref.other}. `;
+                }
+
+                // Add relevance text if present
+                if (ref.relevance_text) {
+                    entry += `Relevance: ${ref.relevance_text} `;
+                }
+
+                // Add FLAGS if finalized
+                if (includeFinalized || ref.finalized) {
+                    entry += `FLAGS[FINALIZED] `;
+                }
+
+                // Add URLs
+                if (ref.urls.primary) {
+                    entry += `PRIMARY_URL[${ref.urls.primary}] `;
+                }
+                if (ref.urls.secondary) {
+                    entry += `SECONDARY_URL[${ref.urls.secondary}] `;
+                }
+
+                return entry.trim();
+            },
+
+            // AI Operations
+            async generateQueries() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref) return;
+
+                const btn = event.target;
+                const originalText = document.getElementById('suggestBtnText').textContent;
+                btn.disabled = true;
+                document.getElementById('suggestBtnText').innerHTML = '<span class="loading"></span> Generating...';
+
+                this.addDebugLog('Generating search queries...');
+
+                try {
+                    const prompt = `You are helping find URLs for an academic reference. Generate search queries that will find high-quality candidates for both PRIMARY and SECONDARY URL goals.
+
+PRIMARY URL GOALS (in priority order):
+1. PDF of reference (free > paywalled)
+2. Publisher site or sales page for reference
+3. Author's work directly treating this reference
+4. Author biography/CV
+5. Must be authored by or about the author
+
+SECONDARY URL GOALS (in priority order):
+1. Review of this specific reference
+2. Discussion of reference's key themes (see Relevance text below)
+3. Author CV or biographical material
+
+REFERENCE:
+Title: ${ref.title || 'Unknown'}
+Authors: ${ref.authors || 'Unknown'}
+Year: ${ref.year || 'Unknown'}
+Other Bibliographic Info: ${ref.other || 'None'}
+
+RELEVANCE (why this matters to the manuscript):
+${ref.relevance_text || 'No context provided'}
+
+PROVEN EFFECTIVE QUERY PATTERNS (use frequently):
+1. "Exact Title" Author Year filetype:pdf
+2. Author Year "key phrase from title" site:.edu
+3. Author "publication venue" Year publisher
+4. Author topic keywords (medium specificity)
+5. "Title keywords" review academic journal
+
+AVOID (these patterns consistently fail):
+❌ URLs or links (e.g., spotify.com, youtube.com links)
+❌ Combining ISBN + full publisher name + exact title (too specific)
+❌ Multiple overly-specific jargon phrases together
+❌ Queries longer than 120 characters
+❌ More than 2 quoted phrases in one query
+
+QUERY LENGTH GUIDELINES:
+- Optimal: 40-80 characters
+- Maximum: 120 characters
+- Use quotes sparingly (1-2 phrases per query max)
+
+Generate 8 diverse search queries that mix:
+- Bibliography-driven queries (author, title, year)
+- Relevance-driven queries (key themes from the Relevance text)
+- Queries targeting both PRIMARY goals (finding the work itself) and SECONDARY goals (reviews/discussions)
+- Balance: Start specific (exact title + author), include medium-specificity (author + keywords), add broad queries (author + topic)
+
+Return ONLY the queries, one per line, without any labels, categories, or grouping headers.`;
+
+                    const model = this.getSelectedModel();
+                    const response = await this.apiRequest('/api/llm-chat', {
+                        method: 'POST',
+                        body: JSON.stringify({ prompt, model })
+                    });
+
+                    if (response.result) {
+                        document.getElementById('editQueries').value = response.result;
+                        // Store AI-suggested query for override detection
+                        this.aiSuggestedQuery = response.result;
+
+                        // Track cost
+                        if (response.input_tokens && response.output_tokens) {
+                            this.trackClaudeQueryGen(response.input_tokens, response.output_tokens);
+                        }
+
+                        // Add debug panel
+                        const panelContent = `<strong>AI Model:</strong> ${model}
+<strong>Queries Generated:</strong>
+${response.result}`;
+                        this.addDebugPanel('Query Generation (AI)', panelContent, 'success');
+
+                        this.showToast('Queries generated', 'success');
+                    }
+                } catch (error) {
+                    const errorMsg = error.message || error.toString();
+                    this.addDebugLog('Error generating queries: ' + errorMsg);
+                    this.showToast('Query generation failed. Check Debug tab (Tab 3) for details.', 'error');
+                    console.error('Generate queries error:', error);
+                } finally {
+                    btn.disabled = false;
+                    document.getElementById('suggestBtnText').textContent = originalText;
+                }
+            },
+
+            async runSearch() {
+                const currentQuery = document.getElementById('editQueries').value;
+
+                // Check if user modified AI-suggested query
+                if (this.aiSuggestedQuery && currentQuery !== this.aiSuggestedQuery) {
+                    const ref = this.references.find(r => r.id === this.currentEditId);
+                    const details = `
+                        <p><strong>AI Suggested Query:</strong></p>
+                        <pre style="background: var(--background); padding: 0.5rem; border-radius: 4px; white-space: pre-wrap; font-size: 0.9rem; max-height: 150px; overflow-y: auto;">${this.aiSuggestedQuery}</pre>
+                        <p style="margin-top: 1rem;"><strong>Your Modified Query:</strong></p>
+                        <pre style="background: var(--background); padding: 0.5rem; border-radius: 4px; white-space: pre-wrap; font-size: 0.9rem; max-height: 150px; overflow-y: auto;">${currentQuery}</pre>
+                    `;
+
+                    await new Promise((resolve) => {
+                        this.showOverrideModal(details, (annotation) => {
+                            if (annotation !== null) {
+                                this.logOverride({
+                                    rid: this.currentEditId,
+                                    override_type: 'QUERY',
+                                    reference_title: ref?.title || 'Unknown',
+                                    ai_suggested_query: this.aiSuggestedQuery,
+                                    user_final_query: currentQuery,
+                                    user_annotation: annotation
+                                });
+                            }
+                            resolve();
+                        });
+                    });
+                }
+
+                const queries = currentQuery.split('\n').filter(q => q.trim());
+                if (queries.length === 0) {
+                    this.showToast('Enter search queries first', 'warning');
+                    return;
+                }
+
+                const btn = event.target;
+                const originalText = document.getElementById('queryBtnText').textContent;
+                btn.disabled = true;
+                document.getElementById('queryBtnText').innerHTML = '<span class="loading"></span> Searching...';
+
+                this.addDebugLog('Running searches for ' + queries.length + ' queries...');
+
+                try {
+                    const results = [];
+
+                    for (const query of queries) {
+                        this.addDebugLog('Searching: ' + query);
+                        const response = await this.apiRequest('/api/search-google', {
+                            method: 'POST',
+                            body: JSON.stringify({ query })
+                        });
+
+                        if (response.results) {
+                            results.push(...response.results);
+                            this.addDebugLog(`Found ${response.results.length} results`);
+                        }
+                    }
+
+                    // Deduplicate by URL
+                    const unique = Array.from(new Map(results.map(r => [r.url, r])).values());
+                    this.addDebugLog(`Total unique results: ${unique.length}`);
+
+                    // Track Google search cost
+                    this.trackGoogleSearch(queries.length);
+
+                    // Display results in Tab 2
+                    this.displaySearchResults(unique);
+
+                    // Store results
+                    const ref = this.references.find(r => r.id === this.currentEditId);
+                    if (ref) ref.searchResults = unique;
+
+                    // Auto-switch to Tab 2
+                    this.switchTab(1);
+
+                    this.showToast(`Found ${unique.length} results`, 'success');
+                } catch (error) {
+                    const errorMsg = error.message || error.toString();
+                    this.addDebugLog('Search error: ' + errorMsg);
+                    this.showToast('Search failed. Check Debug tab (Tab 3) for details.', 'error');
+                    console.error('Search error:', error);
+                } finally {
+                    btn.disabled = false;
+                    document.getElementById('queryBtnText').textContent = originalText;
+                }
+            },
+
+            displaySearchResults(results) {
+                const container = document.getElementById('candidatesContainer');
+                const ref = this.references.find(r => r.id === this.currentEditId);
+
+                if (results.length === 0) {
+                    container.innerHTML = `
+                        <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                            No results found. Try different queries.
+                        </p>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = results.map((r, i) => {
+                    // Check if this URL is already assigned
+                    let assignedType = '';
+                    let badgeHtml = '';
+                    if (ref) {
+                        if (ref.urls.primary === r.url) {
+                            assignedType = 'primary';
+                            badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                        } else if (ref.urls.secondary === r.url) {
+                            assignedType = 'secondary';
+                            badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                        }
+                    }
+
+                    const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                    return `
+                        <div class="${itemClass}" data-index="${i}" data-url="${r.url}">
+                            <div class="candidate-buttons">
+                                <button onclick="app.selectCandidate(${i}, 'primary')" class="success">
+                                    Set as Primary
+                                </button>
+                                <button onclick="app.selectCandidate(${i}, 'secondary')">
+                                    Set as Secondary
+                                </button>
+                            </div>
+                            <div class="candidate-content">
+                                <div>
+                                    <div class="candidate-header">
+                                        <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                    </div>
+                                    <div class="candidate-snippet">${r.snippet}</div>
+                                </div>
+                                <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Show sort toggle if we have results
+                if (results.length > 0) {
+                    document.getElementById('sortToggleContainer').style.display = 'block';
+                }
+            },
+
+            setSortFocus(focus) {
+                this.sortFocus = focus;
+
+                // Update button styles
+                const primaryBtn = document.getElementById('sortByPrimary');
+                const secondaryBtn = document.getElementById('sortBySecondary');
+
+                if (focus === 'primary') {
+                    primaryBtn.style.background = 'var(--accent-color)';
+                    primaryBtn.style.color = 'white';
+                    secondaryBtn.style.background = 'transparent';
+                    secondaryBtn.style.color = 'var(--text-secondary)';
+                } else {
+                    secondaryBtn.style.background = 'var(--accent-color)';
+                    secondaryBtn.style.color = 'white';
+                    primaryBtn.style.background = 'transparent';
+                    primaryBtn.style.color = 'var(--text-secondary)';
+                }
+
+                // Re-render candidates with new sort
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (ref && ref.searchResults) {
+                    this.renderCandidates(ref.searchResults, ref.rankings || null);
+                }
+            },
+
+            renderCandidates(candidates, rankings = null) {
+                const container = document.getElementById('candidatesContainer');
+                const ref = this.references.find(r => r.id === this.currentEditId);
+
+                if (!candidates || candidates.length === 0) {
+                    container.innerHTML = `
+                        <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                            No results found. Try different queries.
+                        </p>
+                    `;
+                    document.getElementById('sortToggleContainer').style.display = 'none';
+                    return;
+                }
+
+                // Show sort toggle
+                document.getElementById('sortToggleContainer').style.display = 'block';
+
+                // If we have rankings, deduplicate and sort
+                if (rankings && rankings.length > 0) {
+                    // Create ranking map
+                    const rankingMap = new Map();
+                    rankings.forEach(ranking => {
+                        rankingMap.set(ranking.index, ranking);
+                    });
+
+                    // Deduplicate by URL
+                    const urlMap = new Map();
+                    candidates.forEach((result, index) => {
+                        const ranking = rankingMap.get(index) || { primary_score: 0, secondary_score: 0, combined_score: 0 };
+                        if (!urlMap.has(result.url)) {
+                            urlMap.set(result.url, { result, originalIndex: index, ranking });
+                        } else {
+                            const existing = urlMap.get(result.url);
+                            if (ranking.combined_score > existing.ranking.combined_score) {
+                                urlMap.set(result.url, { result, originalIndex: index, ranking });
+                            }
+                        }
+                    });
+
+                    // Sort based on current focus
+                    let sortedResults = Array.from(urlMap.values()).sort((a, b) => {
+                        if (this.sortFocus === 'primary') {
+                            // Sort by primary score first
+                            if (b.ranking.primary_score !== a.ranking.primary_score) {
+                                return b.ranking.primary_score - a.ranking.primary_score;
+                            }
+                            return b.ranking.secondary_score - a.ranking.secondary_score;
+                        } else {
+                            // Sort by secondary score first
+                            if (b.ranking.secondary_score !== a.ranking.secondary_score) {
+                                return b.ranking.secondary_score - a.ranking.secondary_score;
+                            }
+                            return b.ranking.primary_score - a.ranking.primary_score;
+                        }
+                    });
+
+                    // Move designated URL to top based on current focus
+                    if (this.sortFocus === 'primary' && ref.urls.primary) {
+                        const designatedItem = sortedResults.find(item => item.result.url === ref.urls.primary);
+                        if (designatedItem) {
+                            sortedResults = sortedResults.filter(item => item.result.url !== ref.urls.primary);
+                            sortedResults.unshift(designatedItem);
+                        }
+                    } else if (this.sortFocus === 'secondary' && ref.urls.secondary) {
+                        const designatedItem = sortedResults.find(item => item.result.url === ref.urls.secondary);
+                        if (designatedItem) {
+                            sortedResults = sortedResults.filter(item => item.result.url !== ref.urls.secondary);
+                            sortedResults.unshift(designatedItem);
+                        }
+                    }
+
+                    // Render ranked candidates
+                    container.innerHTML = sortedResults.map((item) => {
+                        const r = item.result;
+                        const ranking = item.ranking;
+                        const originalIndex = item.originalIndex;
+
+                        let assignedType = '';
+                        let badgeHtml = '';
+                        if (ref.urls.primary === r.url) {
+                            assignedType = 'primary';
+                            badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                        } else if (ref.urls.secondary === r.url) {
+                            assignedType = 'secondary';
+                            badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                        }
+
+                        const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                        const dualPurpose = ranking.primary_score > 60 && ranking.secondary_score > 60;
+                        const scoreHtml = ranking.primary_score ? `
+                            <div class="candidate-score" title="${ranking.primary_fit || 'N/A'} | ${ranking.secondary_fit || 'N/A'}">
+                                ${dualPurpose ? '⚡ ' : ''}
+                                P:${ranking.primary_score} S:${ranking.secondary_score}
+                                (${ranking.combined_score})
+                            </div>
+                        ` : '';
+
+                        return `
+                            <div class="${itemClass}" data-index="${originalIndex}" data-url="${r.url}">
+                                <div class="candidate-buttons">
+                                    <button onclick="app.selectCandidate(${originalIndex}, 'primary')" class="success">
+                                        Set as Primary
+                                    </button>
+                                    <button onclick="app.selectCandidate(${originalIndex}, 'secondary')">
+                                        Set as Secondary
+                                    </button>
+                                </div>
+                                <div class="candidate-content">
+                                    <div>
+                                        <div class="candidate-header">
+                                            <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                            ${scoreHtml}
+                                        </div>
+                                        <div class="candidate-snippet">${r.snippet}</div>
+                                    </div>
+                                    <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    // No rankings, just display in original order
+                    container.innerHTML = candidates.map((r, i) => {
+                        let assignedType = '';
+                        let badgeHtml = '';
+                        if (ref) {
+                            if (ref.urls.primary === r.url) {
+                                assignedType = 'primary';
+                                badgeHtml = '<span style="background: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ PRIMARY</span>';
+                            } else if (ref.urls.secondary === r.url) {
+                                assignedType = 'secondary';
+                                badgeHtml = '<span style="background: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ SECONDARY</span>';
+                            }
+                        }
+
+                        const itemClass = assignedType ? `candidate-item selected-${assignedType}` : 'candidate-item';
+
+                        return `
+                            <div class="${itemClass}" data-index="${i}" data-url="${r.url}">
+                                <div class="candidate-buttons">
+                                    <button onclick="app.selectCandidate(${i}, 'primary')" class="success">
+                                        Set as Primary
+                                    </button>
+                                    <button onclick="app.selectCandidate(${i}, 'secondary')">
+                                        Set as Secondary
+                                    </button>
+                                </div>
+                                <div class="candidate-content">
+                                    <div>
+                                        <div class="candidate-header">
+                                            <div class="candidate-title">${r.title}${badgeHtml}</div>
+                                        </div>
+                                        <div class="candidate-snippet">${r.snippet}</div>
+                                    </div>
+                                    <a href="${r.url}" target="_blank" class="candidate-url">${r.url}</a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            },
+
+            async selectCandidate(index, urlType) {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref || !ref.searchResults || !ref.searchResults[index]) return;
+
+                const candidate = ref.searchResults[index];
+                let overrideData = null; // Track override info for session log
+
+                // Check if user is overriding AI ranking
+                if (this.aiRankedResults && this.aiRankedResults.allRankings) {
+                    const aiSuggestion = urlType === 'primary' ? this.aiRankedResults.primary : this.aiRankedResults.secondary;
+
+                    if (aiSuggestion && candidate.url !== aiSuggestion) {
+                        // Find AI ranking for suggested URL
+                        const aiRanking = this.aiRankedResults.allRankings.find(r =>
+                            ref.searchResults[r.index]?.url === aiSuggestion);
+
+                        // Find AI ranking for user's selected URL
+                        const userRanking = this.aiRankedResults.allRankings.find(r =>
+                            ref.searchResults[r.index]?.url === candidate.url);
+
+                        const details = `
+                            <p><strong>AI Recommended ${urlType.toUpperCase()} URL:</strong></p>
+                            <div style="background: var(--background); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.9rem;">
+                                <a href="${aiSuggestion}" target="_blank" style="color: var(--accent-color);">${aiSuggestion}</a>
+                                ${aiRanking ? `<br><small>P:${aiRanking.primary_score} S:${aiRanking.secondary_score}</small>` : ''}
+                            </div>
+                            <p style="margin-top: 1rem;"><strong>Your Selected ${urlType.toUpperCase()} URL:</strong></p>
+                            <div style="background: var(--background); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; font-size: 0.9rem;">
+                                <a href="${candidate.url}" target="_blank" style="color: var(--accent-color);">${candidate.url}</a>
+                                ${userRanking ? `<br><small>P:${userRanking.primary_score} S:${userRanking.secondary_score}</small>` : ''}
+                            </div>
+                        `;
+
+                        await new Promise((resolve) => {
+                            this.showOverrideModal(details, (annotation) => {
+                                if (annotation !== null) {
+                                    // Store override data for session log
+                                    overrideData = {
+                                        aiSuggestion,
+                                        aiRanking,
+                                        userRanking,
+                                        annotation
+                                    };
+
+                                    // Enhanced logging with full context to override log
+                                    this.logOverride({
+                                        rid: this.currentEditId,
+                                        override_type: 'RANKING_' + urlType.toUpperCase(),
+                                        reference_metadata: {
+                                            title: ref.title,
+                                            authors: ref.authors,
+                                            year: ref.year,
+                                            has_doi: ref.other?.includes('DOI:') || false,
+                                            has_isbn: ref.other?.includes('ISBN:') || false
+                                        },
+                                        ai_suggested: {
+                                            url: aiSuggestion,
+                                            primary_score: aiRanking?.primary_score || 0,
+                                            secondary_score: aiRanking?.secondary_score || 0,
+                                            primary_fit: aiRanking?.primary_fit || '',
+                                            secondary_fit: aiRanking?.secondary_fit || ''
+                                        },
+                                        user_selected: {
+                                            url: candidate.url,
+                                            was_ranked: userRanking ? this.aiRankedResults.allRankings.indexOf(userRanking) + 1 : 'unranked',
+                                            primary_score: userRanking?.primary_score || 0,
+                                            secondary_score: userRanking?.secondary_score || 0
+                                        },
+                                        user_annotation: annotation
+                                    });
+                                }
+                                resolve();
+                            });
+                        });
+                    }
+                }
+
+                if (urlType === 'primary') {
+                    ref.urls.primary = candidate.url;
+                    document.getElementById('editPrimaryUrl').value = candidate.url;
+                    // Update display in Candidates tab
+                    document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${candidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${candidate.url}</a>`;
+                    this.showToast('Set as Primary URL', 'success');
+                } else if (urlType === 'secondary') {
+                    ref.urls.secondary = candidate.url;
+                    document.getElementById('editSecondaryUrl').value = candidate.url;
+                    // Update display in Candidates tab
+                    document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${candidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${candidate.url}</a>`;
+                    this.showToast('Set as Secondary URL', 'success');
+                }
+
+                // Auto-save after URL change
+                this.autoSave();
+
+                // Update visual selection
+                document.querySelectorAll('.candidate-item').forEach(item => {
+                    item.classList.remove('selected-primary', 'selected-secondary');
+                });
+
+                const item = document.querySelector(`[data-index="${index}"]`);
+                if (item) {
+                    item.classList.add(urlType === 'primary' ? 'selected-primary' : 'selected-secondary');
+                }
+
+                // Log selection to session log - enhanced with override info if present
+                const queryInfo = candidate.query ? `Found by query: ${candidate.query}` : '';
+
+                if (overrideData) {
+                    // This was an override - log detailed information to session
+                    const aiRank = overrideData.aiRanking;
+                    const userRank = overrideData.userRanking;
+
+                    const panelContent = `<strong>🔄 AI Override - ${urlType.toUpperCase()} URL</strong>
+
+<strong>AI Recommended:</strong>
+URL: ${overrideData.aiSuggestion}
+Primary Score: ${aiRank?.primary_score || 'N/A'}
+Secondary Score: ${aiRank?.secondary_score || 'N/A'}
+${aiRank?.primary_fit ? `Fit: ${aiRank.primary_fit}` : ''}
+
+<strong>You Selected:</strong>
+URL: ${candidate.url}
+Primary Score: ${userRank?.primary_score || 'N/A'}
+Secondary Score: ${userRank?.secondary_score || 'N/A'}
+${userRank ? `Ranked Position: #${this.aiRankedResults.allRankings.indexOf(userRank) + 1}` : 'Not ranked by AI'}
+${queryInfo ? `${queryInfo}` : ''}
+
+<strong>Your Reason:</strong>
+"${overrideData.annotation}"`;
+
+                    this.addDebugPanel(`URL Override (${urlType})`, panelContent, 'warning');
+                } else {
+                    // Normal selection - simple log
+                    this.addDebugLog(`Selected as ${urlType} URL: ${candidate.url}${queryInfo ? '\n' + queryInfo : ''}`);
+                }
+            },
+
+            async rankCandidates() {
+                const ref = this.references.find(r => r.id === this.currentEditId);
+                if (!ref || !ref.searchResults || ref.searchResults.length === 0) {
+                    this.showToast('No search results to rank', 'warning');
+                    return;
+                }
+
+                const btn = event.target;
+                const originalText = document.getElementById('rankBtnText').textContent;
+                btn.disabled = true;
+                document.getElementById('rankBtnText').innerHTML = '<span class="loading"></span> Ranking...';
+
+                // Batch processing for large result sets
+                // v13.6: Disabled search tool in llm-rank.ts (was the actual bottleneck)
+                // v13.7: Increased batch size to 35 now that search is disabled (~15s per batch)
+                const batchSize = 35;
+                const totalCandidates = ref.searchResults.length;
+                const numBatches = Math.ceil(totalCandidates / batchSize);
+
+                this.addDebugLog(`Ranking ${totalCandidates} candidates in ${numBatches} batch(es)...`);
+
+                if (numBatches > 1) {
+                    this.showToast(`Ranking ${totalCandidates} candidates in ${numBatches} batches...`, 'info');
+                } else if (totalCandidates > 20) {
+                    this.showToast(`Ranking ${totalCandidates} candidates - this may take 12-18 seconds...`, 'info');
+                }
+
+                try {
+                    const model = this.getSelectedModel();
+                    let allRankings = [];
+                    let allCandidates = ref.searchResults;
+
+                    // Process each batch
+                    for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
+                        const startIdx = batchIndex * batchSize;
+                        const endIdx = Math.min(startIdx + batchSize, totalCandidates);
+                        const batchCandidates = ref.searchResults.slice(startIdx, endIdx);
+
+                        if (numBatches > 1) {
+                            this.addDebugLog(`Processing batch ${batchIndex + 1}/${numBatches} (candidates ${startIdx + 1}-${endIdx})...`);
+                            document.getElementById('rankBtnText').innerHTML = `<span class="loading"></span> Batch ${batchIndex + 1}/${numBatches}...`;
+                        }
+
+                        const response = await this.apiRequest('/api/llm-rank', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                reference: {
+                                    title: ref.title,
+                                    authors: ref.authors,
+                                    year: ref.year,
+                                    other: ref.other,
+                                    relevance_text: ref.relevance_text
+                                },
+                                candidates: batchCandidates,
+                                model: model
+                            })
+                        });
+
+                        if (!response.rankings || response.rankings.length === 0) {
+                            if (response.error) {
+                                throw new Error(response.error);
+                            }
+                            this.addDebugLog(`Warning: Batch ${batchIndex + 1} returned no rankings`);
+                            continue;
+                        }
+
+                        // Track tokens for this batch
+                        if (response.input_tokens && response.output_tokens) {
+                            this.trackClaudeRank(response.input_tokens, response.output_tokens);
+                        }
+
+                        // Adjust indices to account for batch offset
+                        const adjustedRankings = response.rankings.map(ranking => ({
+                            ...ranking,
+                            index: ranking.index + startIdx
+                        }));
+
+                        allRankings = allRankings.concat(adjustedRankings);
+
+                        // If Claude performed additional searches in this batch
+                        if (response.searches_performed && response.searches_performed > 0) {
+                            this.addDebugLog(`Batch ${batchIndex + 1}: AI performed ${response.searches_performed} additional search(es)`);
+                            if (response.allCandidates && response.allCandidates.length > batchCandidates.length) {
+                                // New candidates were found - add them to the end
+                                const newCandidates = response.allCandidates.slice(batchCandidates.length);
+                                allCandidates = allCandidates.concat(newCandidates);
+                                ref.searchResults = allCandidates;
+                                this.addDebugLog(`Added ${newCandidates.length} new candidate(s) from AI searches`);
+                            }
+                        }
+                    }
+
+                    // Create a response object that matches the expected format
+                    const response = {
+                        rankings: allRankings,
+                        allCandidates: allCandidates,
+                        searches_performed: allRankings.filter(r => r._newCandidate).length
+                    };
+
+                    if (response.rankings && response.rankings.length > 0) {
+                        // Check if Claude performed additional searches
+                        if (response.searches_performed && response.searches_performed > 0) {
+                            this.addDebugLog(`AI performed ${response.searches_performed} additional search(es) to find better candidates`);
+
+                            // Update searchResults with expanded candidate list
+                            if (response.allCandidates && response.allCandidates.length > ref.searchResults.length) {
+                                const newCandidatesCount = response.allCandidates.length - ref.searchResults.length;
+                                ref.searchResults = response.allCandidates;
+                                this.addDebugLog(`Added ${newCandidatesCount} new candidate(s) from AI searches`);
+                            }
+                        }
+
+                        this.addDebugLog(`Received ${response.rankings.length} rankings from AI`);
+
+                        // Track Claude ranking cost
+                        if (response.input_tokens && response.output_tokens) {
+                            this.trackClaudeRank(response.input_tokens, response.output_tokens);
+                        }
+
+                        // Store full AI rankings for override detection
+                        this.aiRankedResults = {
+                            primary: null,
+                            secondary: null,
+                            allRankings: response.rankings
+                        };
+
+                        // Find best PRIMARY and SECONDARY recommendations
+                        const bestPrimary = response.rankings.reduce((best, curr) =>
+                            (curr.recommended_as === 'primary' || curr.primary_score > (best?.primary_score || 0)) ? curr : best, null);
+                        const bestSecondary = response.rankings.reduce((best, curr) =>
+                            (curr.recommended_as === 'secondary' || curr.secondary_score > (best?.secondary_score || 0)) ? curr : best, null);
+
+                        // Check for low scores and flag reference
+                        let flagWarnings = [];
+
+                        if (!bestPrimary || bestPrimary.primary_score <= 60) {
+                            flagWarnings.push(`⚠️ PRIMARY: ${bestPrimary ? `Low confidence (score: ${bestPrimary.primary_score})` : 'No suitable candidate found'}`);
+                            if (bestPrimary?.primary_fit) {
+                                flagWarnings.push(`   Reason: ${bestPrimary.primary_fit}`);
+                            }
+                        }
+
+                        if (!bestSecondary || bestSecondary.secondary_score <= 60) {
+                            flagWarnings.push(`⚠️ SECONDARY: ${bestSecondary ? `Low confidence (score: ${bestSecondary.secondary_score})` : 'No suitable candidate found'}`);
+                            if (bestSecondary?.secondary_fit) {
+                                flagWarnings.push(`   Reason: ${bestSecondary.secondary_fit}`);
+                            }
+                        }
+
+                        // Auto-fill top URLs from ranked results (even if scores are low, so user can review)
+                        if (bestPrimary) {
+                            const topCandidate = ref.searchResults[bestPrimary.index];
+                            if (topCandidate) {
+                                ref.urls.primary = topCandidate.url;
+                                document.getElementById('editPrimaryUrl').value = topCandidate.url;
+
+                                // Add warning badge if score is low
+                                const warningBadge = bestPrimary.primary_score <= 60 ?
+                                    ' <span style="background: var(--warning-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">⚠️ LOW SCORE</span>' : '';
+
+                                document.getElementById('displayPrimaryUrl').innerHTML = `<a href="${topCandidate.url}" target="_blank" style="color: var(--success-color); text-decoration: none;">${topCandidate.url}</a>${warningBadge}`;
+                                this.addDebugLog(`Primary URL (P:${bestPrimary.primary_score}, S:${bestPrimary.secondary_score}): ${topCandidate.url}`);
+                                this.aiRankedResults.primary = topCandidate.url;
+                            }
+                        } else {
+                            // No primary found
+                            document.getElementById('editPrimaryUrl').value = '';
+                            document.getElementById('displayPrimaryUrl').innerHTML = '<span style="color: var(--warning-color);">⚠️ No suitable primary URL found</span>';
+                        }
+
+                        if (bestSecondary && bestSecondary.index !== bestPrimary?.index) {
+                            const secondCandidate = ref.searchResults[bestSecondary.index];
+                            if (secondCandidate) {
+                                ref.urls.secondary = secondCandidate.url;
+                                document.getElementById('editSecondaryUrl').value = secondCandidate.url;
+
+                                // Add warning badge if score is low
+                                const warningBadge = bestSecondary.secondary_score <= 60 ?
+                                    ' <span style="background: var(--warning-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">⚠️ LOW SCORE</span>' : '';
+
+                                document.getElementById('displaySecondaryUrl').innerHTML = `<a href="${secondCandidate.url}" target="_blank" style="color: var(--accent-color); text-decoration: none;">${secondCandidate.url}</a>${warningBadge}`;
+                                this.addDebugLog(`Secondary URL (P:${bestSecondary.primary_score}, S:${bestSecondary.secondary_score}): ${secondCandidate.url}`);
+                                this.aiRankedResults.secondary = secondCandidate.url;
+                            }
+                        } else {
+                            // No secondary found
+                            document.getElementById('editSecondaryUrl').value = '';
+                            document.getElementById('displaySecondaryUrl').innerHTML = '<span style="color: var(--warning-color);">⚠️ No suitable secondary URL found</span>';
+                        }
+
+                        // Show warning panel if there are flags
+                        if (flagWarnings.length > 0) {
+                            const warningContent = flagWarnings.join('\n');
+                            this.addDebugPanel('⚠️ URL Selection Flags', warningContent, 'warning');
+                            this.showToast('⚠️ Manual review required - check Debug tab', 'warning');
+                        }
+
+                        // Store rankings for the reference
+                        ref.rankings = response.rankings;
+
+                        // Render candidates using the new function (supports sort toggle)
+                        this.renderCandidates(ref.searchResults, response.rankings);
+
+                        // Add debug panel for autorank results
+                        const primaryUrl = bestPrimary ? ref.searchResults[bestPrimary.index]?.url || 'N/A' : 'N/A';
+                        const secondaryUrl = bestSecondary ? ref.searchResults[bestSecondary.index]?.url || 'N/A' : 'N/A';
+
+                        let searchInfo = '';
+                        if (response.searches_performed && response.searches_performed > 0) {
+                            searchInfo = `\n<strong>🔍 AI Searches Performed:</strong> ${response.searches_performed}\n<strong>Total Candidates:</strong> ${ref.searchResults.length} (${response.searches_performed > 0 ? `+${ref.searchResults.length - candidates.length} from AI` : 'original'})\n`;
+                        }
+
+                        const panelContent = `<strong>Candidates Ranked:</strong> ${response.rankings.length}${searchInfo}
+
+<strong>Primary Recommendation:</strong>
+URL: ${primaryUrl}
+Primary Score: ${bestPrimary?.primary_score || 'N/A'}
+Secondary Score: ${bestPrimary?.secondary_score || 'N/A'}
+Combined Score: ${bestPrimary?.combined_score || 'N/A'}
+${bestPrimary?.title_match ? `Title Match: ${bestPrimary.title_match}` : ''}
+${bestPrimary?.author_match !== undefined ? `Author Match: ${bestPrimary.author_match}` : ''}
+
+<strong>Secondary Recommendation:</strong>
+URL: ${secondaryUrl}
+Primary Score: ${bestSecondary?.primary_score || 'N/A'}
+Secondary Score: ${bestSecondary?.secondary_score || 'N/A'}
+Combined Score: ${bestSecondary?.combined_score || 'N/A'}`;
+                        this.addDebugPanel('Autorank Results', panelContent, 'success');
+
+                        this.showToast('URLs ranked and auto-filled', 'success');
+                    } else if (response.error) {
+                        // Enhanced error panel with full details
+                        let errorDetails = `<strong>Error:</strong> ${response.error}\n\n`;
+
+                        if (response.raw_response_preview) {
+                            errorDetails += `<strong>AI Response Preview:</strong>\n${response.raw_response_preview}\n\n`;
+                        }
+
+                        if (response.allCandidates) {
+                            errorDetails += `<strong>Candidates Sent:</strong> ${response.allCandidates.length}\n`;
+                        }
+
+                        if (response.searches_performed !== undefined) {
+                            errorDetails += `<strong>Searches Performed:</strong> ${response.searches_performed}\n`;
+                        }
+
+                        this.addDebugPanel('Ranking API Error', errorDetails, 'error');
+                        this.showToast('Ranking failed: ' + response.error.substring(0, 100), 'error');
+                    } else {
+                        this.addDebugLog('No rankings returned from API');
+                        this.showToast('No rankings returned', 'warning');
+                    }
+                } catch (error) {
+                    const errorMsg = error.message || error.toString();
+                    this.addDebugPanel('Exception: Autorank Failed', `<strong>Error:</strong> ${errorMsg}`, 'error');
+                    this.showToast('Ranking failed. Check Debug tab (Tab 3) for details.', 'error');
+                    console.error('Ranking error:', error);
+                } finally {
+                    btn.disabled = false;
+                    document.getElementById('rankBtnText').textContent = originalText;
+                }
+            },
+
+            // Debug Panel System
+            addDebugPanel(title, content, type = '') {
+                const timestamp = new Date().toLocaleTimeString();
+
+                // Check if we should consolidate with existing System Log panel
+                if (title === 'System Log' && this.currentSystemLogPanel) {
+                    // Append to existing system log panel
+                    const contentDiv = this.currentSystemLogPanel.querySelector('.debug-panel-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML += '\n' + content;
+                    }
+
+                    // Update the panel data in our array
+                    const lastPanel = this.debugPanels[this.debugPanels.length - 1];
+                    if (lastPanel && lastPanel.title === 'System Log') {
+                        lastPanel.content += '\n' + content;
+                    }
+
+                    // Save to session log
+                    this.saveToSessionLog({timestamp, title, content, type});
+                } else {
+                    // Create new panel
+                    const panel = {
+                        timestamp,
+                        title,
+                        content,
+                        type
+                    };
+
+                    this.debugPanels.push(panel);
+                    this.renderDebugPanel(panel);
+
+                    // If this is a System Log, track it for future consolidation
+                    if (title === 'System Log') {
+                        const container = document.getElementById('debugPanelsContainer');
+                        this.currentSystemLogPanel = container?.lastElementChild;
+                    } else {
+                        // Different panel type resets the system log consolidation
+                        this.currentSystemLogPanel = null;
+                    }
+
+                    // Save to session log
+                    this.saveToSessionLog(panel);
+                }
+
+                // Auto-scroll to latest panel
+                setTimeout(() => {
+                    const container = document.getElementById('debugPanelsContainer');
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }, 100);
+            },
+
+            renderDebugPanel(panel) {
+                const container = document.getElementById('debugPanelsContainer');
+                if (!container) return;
+
+                const panelDiv = document.createElement('div');
+                panelDiv.className = `debug-panel ${panel.type}`;
+                panelDiv.innerHTML = `
+                    <div class="debug-panel-header">
+                        <span>${panel.title}</span>
+                        <span class="debug-panel-timestamp">${panel.timestamp}</span>
+                    </div>
+                    <div class="debug-panel-content">${panel.content}</div>
+                `;
+                container.appendChild(panelDiv);
+            },
+
+            initializeDebugPanels(ref) {
+                this.debugPanels = [];
+                this.currentSystemLogPanel = null;  // Reset consolidation tracker
+                const container = document.getElementById('debugPanelsContainer');
+                if (!container) return;
+                container.innerHTML = '';
+
+                // Panel 1: Raw Reference
+                const rawContent = `${ref.sourceLine || '[No raw data available]'}`;
+                this.addDebugPanel('Raw Reference from decisions.txt', rawContent);
+
+                // Panel 2: Parsed Reference
+                const parsedContent = `<strong>ID:</strong> ${ref.id}
+<strong>Title:</strong> ${ref.title || 'N/A'}
+<strong>Authors:</strong> ${ref.authors || 'N/A'}
+<strong>Year:</strong> ${ref.year || 'N/A'}
+<strong>Other:</strong> ${ref.other || 'N/A'}
+<strong>Primary URL:</strong> ${ref.urls.primary || 'Not set'}
+<strong>Secondary URL:</strong> ${ref.urls.secondary || 'Not set'}
+<strong>Queries:</strong> ${ref.queries.length} queries loaded`;
+                this.addDebugPanel('Parsed Reference Fields', parsedContent);
+            },
+
+            saveToSessionLog(panel) {
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+                const logEntry = {
+                    referenceId: this.currentEditId,
+                    timestamp: panel.timestamp,
+                    title: panel.title,
+                    content: panel.content,
+                    type: panel.type
+                };
+                sessionLog.push(logEntry);
+                localStorage.setItem('rr_session_log', JSON.stringify(sessionLog));
+
+                // Update the session log textarea if it exists
+                this.updateSessionLogTextarea();
+            },
+
+            updateSessionLogTextarea() {
+                const textarea = document.getElementById('sessionLogTextarea');
+                if (!textarea) return;
+
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                // Format log for display
+                let logContent = `Reference Refinement Session Log\n`;
+                logContent += `Total Entries: ${sessionLog.length}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                let currentRef = null;
+                sessionLog.forEach(entry => {
+                    if (entry.referenceId !== currentRef) {
+                        currentRef = entry.referenceId;
+                        logContent += `\n` + `=`.repeat(80) + `\n`;
+                        logContent += `REFERENCE ID: ${currentRef}\n`;
+                        logContent += `=`.repeat(80) + `\n\n`;
+                    }
+
+                    logContent += `[${entry.timestamp}] ${entry.title}\n`;
+                    logContent += `-`.repeat(80) + `\n`;
+                    // Strip HTML tags from content for plain text display
+                    const plainContent = entry.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ');
+                    logContent += `${plainContent}\n\n`;
+                });
+
+                textarea.value = logContent;
+            },
+
+            copySessionLog() {
+                const textarea = document.getElementById('sessionLogTextarea');
+                if (!textarea || !textarea.value) {
+                    this.showToast('No session log to copy', 'warning');
+                    return;
+                }
+
+                textarea.select();
+                document.execCommand('copy');
+                this.showToast('Session log copied to clipboard! Paste it into a file in Dropbox.', 'success');
+            },
+
+            clearSessionLog() {
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                if (sessionLog.length === 0) {
+                    this.showToast('Session log is already empty', 'info');
+                    return;
+                }
+
+                if (confirm(`Clear session log with ${sessionLog.length} entries? This cannot be undone.`)) {
+                    localStorage.removeItem('rr_session_log');
+                    this.updateSessionLogTextarea();
+                    this.showToast('Session log cleared', 'success');
+                }
+            },
+
+            downloadDecisions() {
+                // Export decisions.txt from localStorage
+                this.exportFile();
+            },
+
+            downloadDebugLog() {
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                if (sessionLog.length === 0) {
+                    this.showToast('No debug log data to download', 'warning');
+                    return;
+                }
+
+                // Format log file
+                let logContent = `Reference Refinement Debug Log\n`;
+                logContent += `Generated: ${new Date().toLocaleString()}\n`;
+                logContent += `Total Entries: ${sessionLog.length}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                let currentRef = null;
+                sessionLog.forEach(entry => {
+                    if (entry.referenceId !== currentRef) {
+                        currentRef = entry.referenceId;
+                        logContent += `\n` + `=`.repeat(80) + `\n`;
+                        logContent += `REFERENCE ID: ${currentRef}\n`;
+                        logContent += `=`.repeat(80) + `\n\n`;
+                    }
+
+                    logContent += `[${entry.timestamp}] ${entry.title}\n`;
+                    logContent += `-`.repeat(80) + `\n`;
+                    logContent += `${entry.content}\n\n`;
+                });
+
+                // Download file
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                a.download = `debug_log_${timestamp}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Clear log after download
+                localStorage.removeItem('rr_session_log');
+                this.showToast('Debug log downloaded and cleared', 'success');
+            },
+
+            addDebugLog(message) {
+                // Backward compatibility - convert old log calls to panels
+                this.addDebugPanel('System Log', message);
+            },
+
+            saveUserNote() {
+                // Auto-save user notes to session log
+                clearTimeout(this.userNoteTimeout);
+                this.userNoteTimeout = setTimeout(() => {
+                    const textarea = document.getElementById('userNotesTextarea');
+                    if (!textarea) return;
+
+                    const note = textarea.value.trim();
+                    if (!note) return;
+
+                    // Save to session log with special type
+                    const timestamp = new Date().toLocaleTimeString();
+                    this.saveToSessionLog({
+                        timestamp,
+                        title: '📝 User Note',
+                        content: note,
+                        type: 'USER_NOTE'
+                    });
+                }, 1000); // Debounce for 1 second
+            },
+
+            // Utility
+            clearAll() {
+                if (confirm('Clear all references? This cannot be undone.')) {
+                    this.references = [];
+                    this.finalizedReferences = [];
+                    this.filteredReferences = [];
+                    this.renderReferences();
+                    this.updateStats();
+                    this.showToast('All references cleared', 'success');
+                }
+            },
+
+            // Notifications
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+
+                // Create message span
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'toast-message';
+                messageSpan.textContent = message;
+
+                // Create close button
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'toast-close';
+                closeBtn.innerHTML = '&times;';
+                closeBtn.setAttribute('aria-label', 'Close notification');
+                closeBtn.onclick = () => {
+                    toast.classList.remove('visible');
+                    setTimeout(() => toast.remove(), 300);
+                };
+
+                toast.appendChild(messageSpan);
+                toast.appendChild(closeBtn);
+                container.appendChild(toast);
+
+                setTimeout(() => toast.classList.add('visible'), 10);
+
+                // Auto-dismiss only success messages after 5 seconds
+                // Warning and error messages stay until manually dismissed
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        toast.classList.remove('visible');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 5000);
+                }
+            },
+
+            // Dropbox Integration
+            async handleDropboxOAuthCallback() {
+                // Check for authorization code (PKCE Flow)
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const state = urlParams.get('state');
+                const error = urlParams.get('error');
+                const errorDescription = urlParams.get('error_description');
+
+                // Check if Dropbox returned an error
+                if (error) {
+                    console.error('[DROPBOX] OAuth error:', error, errorDescription);
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    this.showToast(`Dropbox OAuth error: ${error}${errorDescription ? ' - ' + errorDescription : ''}`, 'error');
+                    return;
+                }
+
+                if (code) {
+                    console.log('[DROPBOX] Authorization code received, exchanging for tokens...');
+
+                    // Retrieve the PKCE verifier from state parameter
+                    let codeVerifier = null;
+                    let source = 'none';
+
+                    if (state && state.startsWith('pkce:')) {
+                        // Extract verifier from state parameter
+                        codeVerifier = state.substring(5); // Remove "pkce:" prefix
+                        source = 'state parameter';
+                        console.log('[DROPBOX] PKCE verifier retrieved from state parameter');
+                    } else {
+                        // Fallback: try old storage methods (for backwards compatibility)
+                        console.warn('[DROPBOX] State parameter missing, trying storage fallback...');
+
+                        codeVerifier = this.getCookie('rr_pkce_verifier');
+                        if (codeVerifier) source = 'cookie';
+
+                        if (!codeVerifier) {
+                            codeVerifier = sessionStorage.getItem('rr_pkce_verifier');
+                            if (codeVerifier) source = 'sessionStorage';
+                        }
+
+                        if (!codeVerifier) {
+                            codeVerifier = localStorage.getItem('rr_pkce_verifier');
+                            if (codeVerifier) source = 'localStorage';
+                        }
+                    }
+
+                    if (!codeVerifier) {
+                        console.error('[DROPBOX] PKCE verifier not found in state parameter or storage');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        this.showToast('OAuth error: PKCE verifier missing. Please try connecting again.', 'error');
+                        return;
+                    }
+
+                    console.log('[DROPBOX] PKCE verifier retrieved successfully from', source);
+
+                    try {
+                        // Exchange code for tokens via our Netlify Function
+                        const response = await this.apiRequest('/api/dropbox-oauth', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                code: code,
+                                code_verifier: codeVerifier
+                            })
+                        });
+
+                        if (response.access_token) {
+                            // Store tokens
+                            this.dropboxAccessToken = response.access_token;
+                            this.dropboxRefreshToken = response.refresh_token;
+                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
+
+                            localStorage.setItem('rr_dropbox_token', response.access_token);
+                            localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
+                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
+
+                            this.initializeDropbox(response.access_token);
+
+                            // Set flag to prevent auto-load (preserve in-memory data)
+                            this.justReconnectedDropbox = true;
+
+                            // Clean up URL (remove ?code= and ?state= parameters)
+                            window.history.replaceState({}, document.title, window.location.pathname);
+
+                            console.log('[DROPBOX] Successfully connected! Token expires in', response.expires_in, 'seconds');
+                            this.showToast('Connected to Dropbox! Your tokens will auto-refresh.', 'success');
+                        } else {
+                            throw new Error(response.error || 'Failed to exchange code for tokens');
+                        }
+                    } catch (error) {
+                        console.error('[DROPBOX] Token exchange failed:', error);
+
+                        // Clean up URL on error
+                        window.history.replaceState({}, document.title, window.location.pathname);
+
+                        this.showToast('Failed to connect to Dropbox: ' + error.message + '. Please try again.', 'error');
+                    }
+                }
+            },
+
+            initializeDropbox(accessToken) {
+                this.dropboxAccessToken = accessToken;
+                this.dropboxClient = new Dropbox.Dropbox({ accessToken });
+                this.updateDropboxUI(true);
+            },
+
+            async connectDropbox() {
+                // Generate PKCE code verifier and challenge
+                const codeVerifier = this.generateCodeVerifier();
+                const codeChallenge = await this.generateCodeChallenge(codeVerifier);
+
+                console.log('[DROPBOX] Initiating PKCE OAuth flow with state parameter');
+
+                // Encode verifier in OAuth state parameter (survives Safari redirects)
+                const stateWithVerifier = `pkce:${codeVerifier}`;
+
+                // Use PKCE flow (required for public clients)
+                const redirectUri = 'https://rrv521-1760738877.netlify.app/rr_v60.html';
+                const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&token_access_type=offline&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${encodeURIComponent(stateWithVerifier)}`;
+
+                console.log('[DROPBOX] Redirecting to Dropbox for authorization');
+                window.location.href = authUrl;
+            },
+
+            getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            },
+
+            deleteCookie(name) {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            },
+
+            generateCodeVerifier() {
+                // Generate a random string for PKCE
+                const array = new Uint8Array(32);
+                crypto.getRandomValues(array);
+                return btoa(String.fromCharCode.apply(null, Array.from(array)))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            },
+
+            async generateCodeChallenge(verifier) {
+                // Hash the verifier using SHA-256
+                const encoder = new TextEncoder();
+                const data = encoder.encode(verifier);
+                const hash = await crypto.subtle.digest('SHA-256', data);
+                return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(hash))))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            },
+
+            disconnectDropbox() {
+                this.dropboxAccessToken = null;
+                this.dropboxRefreshToken = null;
+                this.dropboxTokenExpiry = null;
+                this.dropboxClient = null;
+                localStorage.removeItem('rr_dropbox_token');
+                localStorage.removeItem('rr_dropbox_refresh_token');
+                localStorage.removeItem('rr_dropbox_token_expiry');
+                this.updateDropboxUI(false);
+                this.showToast('Disconnected from Dropbox', 'info');
+            },
+
+            async ensureValidDropboxToken() {
+                // Check if we need to refresh the token
+                // Refresh if token expires in less than 5 minutes
+                const fiveMinutes = 5 * 60 * 1000;
+
+                if (!this.dropboxTokenExpiry || !this.dropboxRefreshToken) {
+                    console.log('[DROPBOX] No expiry time or refresh token - skipping refresh');
+                    return;
+                }
+
+                const timeUntilExpiry = this.dropboxTokenExpiry - Date.now();
+
+                if (timeUntilExpiry < fiveMinutes) {
+                    console.log('[DROPBOX] Token expires soon, refreshing... (expires in', Math.floor(timeUntilExpiry / 1000), 'seconds)');
+
+                    try {
+                        const response = await this.apiRequest('/api/dropbox-oauth', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                grant_type: 'refresh_token',
+                                refresh_token: this.dropboxRefreshToken
+                            })
+                        });
+
+                        if (response.access_token) {
+                            // Update tokens
+                            this.dropboxAccessToken = response.access_token;
+                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
+
+                            // Update refresh token if a new one was provided
+                            if (response.refresh_token) {
+                                this.dropboxRefreshToken = response.refresh_token;
+                                localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
+                            }
+
+                            localStorage.setItem('rr_dropbox_token', response.access_token);
+                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
+
+                            // Update the Dropbox client with new token
+                            if (this.dropboxClient) {
+                                this.dropboxClient = new Dropbox.Dropbox({ accessToken: response.access_token });
+                            }
+
+                            console.log('[DROPBOX] Token refreshed successfully, new expiry in:', response.expires_in, 'seconds');
+                        } else {
+                            throw new Error(response.error || 'Failed to refresh token');
+                        }
+                    } catch (error) {
+                        console.error('[DROPBOX] Token refresh failed:', error);
+                        this.showToast('Dropbox token refresh failed. Please reconnect.', 'warning');
+                        // Don't clear tokens yet - let user reconnect manually
+                    }
+                } else {
+                    console.log('[DROPBOX] Token still valid for', Math.floor(timeUntilExpiry / 60000), 'minutes');
+                }
+            },
+
+            updateDropboxUI(connected) {
+                const btn = document.getElementById('dropboxConnectBtn');
+                const status = document.getElementById('dropboxStatus');
+                const saveLogBtn = document.getElementById('saveLogBtn');
+
+                if (connected) {
+                    btn.textContent = 'Disconnect';
+                    btn.onclick = () => this.disconnectDropbox();
+                    status.textContent = '✓ Connected';
+                    status.style.color = 'var(--success-color)';
+                    if (saveLogBtn) saveLogBtn.disabled = false;
+                } else {
+                    btn.textContent = 'Connect to Dropbox';
+                    btn.onclick = () => this.connectDropbox();
+                    status.textContent = 'Not connected';
+                    status.style.color = 'var(--text-secondary)';
+                    if (saveLogBtn) saveLogBtn.disabled = true;
+                }
+            },
+
+            async saveToDropbox(path, content) {
+                if (!this.dropboxClient) {
+                    this.showToast('Not connected to Dropbox', 'error');
+                    return false;
+                }
+
+                // Ensure token is valid before making request
+                await this.ensureValidDropboxToken();
+
+                try {
+                    await this.dropboxClient.filesUpload({
+                        path: path,
+                        contents: content,
+                        mode: 'overwrite',
+                        autorename: false
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Dropbox save error:', error);
+
+                    // Check if this is a 401 (token expired) error
+                    if (error.status === 401 || (error.error && error.error.error && error.error.error['.tag'] === 'invalid_access_token')) {
+                        // Token expired - auto-disconnect and prompt to reconnect
+                        this.dropboxAccessToken = null;
+                        this.dropboxClient = null;
+                        localStorage.removeItem('rr_dropbox_token');
+                        this.updateDropboxUI(false);
+
+                        // Show friendly reconnect prompt
+                        const reconnect = confirm('Your Dropbox session has expired. Would you like to reconnect now?');
+                        if (reconnect) {
+                            this.connectDropbox();
+                        }
+                        return false;
+                    }
+
+                    this.showToast('Failed to save to Dropbox: ' + error.message, 'error');
+                    return false;
+                }
+            },
+
+            async saveDecisionsToDropbox() {
+                if (!this.dropboxClient) return;
+
+                // Generate decisions.txt content
+                let content = '';
+                for (const ref of this.references) {
+                    content += this.generateDecisionsEntry(ref, ref.finalized) + '\n';
+                }
+
+                const success = await this.saveToDropbox('/decisions.txt', content);
+                if (success) {
+                    this.showToast('decisions.txt saved to Dropbox', 'success');
+                }
+            },
+
+            async saveSessionLogToDropbox() {
+                if (!this.dropboxClient) {
+                    this.showToast('Not connected to Dropbox', 'error');
+                    return;
+                }
+
+                const sessionLog = JSON.parse(localStorage.getItem('rr_session_log') || '[]');
+
+                if (sessionLog.length === 0) {
+                    this.showToast('No session log to save', 'warning');
+                    return;
+                }
+
+                // Format log file
+                let logContent = `Reference Refinement Debug Log\n`;
+                logContent += `Generated: ${new Date().toLocaleString()}\n`;
+                logContent += `Total Entries: ${sessionLog.length}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                let currentRef = null;
+                sessionLog.forEach(entry => {
+                    if (entry.referenceId !== currentRef) {
+                        currentRef = entry.referenceId;
+                        logContent += `\n` + `=`.repeat(80) + `\n`;
+                        logContent += `REFERENCE ID: ${currentRef}\n`;
+                        logContent += `=`.repeat(80) + `\n\n`;
+                    }
+
+                    logContent += `[${entry.timestamp}] ${entry.title}\n`;
+                    logContent += `-`.repeat(80) + `\n`;
+                    logContent += `${entry.content}\n\n`;
+                });
+
+                // Add override summary section if there are any overrides
+                if (this.overrideLog.length > 0) {
+                    logContent += `\n\n` + `=`.repeat(80) + `\n`;
+                    logContent += `AI OVERRIDE DECISIONS SUMMARY (${this.overrideLog.length} total)\n`;
+                    logContent += `=`.repeat(80) + `\n\n`;
+
+                    this.overrideLog.forEach((override, index) => {
+                        logContent += `Override #${index + 1}\n`;
+                        logContent += `-`.repeat(80) + `\n`;
+                        logContent += `Timestamp: ${new Date(override.timestamp).toLocaleString()}\n`;
+                        logContent += `Reference ID: ${override.rid}\n`;
+                        logContent += `Type: ${override.override_type}\n`;
+
+                        if (override.reference_metadata) {
+                            logContent += `\nReference:\n`;
+                            logContent += `  Title: ${override.reference_metadata.title}\n`;
+                            logContent += `  Authors: ${override.reference_metadata.authors}\n`;
+                            logContent += `  Year: ${override.reference_metadata.year}\n`;
+                        }
+
+                        if (override.ai_suggested) {
+                            logContent += `\nAI Recommended:\n`;
+                            logContent += `  URL: ${override.ai_suggested.url}\n`;
+                            logContent += `  Primary Score: ${override.ai_suggested.primary_score}\n`;
+                            logContent += `  Secondary Score: ${override.ai_suggested.secondary_score}\n`;
+                            if (override.ai_suggested.primary_fit) {
+                                logContent += `  Fit: ${override.ai_suggested.primary_fit}\n`;
+                            }
+                        }
+
+                        if (override.user_selected) {
+                            logContent += `\nYou Selected:\n`;
+                            logContent += `  URL: ${override.user_selected.url}\n`;
+                            logContent += `  Primary Score: ${override.user_selected.primary_score}\n`;
+                            logContent += `  Secondary Score: ${override.user_selected.secondary_score}\n`;
+                            logContent += `  Ranked Position: ${override.user_selected.was_ranked}\n`;
+                        }
+
+                        if (override.user_annotation) {
+                            logContent += `\nYour Reason:\n`;
+                            logContent += `  "${override.user_annotation}"\n`;
+                        }
+
+                        logContent += `\n`;
+                    });
+                }
+
+                // Add session cost summary
+                logContent += `\n\n` + `=`.repeat(80) + `\n`;
+                logContent += `SESSION COST SUMMARY\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+                logContent += `Google API:\n`;
+                logContent += `  Searches Executed: ${this.sessionCosts.googleSearches}\n`;
+                logContent += `  Cost (at $0.005/query): $${this.calculateGoogleCost()}\n\n`;
+                logContent += `Claude API (Sonnet 4):\n`;
+                logContent += `  Query Generation: ${this.sessionCosts.claudeQueryGenCalls} calls\n`;
+                logContent += `    Input Tokens: ${this.sessionCosts.claudeQueryGenTokensIn.toLocaleString()}\n`;
+                logContent += `    Output Tokens: ${this.sessionCosts.claudeQueryGenTokensOut.toLocaleString()}\n`;
+                logContent += `  Ranking: ${this.sessionCosts.claudeRankCalls} calls\n`;
+                logContent += `    Input Tokens: ${this.sessionCosts.claudeRankTokensIn.toLocaleString()}\n`;
+                logContent += `    Output Tokens: ${this.sessionCosts.claudeRankTokensOut.toLocaleString()}\n`;
+                logContent += `  Total Tokens: ${(this.sessionCosts.claudeQueryGenTokensIn + this.sessionCosts.claudeRankTokensIn + this.sessionCosts.claudeQueryGenTokensOut + this.sessionCosts.claudeRankTokensOut).toLocaleString()}\n`;
+                logContent += `  Cost (at $0.003/1K in, $0.015/1K out): $${this.calculateClaudeCost()}\n\n`;
+                logContent += `TOTAL SESSION COST: $${this.calculateTotalSessionCost()}\n`;
+                logContent += `=`.repeat(80) + `\n\n`;
+
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                const success = await this.saveToDropbox(`/debug_logs/session_${timestamp}.txt`, logContent);
+
+                if (success) {
+                    // Clear log after saving
+                    localStorage.removeItem('rr_session_log');
+                    this.updateSessionLogTextarea();
+                    this.showToast('Session log saved to Dropbox and cleared', 'success');
+                }
+            },
+
+            async loadFromDropbox(path) {
+                if (!this.dropboxClient) {
+                    return null;
+                }
+
+                // Ensure token is valid before making request
+                await this.ensureValidDropboxToken();
+
+                try {
+                    const response = await this.dropboxClient.filesDownload({ path: path });
+                    const blob = response.result.fileBlob;
+                    const text = await blob.text();
+                    return text;
+                } catch (error) {
+                    console.error('Dropbox load error:', error);
+                    // Don't show error toast on startup - file might not exist yet
+                    return null;
+                }
+            },
+
+            async loadDecisionsFromDropbox() {
+                if (!this.dropboxClient) return;
+
+                const content = await this.loadFromDropbox('/decisions.txt');
+                if (content) {
+                    // Parse and load the content
+                    document.getElementById('decisionsInput').value = content;
+                    this.parseDecisions();
+                    this.showToast('decisions.txt loaded from Dropbox', 'success');
+                }
+            }
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
