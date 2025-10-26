@@ -97,8 +97,10 @@ export const handler: Handler = async (event, context) => {
       }
     ];
 
-    // Disable search tool for large candidate sets to prevent timeouts
-    const disableSearch = candidates.length >= 50;
+    // Disable search tool entirely to prevent timeouts (v13.6)
+    // Search was causing 29s delays even with small batches because frontend sends batches < 50
+    // We already do 8 queries upfront, so additional search isn't needed
+    const disableSearch = true;
 
     const systemPrompt = `You are an expert at identifying academic references and ranking URLs by their suitability as primary and secondary sources.
 

@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v13.4</title>
+    <title>Reference Refinement v13.6</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -2963,9 +2963,9 @@ ${queryInfo ? `${queryInfo}` : ''}
                 document.getElementById('rankBtnText').innerHTML = '<span class="loading"></span> Ranking...';
 
                 // Batch processing for large result sets
-                // Reduced from 50→35→25 to stay under 26-second Netlify timeout (v13.4)
-                // 35 was still timing out (25-28s), 25 should take ~18s safely
-                const batchSize = 25;
+                // Reduced from 50→35→25→20 to stay under 26-second Netlify timeout
+                // v13.3: 35 timed out (28s), v13.4: 25 timed out (29s), v13.5: trying 20
+                const batchSize = 20;
                 const totalCandidates = ref.searchResults.length;
                 const numBatches = Math.ceil(totalCandidates / batchSize);
 
@@ -2973,8 +2973,8 @@ ${queryInfo ? `${queryInfo}` : ''}
 
                 if (numBatches > 1) {
                     this.showToast(`Ranking ${totalCandidates} candidates in ${numBatches} batches...`, 'info');
-                } else if (totalCandidates > 40) {
-                    this.showToast(`Ranking ${totalCandidates} candidates - this may take 15-20 seconds...`, 'info');
+                } else if (totalCandidates > 15) {
+                    this.showToast(`Ranking ${totalCandidates} candidates - this may take 20-25 seconds...`, 'info');
                 }
 
                 try {
