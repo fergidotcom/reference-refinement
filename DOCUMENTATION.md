@@ -164,7 +164,7 @@ Academic researchers and authors who need to:
 **App Details:**
 - **App Name:** Reference Refinement
 - **App Key:** `q4ldgkwjmhxv6w2`
-- **App Secret:** `3a5rvori2s15f3b` (stored as environment variable in Netlify)
+- **App Secret:** `[REDACTED - Set in Netlify environment variable DROPBOX_APP_SECRET]`
 - **Permission Type:** App Folder (scoped access only)
 - **Access Type:** Files and folders
 
@@ -315,7 +315,7 @@ DROPBOX_APP_KEY=q4ldgkwjmhxv6w2
 
 **Secret Environment Variable** (Netlify only):
 ```
-DROPBOX_APP_SECRET=3a5rvori2s15f3b
+DROPBOX_APP_SECRET=[REDACTED - See Netlify environment variables]
 ```
 
 **OAuth Redirect URI:**
@@ -909,7 +909,7 @@ netlify env:set VARIABLE_NAME "value"
 - Must be: `https://rrv521-1760738877.netlify.app/rr_v60.html`
 
 **"DROPBOX_APP_SECRET not configured":**
-- Set in Netlify: `netlify env:set DROPBOX_APP_SECRET "3a5rvori2s15f3b"`
+- Set in Netlify: `netlify env:set DROPBOX_APP_SECRET "your-app-secret-from-dropbox-console"`
 - Redeploy site after setting
 
 **Token refresh fails:**
