@@ -102,123 +102,26 @@ export const handler: Handler = async (event, context) => {
     // We already do 8 queries upfront, so additional search isn't needed
     const disableSearch = true;
 
-    const systemPrompt = `You are an expert at identifying academic references and ranking URLs by their suitability as primary and secondary sources.
+    const systemPrompt = `Rank academic URLs quickly by primary (direct source) and secondary (backup/related) fitness.`;
 
-${disableSearch
-  ? 'IMPORTANT: You already have a large set of candidates to evaluate. DO NOT use the search_web tool - just rank the existing candidates.'
-  : `You have access to a search_web tool. Use it strategically when:
-- No exact title+author match exists in current candidates
-- Current candidates are articles ABOUT the work, not the work itself
-- Need to verify author or title information
-- All candidates score below 60 and better results are needed
+    const initialPrompt = `Rank these URLs for: "${reference.title || 'Unknown'}" by ${reference.authors || 'Unknown'} (${reference.year || 'Unknown'})
 
-IMPORTANT: Limit tool use to 2-3 searches maximum. Be strategic - don't search unless necessary.`}`;
+PRIMARY (score 0-100):
+- 100: Free PDF from .edu/.gov/publisher
+- 80-90: Publisher official page
+- 60+: Exact title+author match required
+- <60: No match or wrong work
 
-    const initialPrompt = `Rank these search results for BOTH primary and secondary URL fitness.
-
-CRITICAL MATCHING REQUIREMENTS FOR PRIMARY URLS:
-
-1. EXACT TITLE MATCH (MANDATORY):
-   - The candidate title MUST match the reference title exactly or very closely
-   - Acceptable variations: "The Title" vs "Title, The", subtitle omissions, punctuation differences
-   - NOT acceptable: Similar topics, related works, different editions with significantly different titles
-   - If no exact title match exists among candidates: PRIMARY score MUST be ≤ 50 (disqualified)
-
-2. AUTHOR MATCH (MANDATORY):
-   - The candidate MUST be BY or ABOUT the specified author
-   - For multi-author works, at least the first/primary author must match
-   - Author CVs/bios are acceptable only if they mention this specific work
-   - If author doesn't match: PRIMARY score MUST be ≤ 50 (disqualified)
-
-3. WORK ITSELF vs ABOUT THE WORK:
-   - Primary URLs should be the actual reference (book, article, PDF)
-   - NOT articles about it, reviews of it, or references to it (unless no direct source exists)
-
-If a candidate does not meet BOTH title and author requirements, it CANNOT be a primary URL candidate, regardless of domain authority.
-
-PRIMARY CRITERIA (authority & accessibility - only apply if title+author match):
-1. FREE PDF from trusted source (=100):
-   - Institutional repositories: archive.org, dtic.mil, .edu repositories
-   - Academic publishers with free access: methods.sagepub.com, JSTOR open, etc.
-
-2. KNOWN publisher with free PDF (=95):
-   - SAGE, Oxford, Cambridge, MIT Press, etc. with accessible PDFs
-
-3. Institutional archive (=90):
-   - .gov archives, university digital libraries
-
-4. Publisher official page with PDF preview (=85):
-   - Publisher site that shows book/article with preview
-
-5. Publisher official page paywalled (=70):
-   - Official but requires purchase/subscription
-
-6. Author's personal site with PDF (=80)
-
-7. Author CV/bio mentioning work (=60)
-
-PENALTIES:
-- Unknown CDN domains (cdn.*.com): -30 points
-- Articles ABOUT the work (not the work itself): -40 points
-- Aggregators (Google Scholar profiles, ResearchGate): -50 points
-- Random WordPress/blog sites (unless known academic): -20 points
-- Paywalled with no preview: -15 points
-
-SECONDARY CRITERIA (backup sources - must still relate to the work):
-CRITICAL: Secondary URLs are BACKUP sources for the same work, NOT just authoritative sites discussing similar themes.
-A secondary URL should still be ABOUT this specific work or author, just from a different source/format.
-
-ACCEPTABLE SECONDARY URLS:
-- Alternative format of the same work (e.g., HTML vs PDF, different edition) (=100)
-- Review/critique of THIS specific work (=100)
-- Author's CV/bio page that discusses THIS specific work (=90)
-- Publisher's alternative page for the same work (=90)
-- Related work BY THE SAME AUTHOR on similar topic (=70)
-- Scholarly discussion that extensively cites THIS specific work (=60)
-
-DISQUALIFIED (score ≤30 even if high domain authority):
-- Articles about similar themes but NOT mentioning this work or author
-- Law review / journal articles on related topics by different authors
-- Generic academic discussions of similar concepts
-- Any URL where neither the title NOR author appears in the snippet/title
-
-EXAMPLE:
-Reference: Gergen, K.J. (1999). An Invitation to Social Construction
-✓ GOOD Secondary: ResearchGate article "The Social Constructionist Movement in Modern Psychology" by Gergen
-✗ BAD Secondary: Law review article discussing "social construction" but NOT by/about Gergen
-
-REFERENCE:
-Title: ${reference.title || 'Unknown'}
-Authors: ${reference.authors || 'Unknown'}
-Year: ${reference.year || 'Unknown'}
-Other: ${reference.other || 'Unknown'}
-
-RELEVANCE (why this matters - extract themes for secondary scoring):
-${reference.relevance_text || 'No context provided'}
+SECONDARY (score 0-100):
+- 90-100: Alt format, review, author's CV
+- 60-80: Related work by same author
+- <60: Different author or generic topic
 
 CANDIDATES:
-${candidates.map((c, i) => `${i}. ${c.title}\n   URL: ${c.url}\n   Snippet: ${c.snippet || 'No snippet'}`).join('\n\n')}
+${candidates.map((c, i) => `${i}. ${c.title}\nURL: ${c.url}\nSnippet: ${c.snippet || 'N/A'}`).join('\n\n')}
 
-Return JSON array ranked by COMBINED utility (primary_score + secondary_score) / 2:
-[
-  {
-    "index": 0,
-    "primary_score": 95,
-    "secondary_score": 40,
-    "combined_score": 67,
-    "primary_fit": "Official publisher page",
-    "secondary_fit": "No thematic discussion",
-    "title_match": "exact",
-    "author_match": true,
-    "recommended_as": "primary"
-  }
-]
-
-IMPORTANT SCORING RULES:
-- If NO candidate has primary_score > 60 with exact title+author match: Include a note in primary_fit explaining why (e.g., "No exact title match found")
-- If NO candidate has secondary_score > 60: Include a note in secondary_fit explaining why
-- Mark the BEST candidate as "primary" even if score is low, so user knows the best available option
-- Mark the BEST secondary candidate similarly
+Return JSON (sort by combined_score desc):
+[{"index":0,"primary_score":95,"secondary_score":40,"combined_score":67,"primary_fit":"Publisher PDF","secondary_fit":"No backup value","title_match":"exact","author_match":true,"recommended_as":"primary"}]
 
 Use index 0-${candidates.length - 1}.`;
 
@@ -234,7 +137,7 @@ Use index 0-${candidates.length - 1}.`;
     while (searchCount < maxSearches) {
       const apiPayload: any = {
         model: model || 'claude-sonnet-4-20250514',
-        max_tokens: 1500,  // Reduced from 4000 to speed up generation
+        max_tokens: 800,  // v13.9: Reduced from 1500 to 800 (v13.8 still timing out)
         system: systemPrompt,
         messages: messages
       };

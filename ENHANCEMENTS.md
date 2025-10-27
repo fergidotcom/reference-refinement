@@ -2,22 +2,30 @@
 
 This file tracks enhancement requests and feature ideas for the Reference Refinement Tool.
 
-## For Next Release (v13.8)
+## For Next Release (v13.10)
+
+### Performance Improvements
+
+#### 1. Monitoring Dashboard for Autorank Performance
+**Priority:** Medium
+**Description:** Add real-time performance metrics to the Debug tab showing:
+- Average API response time per batch
+- Success rate percentage
+- Total tokens used per session
+- Batch processing timeline visualization
+
+**Benefit:** Help users understand performance and identify bottlenecks
 
 ### UI/UX Improvements
 
-#### 1. Fix Reference List Width - Horizontal Scrolling Issue
-**Priority:** High
-**Reported:** October 26, 2025
-**Description:** References in the main window are too wide, requiring horizontal scrolling to read the full content. This makes it difficult to scan through references quickly.
+#### 2. Enhanced Reference Card Layout
+**Priority:** Low
+**Description:** Consider adding:
+- Collapsible relevance sections for long descriptions
+- Visual indicators for URL quality/availability
+- Quick preview of URLs on hover
 
-**Proposed Solution:**
-- Implement responsive text wrapping for reference entries
-- Consider truncating long titles with ellipsis and show full text on hover/expand
-- Adjust column widths to fit viewport without horizontal scrolling
-- May need to adjust the reference list container's CSS max-width and overflow properties
-
-**Affected Component:** Main reference list display (around line 1400-1600 in HTML)
+**Benefit:** Better information density and user experience
 
 ---
 
@@ -28,6 +36,15 @@ This file tracks enhancement requests and feature ideas for the Reference Refine
 ---
 
 ## Completed Enhancements
+
+### v13.9
+- **Fixed horizontal scrolling in reference list** - Added CSS word-breaking and overflow handling
+- **Drastically simplified ranking prompt** - Reduced from 118 lines to 20 lines for faster processing
+- **Ultra-conservative batch size** - Reduced to 10 candidates per batch for reliable completion
+
+### v13.8
+- **Added 18-second API timeout** - Graceful failure instead of hard Netlify timeouts
+- **Reduced max_tokens to 1500** - Faster Claude generation
 
 ### v13.0
 - Dropbox OAuth with PKCE integration

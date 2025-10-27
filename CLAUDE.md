@@ -7,32 +7,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Reference Refinement Tool** - A web application for managing academic references with AI-powered search and ranking capabilities. The tool helps researchers find and validate URLs for bibliographic references.
 
 **Live URL:** https://rrv521-1760738877.netlify.app
-**Current Version:** v13.8 (deployed and accessible via rr_v137.html)
+**Current Version:** v13.9 (deployed and accessible via rr_v137.html)
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
 **Last Updated:** October 26, 2025
 
 ## Recent Issues and Fixes
 
-### ✅ RESOLVED - Autorank Timeout Issues (v13.8 - Oct 26, 2025)
+### ✅ RESOLVED - Autorank Timeout Issues (v13.9 - Oct 26, 2025)
 
-**Issue:** Autorank consistently failing with 504 Gateway Timeout after 26-29 seconds, regardless of batch size.
+**Issue:** Autorank failing with API timeouts even with v13.8's conservative settings (15 batch, 1500 max_tokens). API calls taking 19+ seconds.
 
-**Root Cause:** Multiple compounding issues:
-1. No timeout on Claude API calls → function waited indefinitely
-2. max_tokens: 4000 → slower generation
-3. Batch size too large (35) → large prompts, slow processing
-4. Previous attempts (v13.6-13.7) only addressed search tool, not core timeout issue
+**Root Cause:** The verbose 118-line ranking prompt was the main bottleneck. Claude spent excessive time processing complex scoring criteria, examples, and edge cases.
 
-**Solution (v13.8):**
-- Added 18-second AbortController timeout to Claude API calls
-- Reduced max_tokens from 4000 → 1500 (faster generation)
-- Reduced batch size from 35 → 15 (conservative, reliable)
-- Added timing logs for performance monitoring
+**Solution (v13.9):**
+- **Drastically simplified prompt:** 118 lines → 20 lines (~85% reduction)
+- **Ultra-conservative batch size:** 15 → 10 candidates
+- **Reduced max_tokens:** 1500 → 800 (forces concise responses)
+- Kept 18-second timeout from v13.8
 
 **Expected Performance:**
-- Small references (10-20 candidates): 5-10s
-- Medium references (30-50 candidates): 16-48s (2-4 batches)
-- Large references (60-80 candidates): 32-72s (4-6 batches)
+- Small references (10-20 candidates): 6-20s (1-2 batches)
+- Medium references (30-50 candidates): 24-60s (3-5 batches)
+- Large references (60-80 candidates): 48-96s (6-8 batches)
+
+**What Finally Worked:** Simplifying the prompt was more effective than reducing batch size or max_tokens. The verbose instructions were causing Claude to overthink each ranking.
 
 ### ✅ RESOLVED - Version Display Bug (v13.7 - Oct 26, 2025)
 
