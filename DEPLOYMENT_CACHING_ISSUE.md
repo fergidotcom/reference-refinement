@@ -2,11 +2,13 @@
 
 ## Problem Summary
 
-**Issue:** iPad Safari is aggressively caching v13.4 of the Reference Refinement app and refusing to load newer versions (v13.5, v13.6, v13.7) despite multiple deployment attempts and cache clearing methods.
+**Issue:** Netlify Edge CDN was aggressively caching v13.4 and serving stale content even after deploying v13.7 to production.
 
-**Status:** Unresolved - requires investigation in next session
+**Status:** ✅ RESOLVED - Root cause identified and fixed
 
-**Impact:** Cannot test critical autorank timeout fix that was deployed in v13.6/v13.7
+**Root Cause:** Netlify Edge cached the redirect/rewrite from `/` to `/rr_v60.html` and continued serving that cached response (age: 2386 seconds) even after new deployments.
+
+**Solution:** Renamed production file to `rr_v137.html` (never cached by CDN) and updated netlify.toml redirect target. Edge cache refreshed on next deployment.
 
 ---
 
@@ -299,5 +301,64 @@ Shows consistent 504 timeouts at ~29 seconds for all autorank attempts.
 
 ---
 
-**Session ended:** 5:10 PM, October 26, 2025
-**Next action:** Clear iPad Safari cache OR test on different browser/device
+## ✅ RESOLUTION (7:00 PM, October 26, 2025)
+
+### The Actual Problem
+
+This was **NOT** a browser cache issue. It was a **Netlify Edge CDN caching issue**.
+
+**Evidence:**
+```bash
+curl -I https://rrv521-1760738877.netlify.app/
+# Returned:
+# cache-status: "Netlify Edge"; hit
+# age: 2386  # <-- Response cached for 40 minutes!
+# HTTP/2 200
+# content-length: 176672  # <-- Serving rr_v60.html (v13.4)
+```
+
+Even though netlify.toml said to serve rr_v60.html, and rr_v60.html contained v13.7, **Netlify Edge had cached the entire file response** from before the v13.7 deployment.
+
+### Why File Renaming Fixed It
+
+When we:
+1. Renamed production file to `rr_v137.html`
+2. Updated netlify.toml redirect from `/rr_v60.html` → `/rr_v137.html`
+3. Deployed
+
+Netlify Edge cache behavior:
+- Old path `/rr_v60.html`: Cached response with v13.4 content
+- New path `/rr_v137.html`: **Never cached**, forces fresh fetch
+- Result: Edge cache refreshed (`age: 1`) and served v13.7
+
+### Why Browser Cache Still Shows v13.4
+
+Browsers (Safari) cached the **redirect itself** from `/` to `/rr_v60.html`. Even though Netlify now redirects to `/rr_v137.html`, Safari doesn't know this because it cached the old redirect.
+
+**Solutions for users:**
+1. Clear Safari cache (Settings → Clear History and Website Data)
+2. Access direct URL: `https://rrv521-1760738877.netlify.app/rr_v137.html`
+3. Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
+
+### Key Learnings
+
+1. **Netlify Edge caching is aggressive** - Even with `max-age=0`, edge nodes cache responses
+2. **Rewrites (status=200) are cached differently than redirects (status=301)** - Both get cached, but rewrites cache the file content
+3. **File renaming bypasses ALL caches** - Most reliable way to force fresh content
+4. **Browser vs CDN cache are separate layers** - Fixing CDN doesn't fix browser cache
+
+### Future Prevention
+
+If this happens again:
+1. Increment filename (e.g., rr_v137.html → rr_v138.html)
+2. Update netlify.toml redirect
+3. Deploy
+4. Instruct users to access new direct URL or clear cache
+
+**Alternative:** Use query parameters for cache busting (e.g., `?v=13.7&t=timestamp`), but this is less reliable than filename changes.
+
+---
+
+**Session ended:** 7:00 PM, October 26, 2025
+**Status:** ✅ Issue resolved, v13.7 now accessible at /rr_v137.html
+**Next action:** Test autorank timeout fix on References #3 and #4
