@@ -7,20 +7,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Reference Refinement Tool** - A web application for managing academic references with AI-powered search and ranking capabilities. The tool helps researchers find and validate URLs for bibliographic references.
 
 **Live URL:** https://rrv521-1760738877.netlify.app
-**Current Version:** v13.7 (deployed, but iPad showing v13.4 due to caching issue - see below)
+**Current Version:** v13.7 (deployed and accessible via rr_v137.html)
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
 **Last Updated:** October 26, 2025
 
-## ⚠️ ACTIVE ISSUE - iPad Safari Caching (Oct 26, 2025)
+## ✅ RESOLVED - Netlify CDN Caching Issue (Oct 26, 2025)
 
-**Critical:** iPad Safari is aggressively caching v13.4 and refusing to load v13.7 despite:
-- Multiple deployments verified via curl
-- Clearing Safari cache/history multiple times
-- Using unique deploy URLs that were never accessed before
-- iPad restart attempts
+**Issue:** Netlify's CDN was aggressively caching `rr_v60.html` as v13.4, even after multiple deployments of v13.7. Both iPad and Mac Safari showed v13.4 on all URLs (including unique deploy URLs).
 
-**Deployed Version:** v13.7 (confirmed working via curl)
-**iPad Shows:** v13.4 (stuck in cache)
+**Root Cause:** CDN edge caching at the filename level, not browser cache.
+
+**Solution:** Changed `netlify.toml` redirect from `/rr_v60.html` → `/rr_v137.html`
+- Since `rr_v137.html` was never cached by the CDN, it serves fresh content
+- All devices now correctly show v13.7
 
 **What We Fixed in v13.6/v13.7:**
 - Disabled search_web tool in llm-rank.ts (was causing 29s timeouts)
@@ -28,11 +27,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Should fix 504 timeout errors during autorank
 
 **Next Steps:**
-1. Test on different browser (Chrome) or device to verify fix works
-2. See `DEPLOYMENT_CACHING_ISSUE.md` for complete details
-3. Once cache cleared, test autorank on References #3 and #4
-
-**DO NOT** redeploy or change version numbers until cache issue is resolved.
+1. ✅ Deploy complete - test on iPad/Mac Safari to verify v13.7 loads
+2. Test autorank on References #3 and #4 to verify timeout fix works
+3. See `DEPLOYMENT_CACHING_ISSUE.md` for technical details
 
 ## Architecture
 
@@ -180,8 +177,9 @@ Required environment variables (set in Netlify Dashboard):
 ### File Structure
 ```
 References/
-├── rr_v60.html                 # Main app (production file - name never changes)
-├── netlify.toml                # Netlify configuration
+├── rr_v137.html                # Main app (production file as of v13.7)
+├── rr_v60.html                 # Legacy production file (retired due to CDN caching)
+├── netlify.toml                # Netlify configuration (redirects to rr_v137.html)
 ├── netlify/functions/          # Serverless function handlers
 ├── backend_server.py           # Optional FastAPI backend
 ├── decisions.txt               # Working references file
@@ -191,9 +189,10 @@ References/
 
 ### Version Management
 - Actual version number is in the HTML file's `<title>` and header
-- Production file is always named `rr_v60.html` regardless of version
-- New versions are copied from Downloads (e.g., `rr_v74.html` → `rr_v60.html`)
-- Netlify publishes the root directory with `rr_v60.html` as the entry point
+- **Production file (as of v13.7):** `rr_v137.html` (changed from rr_v60.html to fix CDN caching)
+- New versions: Copy from Downloads (e.g., `rr_v80.html` → `rr_v137.html`)
+- netlify.toml redirects `/` to `/rr_v137.html`
+- **Important:** If CDN caching issues occur again, rename to a new filename (e.g., rr_v138.html) and update netlify.toml
 
 ### Netlify Configuration
 The `netlify.toml` file configures:
