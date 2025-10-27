@@ -102,36 +102,25 @@ export const handler: Handler = async (event, context) => {
     // We already do 8 queries upfront, so additional search isn't needed
     const disableSearch = true;
 
-    const systemPrompt = `You rank academic URLs. Return ONLY valid JSON, no other text.`;
+    const systemPrompt = `You rank URLs. Reply with ONLY the scores table, nothing else.`;
 
     const initialPrompt = `Rank these URLs for: "${reference.title || 'Unknown'}" by ${reference.authors || 'Unknown'} (${reference.year || 'Unknown'})
 
-PRIMARY (score 0-100):
-- 100: Free PDF from .edu/.gov/publisher
-- 80-90: Publisher official page
-- 60+: Exact title+author match required
-- <60: No match or wrong work
-
-SECONDARY (score 0-100):
-- 90-100: Alt format, review, author's CV
-- 60-80: Related work by same author
-- <60: Different author or generic topic
+Score each URL:
+- PRIMARY (0-100): How good as direct source? 100=free PDF from .edu/.gov, 60+=exact match, <60=wrong work
+- SECONDARY (0-100): How good as backup? 90+=alt format/review, 60+=related work by author, <60=different author
 
 CANDIDATES:
-${candidates.map((c, i) => `${i}. ${c.title}\nURL: ${c.url}\nSnippet: ${c.snippet || 'N/A'}`).join('\n\n')}
+${candidates.map((c, i) => `${i}. ${c.title}\n${c.url}`).join('\n\n')}
 
-IMPORTANT: Return ONLY a JSON array with NO other text before or after. Each entry must have:
-- index (0-${candidates.length - 1})
-- primary_score (0-100)
-- secondary_score (0-100)
-- combined_score (average of primary and secondary)
-- primary_fit (brief reason)
-- secondary_fit (brief reason)
-- title_match ("exact", "partial", or "none")
-- author_match (true/false)
-- recommended_as ("primary", "secondary", or "neither")
+Return ONLY this format (one line per candidate, no headers, no explanations):
+INDEX|PRIMARY|SECONDARY|PRIMARY_REASON|SECONDARY_REASON|TITLE_MATCH|AUTHOR_MATCH|RECOMMEND
 
-Example: [{"index":0,"primary_score":95,"secondary_score":40,"combined_score":67,"primary_fit":"Publisher PDF","secondary_fit":"No backup","title_match":"exact","author_match":true,"recommended_as":"primary"}]`;
+Example:
+0|95|40|Publisher PDF|Not backup source|exact|yes|primary
+1|70|80|Paywalled page|Review article|exact|yes|secondary
+
+Use exact/partial/none for TITLE_MATCH, yes/no for AUTHOR_MATCH, primary/secondary/neither for RECOMMEND.`;
 
     // Tool calling loop
     let allCandidates = [...candidates];
@@ -292,31 +281,47 @@ Return the complete JSON rankings array for ALL candidates now.`;
       const resultText = data.content.find((block: any) => block.type === 'text')?.text || '';
       console.log('Final response length:', resultText.length);
 
-      // Parse JSON from response - try multiple patterns
+      // Parse pipe-delimited response
       let rankings = [];
       let parseError = null;
 
       console.log(`[llm-rank] AI response length: ${resultText.length} chars`);
       console.log(`[llm-rank] AI response preview: ${resultText.substring(0, 300)}`);
 
-      // Try to find JSON array in response
-      const jsonMatch = resultText.match(/\[[\s\S]*\]/);
+      try {
+        // Split into lines and parse each
+        const lines = resultText.trim().split('\n').filter(line => line.trim() && line.includes('|'));
+        console.log(`[llm-rank] Found ${lines.length} pipe-delimited lines`);
 
-      if (jsonMatch) {
-        console.log(`[llm-rank] Found JSON match, length: ${jsonMatch[0].length} chars`);
-        try {
-          rankings = JSON.parse(jsonMatch[0]);
-          console.log(`[llm-rank] Successfully parsed ${rankings.length} rankings`);
-          finalRankings = rankings;
-          break; // Successfully parsed, exit loop
-        } catch (e) {
-          parseError = e instanceof Error ? e.message : 'JSON parse error';
-          console.error(`[llm-rank] Failed to parse JSON: ${parseError}`);
-          console.error(`[llm-rank] Invalid JSON: ${jsonMatch[0].substring(0, 500)}`);
-        }
-      } else {
-        parseError = 'No JSON array found in AI response';
-        console.error(`[llm-rank] ${parseError}`);
+        rankings = lines.map(line => {
+          const parts = line.split('|').map(p => p.trim());
+          if (parts.length < 8) {
+            console.error(`[llm-rank] Invalid line format (${parts.length} parts): ${line}`);
+            return null;
+          }
+
+          const primary = parseInt(parts[1]);
+          const secondary = parseInt(parts[2]);
+
+          return {
+            index: parseInt(parts[0]),
+            primary_score: primary,
+            secondary_score: secondary,
+            combined_score: Math.round((primary + secondary) / 2),
+            primary_fit: parts[3],
+            secondary_fit: parts[4],
+            title_match: parts[5],
+            author_match: parts[6] === 'yes',
+            recommended_as: parts[7]
+          };
+        }).filter(r => r !== null);
+
+        console.log(`[llm-rank] Successfully parsed ${rankings.length} rankings`);
+        finalRankings = rankings;
+        break; // Successfully parsed, exit loop
+      } catch (e) {
+        parseError = e instanceof Error ? e.message : 'Parse error';
+        console.error(`[llm-rank] Failed to parse response: ${parseError}`);
         console.error(`[llm-rank] Full response: ${resultText}`);
       }
 
@@ -329,7 +334,7 @@ Return the complete JSON rankings array for ALL candidates now.`;
           body: JSON.stringify({
             rankings: [],
             allCandidates: allCandidates,
-            error: `Failed to parse rankings for ${allCandidates.length} candidates: ${parseError}`,
+            error: `Failed to parse rankings (expected pipe-delimited format): ${parseError}`,
             raw_response: resultText, // Return full response for debugging
             searches_performed: searchCount
           })
