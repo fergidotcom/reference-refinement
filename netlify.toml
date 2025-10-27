@@ -46,7 +46,7 @@
 # Default redirect - serve main app
 [[redirects]]
   from = "/"
-  to = "/rr_v60.html"
+  to = "/rr_v137.html"
   status = 200
 
 # CORS headers for all function endpoints
