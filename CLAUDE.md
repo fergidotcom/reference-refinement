@@ -11,15 +11,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
 **Last Updated:** October 26, 2025
 
-## ✅ RESOLVED - Netlify CDN Caching Issue (Oct 26, 2025)
+## ✅ RESOLVED - Version Display Bug (Oct 26, 2025)
 
-**Issue:** Netlify's CDN was aggressively caching `rr_v60.html` as v13.4, even after multiple deployments of v13.7. Both iPad and Mac Safari showed v13.4 on all URLs (including unique deploy URLs).
+**Issue:** Page showed "v13.4" in header despite deploying v13.7 multiple times. Appeared on all browsers and all URLs.
 
-**Root Cause:** CDN edge caching at the filename level, not browser cache.
+**Root Cause:** HTML had TWO version numbers that got out of sync:
+- `<title>Reference Refinement v13.7</title>` ✅ (updated)
+- `<h1>Reference Refinement v13.4</h1>` ❌ (forgotten)
 
-**Solution:** Changed `netlify.toml` redirect from `/rr_v60.html` → `/rr_v137.html`
-- Since `rr_v137.html` was never cached by the CDN, it serves fresh content
-- All devices now correctly show v13.7
+**Solution:** Updated `<h1>` tag on line 1037 to show v13.7
+
+**Lesson Learned:** When bumping versions, search for ALL occurrences of the version string, not just `<title>` tag.
 
 **What We Fixed in v13.6/v13.7:**
 - Disabled search_web tool in llm-rank.ts (was causing 29s timeouts)
@@ -27,9 +29,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Should fix 504 timeout errors during autorank
 
 **Next Steps:**
-1. ✅ Deploy complete - test on iPad/Mac Safari to verify v13.7 loads
+1. ✅ Version display fixed - v13.7 now shows correctly everywhere
 2. Test autorank on References #3 and #4 to verify timeout fix works
-3. See `DEPLOYMENT_CACHING_ISSUE.md` for technical details
+3. See `DEPLOYMENT_CACHING_ISSUE.md` for full investigation details
 
 ## Architecture
 

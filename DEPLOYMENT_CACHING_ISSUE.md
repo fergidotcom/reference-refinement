@@ -301,11 +301,57 @@ Shows consistent 504 timeouts at ~29 seconds for all autorank attempts.
 
 ---
 
-## ✅ RESOLUTION (7:00 PM, October 26, 2025)
+## ✅ FINAL RESOLUTION (8:00 PM, October 26, 2025)
 
-### The Actual Problem
+### The ACTUAL Problem (Not What We Thought!)
 
-This was **NOT** a browser cache issue. It was a **Netlify Edge CDN caching issue**.
+This was **NOT** a caching issue at all - neither browser nor CDN!
+
+**Root Cause:** The HTML file had **two separate version numbers** that got out of sync:
+- `<title>Reference Refinement v13.7</title>` (line 10) ✅
+- `<h1>Reference Refinement v13.4</h1>` (line 1037) ❌
+
+When the version was bumped from v13.4 to v13.7, only the `<title>` tag was updated, not the `<h1>` in the page header.
+
+**Evidence:**
+- Chrome tab showed "v13.7" (from `<title>` tag)
+- Page header showed "v13.4" (from `<h1>` tag)
+- curl showed v13.7 content (batchSize = 35, correct)
+- Both Safari AND Chrome showed the same behavior
+
+### Why We Were Confused
+
+We initially thought it was a caching issue because:
+
+1. **Multiple deployments didn't "fix" it** - Because there was nothing to fix in the deployment; the file was correctly deployed with the mismatched version numbers
+2. **Clearing browser cache didn't help** - Because it wasn't cached; the page was genuinely showing v13.4 in the header
+3. **Unique deploy URLs showed v13.4** - Because they all served the same HTML with the mismatched versions
+4. **CDN headers looked suspicious** - We saw "age: 2386" and assumed caching, but that was a red herring
+
+### The Smoking Gun
+
+The breakthrough came from the Chrome screenshot showing:
+- **Tab title:** "Reference Refinement v13.7"
+- **Page header:** "Reference Refinement v13.4"
+
+This revealed there were TWO version strings in the HTML, and they were different!
+
+### The Actual Fix
+
+Simply updated line 1037 in both HTML files:
+```html
+<!-- BEFORE -->
+<h1>Reference Refinement v13.4</h1>
+
+<!-- AFTER -->
+<h1>Reference Refinement v13.7</h1>
+```
+
+Deployed and confirmed both version numbers now match.
+
+### Previous Investigation (Ignored - Not the Issue)
+
+Below is the Netlify CDN caching investigation that led us down the wrong path:
 
 **Evidence:**
 ```bash
