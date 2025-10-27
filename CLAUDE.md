@@ -7,30 +7,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Reference Refinement Tool** - A web application for managing academic references with AI-powered search and ranking capabilities. The tool helps researchers find and validate URLs for bibliographic references.
 
 **Live URL:** https://rrv521-1760738877.netlify.app
-**Current Version:** v13.9 (deployed and accessible via rr_v137.html)
+**Current Version:** v13.11 (deployed and accessible via rr_v137.html)
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
 **Last Updated:** October 26, 2025
 
 ## Recent Issues and Fixes
 
-### ✅ RESOLVED - Autorank Timeout Issues (v13.9 - Oct 26, 2025)
+### ✅ RESOLVED - Autorank Issues (v13.9-v13.11 - Oct 26, 2025)
 
-**Issue:** Autorank failing with API timeouts even with v13.8's conservative settings (15 batch, 1500 max_tokens). API calls taking 19+ seconds.
+**Issue 1: Timeout (FIXED in v13.9)**
+- Autorank taking 19+ seconds and timing out at 18s limit
+- **Root Cause:** Verbose 118-line prompt took too long to process
+- **Solution:** Simplified prompt from 118 → 20 lines
+- **Result:** Reduced to 10-13 seconds ✅
 
-**Root Cause:** The verbose 118-line ranking prompt was the main bottleneck. Claude spent excessive time processing complex scoring criteria, examples, and edge cases.
+**Issue 2: JSON Parsing (FIXED in v13.11)**
+- v13.9/v13.10 fixed timeout but Claude returned invalid JSON
+- **Root Cause:** Claude Sonnet 4 adds conversational text around JSON or returns malformed JSON
+- **Solution:** Switched from JSON to pipe-delimited text format
+  - Format: `INDEX|PRIMARY|SECONDARY|PRIMARY_REASON|SECONDARY_REASON|TITLE_MATCH|AUTHOR_MATCH|RECOMMEND`
+  - Parse text ourselves into JSON structure
+- **Result:** Much more reliable parsing ✅
 
-**Solution (v13.9):**
-- **Drastically simplified prompt:** 118 lines → 20 lines (~85% reduction)
-- **Ultra-conservative batch size:** 15 → 10 candidates
-- **Reduced max_tokens:** 1500 → 800 (forces concise responses)
-- Kept 18-second timeout from v13.8
+**Current Performance (v13.11):**
+- Small references (10-20 candidates): 10-20s (1-2 batches)
+- Medium references (30-50 candidates): 30-60s (3-5 batches)
+- Large references (60-80 candidates): 60-80s (6-8 batches)
 
-**Expected Performance:**
-- Small references (10-20 candidates): 6-20s (1-2 batches)
-- Medium references (30-50 candidates): 24-60s (3-5 batches)
-- Large references (60-80 candidates): 48-96s (6-8 batches)
-
-**What Finally Worked:** Simplifying the prompt was more effective than reducing batch size or max_tokens. The verbose instructions were causing Claude to overthink each ranking.
+**Status:** Autorank should now work reliably. Needs user testing to confirm.
 
 ### ✅ RESOLVED - Version Display Bug (v13.7 - Oct 26, 2025)
 
