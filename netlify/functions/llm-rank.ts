@@ -234,7 +234,7 @@ Use index 0-${candidates.length - 1}.`;
     while (searchCount < maxSearches) {
       const apiPayload: any = {
         model: model || 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
+        max_tokens: 1500,  // Reduced from 4000 to speed up generation
         system: systemPrompt,
         messages: messages
       };
@@ -244,15 +244,42 @@ Use index 0-${candidates.length - 1}.`;
         apiPayload.tools = tools;
       }
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify(apiPayload)
-      });
+      // Add timeout to prevent Netlify function timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 18000); // 18 second timeout
+
+      console.log(`[llm-rank] Calling Claude API with ${candidates.length} candidates...`);
+      const startTime = Date.now();
+
+      let response;
+      try {
+        response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify(apiPayload),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        console.log(`[llm-rank] Claude API responded in ${Date.now() - startTime}ms`);
+      } catch (error: any) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+          console.error('[llm-rank] Claude API timeout after 18 seconds');
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+              rankings: [],
+              error: 'API timeout - try with fewer candidates or simpler reference'
+            })
+          };
+        }
+        throw error;
+      }
 
       if (!response.ok) {
         const errorText = await response.text();

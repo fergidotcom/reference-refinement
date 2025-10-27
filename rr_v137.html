@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v13.7</title>
+    <title>Reference Refinement v13.8</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1034,7 +1034,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v13.7</h1>
+            <h1>Reference Refinement v13.8</h1>
         </div>
     </header>
 
@@ -2964,8 +2964,9 @@ ${queryInfo ? `${queryInfo}` : ''}
 
                 // Batch processing for large result sets
                 // v13.6: Disabled search tool in llm-rank.ts (was the actual bottleneck)
-                // v13.7: Increased batch size to 35 now that search is disabled (~15s per batch)
-                const batchSize = 35;
+                // v13.7: Increased batch size to 35 (still had timeout issues)
+                // v13.8: Reduced to 15 + added 18s timeout + reduced max_tokens to 1500
+                const batchSize = 15;
                 const totalCandidates = ref.searchResults.length;
                 const numBatches = Math.ceil(totalCandidates / batchSize);
 

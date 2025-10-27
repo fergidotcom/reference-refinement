@@ -7,31 +7,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Reference Refinement Tool** - A web application for managing academic references with AI-powered search and ranking capabilities. The tool helps researchers find and validate URLs for bibliographic references.
 
 **Live URL:** https://rrv521-1760738877.netlify.app
-**Current Version:** v13.7 (deployed and accessible via rr_v137.html)
+**Current Version:** v13.8 (deployed and accessible via rr_v137.html)
 **Platform:** Single-page HTML application deployed on Netlify with serverless functions
 **Last Updated:** October 26, 2025
 
-## ✅ RESOLVED - Version Display Bug (Oct 26, 2025)
+## Recent Issues and Fixes
 
-**Issue:** Page showed "v13.4" in header despite deploying v13.7 multiple times. Appeared on all browsers and all URLs.
+### ✅ RESOLVED - Autorank Timeout Issues (v13.8 - Oct 26, 2025)
 
-**Root Cause:** HTML had TWO version numbers that got out of sync:
-- `<title>Reference Refinement v13.7</title>` ✅ (updated)
-- `<h1>Reference Refinement v13.4</h1>` ❌ (forgotten)
+**Issue:** Autorank consistently failing with 504 Gateway Timeout after 26-29 seconds, regardless of batch size.
 
-**Solution:** Updated `<h1>` tag on line 1037 to show v13.7
+**Root Cause:** Multiple compounding issues:
+1. No timeout on Claude API calls → function waited indefinitely
+2. max_tokens: 4000 → slower generation
+3. Batch size too large (35) → large prompts, slow processing
+4. Previous attempts (v13.6-13.7) only addressed search tool, not core timeout issue
 
-**Lesson Learned:** When bumping versions, search for ALL occurrences of the version string, not just `<title>` tag.
+**Solution (v13.8):**
+- Added 18-second AbortController timeout to Claude API calls
+- Reduced max_tokens from 4000 → 1500 (faster generation)
+- Reduced batch size from 35 → 15 (conservative, reliable)
+- Added timing logs for performance monitoring
 
-**What We Fixed in v13.6/v13.7:**
-- Disabled search_web tool in llm-rank.ts (was causing 29s timeouts)
-- Increased batch size to 35 (safe now that search is disabled)
-- Should fix 504 timeout errors during autorank
+**Expected Performance:**
+- Small references (10-20 candidates): 5-10s
+- Medium references (30-50 candidates): 16-48s (2-4 batches)
+- Large references (60-80 candidates): 32-72s (4-6 batches)
 
-**Next Steps:**
-1. ✅ Version display fixed - v13.7 now shows correctly everywhere
-2. Test autorank on References #3 and #4 to verify timeout fix works
-3. See `DEPLOYMENT_CACHING_ISSUE.md` for full investigation details
+### ✅ RESOLVED - Version Display Bug (v13.7 - Oct 26, 2025)
+
+**Issue:** Page showed "v13.4" in header despite deploying v13.7. Not a cache issue.
+
+**Root Cause:** Forgotten `<h1>` tag during version bump.
+
+**Solution:** Updated both `<title>` and `<h1>` tags.
+
+**Lesson Learned:** Search for ALL version occurrences when bumping versions.
 
 ## Architecture
 
