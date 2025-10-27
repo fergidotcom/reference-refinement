@@ -102,7 +102,7 @@ export const handler: Handler = async (event, context) => {
     // We already do 8 queries upfront, so additional search isn't needed
     const disableSearch = true;
 
-    const systemPrompt = `Rank academic URLs quickly by primary (direct source) and secondary (backup/related) fitness.`;
+    const systemPrompt = `You rank academic URLs. Return ONLY valid JSON, no other text.`;
 
     const initialPrompt = `Rank these URLs for: "${reference.title || 'Unknown'}" by ${reference.authors || 'Unknown'} (${reference.year || 'Unknown'})
 
@@ -120,10 +120,18 @@ SECONDARY (score 0-100):
 CANDIDATES:
 ${candidates.map((c, i) => `${i}. ${c.title}\nURL: ${c.url}\nSnippet: ${c.snippet || 'N/A'}`).join('\n\n')}
 
-Return JSON (sort by combined_score desc):
-[{"index":0,"primary_score":95,"secondary_score":40,"combined_score":67,"primary_fit":"Publisher PDF","secondary_fit":"No backup value","title_match":"exact","author_match":true,"recommended_as":"primary"}]
+IMPORTANT: Return ONLY a JSON array with NO other text before or after. Each entry must have:
+- index (0-${candidates.length - 1})
+- primary_score (0-100)
+- secondary_score (0-100)
+- combined_score (average of primary and secondary)
+- primary_fit (brief reason)
+- secondary_fit (brief reason)
+- title_match ("exact", "partial", or "none")
+- author_match (true/false)
+- recommended_as ("primary", "secondary", or "neither")
 
-Use index 0-${candidates.length - 1}.`;
+Example: [{"index":0,"primary_score":95,"secondary_score":40,"combined_score":67,"primary_fit":"Publisher PDF","secondary_fit":"No backup","title_match":"exact","author_match":true,"recommended_as":"primary"}]`;
 
     // Tool calling loop
     let allCandidates = [...candidates];
@@ -288,27 +296,33 @@ Return the complete JSON rankings array for ALL candidates now.`;
       let rankings = [];
       let parseError = null;
 
+      console.log(`[llm-rank] AI response length: ${resultText.length} chars`);
+      console.log(`[llm-rank] AI response preview: ${resultText.substring(0, 300)}`);
+
       // Try to find JSON array in response
       const jsonMatch = resultText.match(/\[[\s\S]*\]/);
 
       if (jsonMatch) {
+        console.log(`[llm-rank] Found JSON match, length: ${jsonMatch[0].length} chars`);
         try {
           rankings = JSON.parse(jsonMatch[0]);
-          console.log('Successfully parsed rankings:', rankings.length);
+          console.log(`[llm-rank] Successfully parsed ${rankings.length} rankings`);
           finalRankings = rankings;
           break; // Successfully parsed, exit loop
         } catch (e) {
           parseError = e instanceof Error ? e.message : 'JSON parse error';
-          console.error('Failed to parse rankings JSON:', parseError);
+          console.error(`[llm-rank] Failed to parse JSON: ${parseError}`);
+          console.error(`[llm-rank] Invalid JSON: ${jsonMatch[0].substring(0, 500)}`);
         }
       } else {
         parseError = 'No JSON array found in AI response';
-        console.error(parseError);
+        console.error(`[llm-rank] ${parseError}`);
+        console.error(`[llm-rank] Full response: ${resultText}`);
       }
 
       // If search is disabled (large candidate set), don't retry - just fail with error
       if (disableSearch && rankings.length === 0) {
-        console.log('Search disabled and parsing failed - returning error');
+        console.log('[llm-rank] Search disabled and parsing failed - returning error');
         return {
           statusCode: 200,
           headers,
@@ -316,7 +330,7 @@ Return the complete JSON rankings array for ALL candidates now.`;
             rankings: [],
             allCandidates: allCandidates,
             error: `Failed to parse rankings for ${allCandidates.length} candidates: ${parseError}`,
-            raw_response_preview: resultText.substring(0, 500),
+            raw_response: resultText, // Return full response for debugging
             searches_performed: searchCount
           })
         };
