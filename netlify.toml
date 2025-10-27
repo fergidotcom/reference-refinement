@@ -44,10 +44,11 @@
   status = 200
 
 # Default redirect - serve main app
+# Using 301 (redirect) instead of 200 (rewrite) to avoid edge caching issues
 [[redirects]]
   from = "/"
   to = "/rr_v137.html"
-  status = 200
+  status = 301
 
 # CORS headers for all function endpoints
 [[headers]]
