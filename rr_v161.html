@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v16.6</title>
+    <title>Reference Refinement v16.1</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1040,94 +1040,13 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-color);
         }
-
-        /* v16.5: Quick Note Modal */
-        .quick-note-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quick-note-modal.show {
-            display: flex;
-        }
-
-        .quick-note-content {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .quick-note-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--accent-color);
-        }
-
-        .quick-note-header h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--primary-color);
-        }
-
-        .quick-note-textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 0.75rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 0.95rem;
-            resize: vertical;
-            margin-bottom: 1rem;
-        }
-
-        .quick-note-textarea:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .quick-note-actions {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: flex-end;
-        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v16.6</h1>
-            <button onclick="app.showQuickNote()" class="secondary" style="margin-left: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
-                📝 Quick Note
-            </button>
+            <h1>Reference Refinement v16.1</h1>
         </div>
     </header>
 
@@ -1155,8 +1074,8 @@
                             <span>Show Finalized References</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
-                            <input type="checkbox" id="showManualReviewToggle" onchange="app.applyFilters()" checked>
-                            <span>Show Manual Review Needed</span>
+                            <input type="checkbox" id="showOnlyManualReviewToggle" onchange="app.applyFilters()">
+                            <span>Show Only Manual Review Needed</span>
                         </label>
                     </div>
                 </div>
@@ -1223,9 +1142,6 @@
                         <!-- Reference title and author will be displayed here -->
                     </div>
                 </div>
-                <button onclick="app.showQuickNote()" class="secondary" style="margin-right: 0.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    📝 Quick Note
-                </button>
                 <button class="modal-close" onclick="app.closeModal()">&times;</button>
             </div>
 
@@ -1321,9 +1237,6 @@
                             <button onclick="app.runSearch()" class="success">
                                 <span id="queryBtnText">Query & Search</span>
                             </button>
-                            <button onclick="app.showQuickNote()" style="background: #9b59b6;">
-                                📝 Note
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -1370,9 +1283,6 @@
                             <button onclick="app.rankCandidates()">
                                 <span id="rankBtnText">Autorank Candidates (AI)</span>
                             </button>
-                            <button onclick="app.showQuickNote()" style="background: #9b59b6;">
-                                📝 Note
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -1381,20 +1291,16 @@
                 <div id="tab2" class="tab-content" style="display: flex; flex-direction: column; overflow: hidden;">
                     <!-- User Notes Panel (Always Visible) -->
                     <div style="padding: 0.75rem; background: #fffbea; border-bottom: 2px solid var(--warning-color); flex-shrink: 0;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 1.2rem;">📝</span>
-                                <h4 style="margin: 0; font-size: 0.9rem; color: var(--warning-color);">Your Notes</h4>
-                            </div>
-                            <button onclick="app.saveQuickNoteWithContext()" class="primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
-                                Save Note Now
-                            </button>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.2rem;">📝</span>
+                            <h4 style="margin: 0; font-size: 0.9rem; color: var(--warning-color);">Your Notes (auto-saved to session log)</h4>
                         </div>
                         <textarea id="userNotesTextarea"
-                            placeholder="Type observations, questions, or notes here. Click 'Save Note Now' to save with full context..."
+                            placeholder="Type observations, questions, or notes here as you work. These will be included in your session log for analysis..."
                             style="width: 100%; height: 80px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
                                    font-size: 0.85rem; padding: 0.5rem; border: 1px solid var(--warning-color);
-                                   border-radius: 4px; background: white; resize: vertical;"></textarea>
+                                   border-radius: 4px; background: white; resize: vertical;"
+                            oninput="app.saveUserNote()"></textarea>
                     </div>
 
                     <!-- Session Cost Tracker -->
@@ -2004,39 +1910,6 @@
                 }
             },
 
-            cleanTitle(title) {
-                // Clean common title parsing errors
-                // Removes date prefixes, trailing dots, and publisher contamination
-                if (!title) return '';
-
-                let cleaned = title;
-
-                // Remove date prefix patterns: "November 10) " or "January 31, 2024) " or "September) "
-                const datePrefix = /^(January|February|March|April|May|June|July|August|September|October|November|December)(?:\s+\d{1,2})?(?:,?\s+\d{4})?\)\s+/i;
-                cleaned = cleaned.replace(datePrefix, '');
-
-                // Remove trailing ellipsis (3 or more consecutive dots)
-                cleaned = cleaned.replace(/\.{3,}$/, '');
-
-                // Remove common publisher contamination from end
-                // Pattern: ends with short capitalized segment like "Census.gov" or "American Public Media"
-                // But be careful not to remove actual title words
-                const publisherPattern = /\.\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3}|[A-Z]{2,}(?:\.[a-z]+)?)\s*$/;
-                const publisherMatch = cleaned.match(publisherPattern);
-                if (publisherMatch) {
-                    const potentialPublisher = publisherMatch[1];
-                    // Only remove if it looks like a publisher (short, no lowercase start, common patterns)
-                    if (potentialPublisher.length < 50 &&
-                        (potentialPublisher.includes('.') || // like "Census.gov"
-                         /^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+$/.test(potentialPublisher) || // like "American Public Media"
-                         /^[A-Z]{2,}$/.test(potentialPublisher))) { // like "UNESCO"
-                        cleaned = cleaned.substring(0, cleaned.length - publisherMatch[0].length).trim();
-                    }
-                }
-
-                return cleaned.trim();
-            },
-
             parseSimplifiedBiblio(ref, biblioSection) {
                 // Simplified parsing: RID, Authors, Year, Title only
                 // Everything else goes into "Other" field
@@ -2116,7 +1989,7 @@
                             }
                         }
 
-                        ref.title = this.cleanTitle(title);
+                        ref.title = title;
                         ref.other = other.replace(/^[,.\s]+/, '').replace(/[.\s]+$/, '').trim(); // Clean leading/trailing punctuation
                     } else {
                         // No period found - entire text after year is title
@@ -2141,7 +2014,7 @@
                             }
                         }
 
-                        ref.title = this.cleanTitle(title);
+                        ref.title = title;
                         ref.other = other.replace(/^[,.\s]+/, '').replace(/[.\s]+$/, '').trim();
                     }
                 } else {
@@ -2412,16 +2285,16 @@ Next 500 references: ~$${proj500}`;
 
             // Filtering and Display
             applyFilters() {
-                // Toggle-based filtering: Both filters work as show/hide toggles
+                // Simplified filtering: Show only non-finalized by default, unless checkbox is checked
                 const showFinalized = document.getElementById('showFinalizedToggle')?.checked || false;
-                const showManualReview = document.getElementById('showManualReviewToggle')?.checked !== false; // Default to true (checked)
+                const showOnlyManualReview = document.getElementById('showOnlyManualReviewToggle')?.checked || false;
 
                 this.filteredReferences = this.references.filter(ref => {
                     // Filter by finalized status
                     if (!showFinalized && ref.finalized) return false;
 
-                    // Filter by manual review flag (if unchecked, hide refs needing review)
-                    if (!showManualReview && ref.needsManualReview) return false;
+                    // Filter by manual review flag (if enabled, only show refs needing review)
+                    if (showOnlyManualReview && !ref.needsManualReview) return false;
 
                     return true;
                 });
@@ -2486,9 +2359,7 @@ Next 500 references: ~$${proj500}`;
                     ${this.createUrlsSection(ref)}
                     <div class="reference-actions">
                         <button onclick="app.editReference('${ref.id}')">Edit</button>
-                        ${!ref.finalized && ref.urls.primary ? `<button onclick="app.finalizeReference('${ref.id}')" style="background: var(--warning-color);">Finalize</button>` : ''}
-                        ${!ref.finalized ? `<button onclick="app.toggleManualReview('${ref.id}')" style="background: ${ref.needsManualReview ? '#95a5a6' : 'var(--warning-color)'};" title="${ref.needsManualReview ? 'Clear Manual Review flag' : 'Mark for Manual Review'}">${ref.needsManualReview ? '✓ Manual Review' : 'Manual Review'}</button>` : ''}
-                        <button onclick="app.selectReference('${ref.id}'); app.showQuickNote();" style="background: #9b59b6;">📝 Note</button>
+                        ${ref.urls.primary ? `<button onclick="app.finalizeReference('${ref.id}')" style="background: var(--warning-color);">Finalize</button>` : ''}
                     </div>
                 `;
                 return card;
@@ -2730,33 +2601,6 @@ Next 500 references: ~$${proj500}`;
                 this.saveDecisionsToDropbox();
 
                 // Update display but keep modal open (reference will disappear from view if "Show Finalized" is unchecked)
-                this.applyFilters();
-            },
-
-            toggleManualReview(refId) {
-                // v16.3: Toggle the MANUAL_REVIEW flag on a reference
-                const ref = this.references.find(r => r.id === refId);
-                if (!ref) return;
-
-                // Can't toggle manual review on finalized references
-                if (ref.finalized) {
-                    this.showToast('Cannot change manual review flag on finalized reference', 'error');
-                    return;
-                }
-
-                // Toggle the flag
-                ref.needsManualReview = !ref.needsManualReview;
-
-                const action = ref.needsManualReview ? 'marked for' : 'cleared from';
-                this.showToast(`Reference ${action} manual review`, 'success');
-
-                // Auto-save decisions.txt
-                this.autoSave();
-
-                // Auto-save to Dropbox if connected
-                this.saveDecisionsToDropbox();
-
-                // Update display
                 this.applyFilters();
             },
 
@@ -4039,69 +3883,6 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}${costInfo}`;
                 }, 1000); // Debounce for 1 second
             },
 
-            // v16.5: Quick Note Modal Functions
-            showQuickNote() {
-                const modal = document.getElementById('quickNoteModal');
-                const textarea = document.getElementById('quickNoteTextarea');
-                modal.classList.add('show');
-                textarea.value = '';
-                setTimeout(() => textarea.focus(), 100);
-            },
-
-            hideQuickNote() {
-                const modal = document.getElementById('quickNoteModal');
-                modal.classList.remove('show');
-            },
-
-            saveQuickNote() {
-                const textarea = document.getElementById('quickNoteTextarea');
-                const note = textarea.value.trim();
-
-                if (!note) {
-                    this.hideQuickNote();
-                    return;
-                }
-
-                // Gather full app context
-                const context = {
-                    currentTab: document.querySelector('.tab-btn.active')?.textContent.trim() || 'Unknown',
-                    activeReference: this.selectedReference ? {
-                        id: this.selectedReference.id,
-                        title: this.selectedReference.title || 'Untitled',
-                        finalized: this.selectedReference.finalized || false
-                    } : null,
-                    editModalOpen: document.getElementById('editModal')?.style.display === 'flex',
-                    totalReferences: this.references.length,
-                    finalizedCount: this.references.filter(r => r.finalized).length
-                };
-
-                // Build context string
-                let contextStr = '';
-                if (context.activeReference) {
-                    contextStr += `Reference: [${context.activeReference.id}] ${context.activeReference.title}\n`;
-                    contextStr += `Status: ${context.activeReference.finalized ? 'Finalized' : 'Unfinalized'}\n`;
-                }
-                contextStr += `Tab: ${context.currentTab}\n`;
-                if (context.editModalOpen) contextStr += `Edit Modal: Open\n`;
-                contextStr += `Total Refs: ${context.totalReferences} (${context.finalizedCount} finalized)`;
-
-                // Save immediately to session log with full context
-                const timestamp = new Date().toLocaleTimeString();
-                this.saveToSessionLog({
-                    timestamp,
-                    title: '📝 Quick Note',
-                    content: `${note}\n\n--- Context ---\n${contextStr}`,
-                    type: 'QUICK_NOTE',
-                    context: context
-                });
-
-                // Show confirmation toast
-                this.showToast('Note saved with context!', 'success');
-
-                // Close modal
-                this.hideQuickNote();
-            },
-
             // ===== v15.0: ROBUST FILE INTEGRITY SYSTEM =====
 
             // File locking to prevent concurrent saves
@@ -4929,21 +4710,5 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}${costInfo}`;
             app.init();
         });
     </script>
-
-    <!-- Quick Note Modal -->
-    <div id="quickNoteModal" class="quick-note-modal" onclick="if(event.target === this) app.hideQuickNote()">
-        <div class="quick-note-content">
-            <div class="quick-note-header">
-                <span style="font-size: 1.5rem;">📝</span>
-                <h3 style="margin: 0;">Quick Note</h3>
-            </div>
-            <textarea id="quickNoteTextarea" class="quick-note-textarea"
-                placeholder="Type your observation or note here..."></textarea>
-            <div class="quick-note-actions">
-                <button onclick="app.hideQuickNote()" class="secondary">Cancel</button>
-                <button onclick="app.saveQuickNote()" class="primary">Done</button>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

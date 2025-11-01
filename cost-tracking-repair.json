@@ -1,0 +1,17 @@
+{
+  "claude": {
+    "calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_per_input_token": 0,
+    "cost_per_output_token": 0,
+    "total_cost": 0
+  },
+  "google": {
+    "queries": 0,
+    "cost_per_query": 0,
+    "total_cost": 0
+  },
+  "session_start": "2025-10-30T18:14:38.024Z",
+  "operations": []
+}

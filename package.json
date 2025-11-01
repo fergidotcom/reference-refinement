@@ -1,14 +1,21 @@
 {
   "name": "reference-refinement-v6",
   "version": "6.0.0",
-  "description": "Reference Refinement System - Serverless Backend",
+  "description": "Reference Refinement System - Serverless Backend + Batch Processor",
+  "type": "module",
   "scripts": {
     "dev": "netlify dev",
     "build": "tsc",
-    "deploy": "netlify deploy --prod"
+    "deploy": "netlify deploy --prod",
+    "batch": "node batch-processor.js",
+    "batch:dry-run": "node batch-processor.js --dry-run",
+    "batch:resume": "node batch-processor.js --resume"
   },
   "dependencies": {
-    "@netlify/functions": "^2.4.0"
+    "@netlify/functions": "^2.4.0",
+    "node-fetch": "^3.3.2",
+    "yaml": "^2.3.4",
+    "chalk": "^5.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

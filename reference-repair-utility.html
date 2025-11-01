@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference Repair Utility v1.0</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .stats-panel {
+            background: white;
+            padding: 1.5rem;
+            margin: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .stat-card.total {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .stat-card.clean {
+            background: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .stat-card.warning {
+            background: #fffbeb;
+            border-color: #f59e0b;
+        }
+
+        .stat-card.critical {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 1rem 1.5rem;
+            margin: 0 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 35% 65%;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - 400px);
+        }
+
+        .reference-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .reference-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            border-left: 4px solid;
+            transition: all 0.2s;
+        }
+
+        .reference-item:hover {
+            background: #f9fafb;
+            transform: translateX(4px);
+        }
+
+        .reference-item.selected {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .reference-item.clean {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .reference-item.warning {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .reference-item.critical {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .reference-item .rid {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .reference-item .issues {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .reference-item .preview {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .editor-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .editor-panel h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .raw-text {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .field-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .field label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .field input,
+        .field textarea {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .field textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .field-status {
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .field-status.found {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .field-status.missing {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .field-status.uncertain {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .issues-list {
+            background: #fef2f2;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #ef4444;
+        }
+
+        .issues-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .issues-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #fecaca;
+        }
+
+        .issues-list li:last-child {
+            border-bottom: none;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+        }
+
+        .toast {
+            position: fixed;
+            top: 5rem;
+            right: 1rem;
+            background: #333;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Reference Repair Utility v1.0</h1>
+        <div class="subtitle">Repair and validate references with robust fault-tolerant parsing</div>
+    </div>
+
+    <div class="toolbar">
+        <button class="btn btn-primary" onclick="app.loadFile()">
+            📁 Load Source File
+        </button>
+        <button class="btn btn-secondary" onclick="app.exportDecisions()" id="btnExportDecisions" disabled>
+            💾 Export decisions.txt
+        </button>
+        <button class="btn btn-secondary" onclick="app.exportReport()" id="btnExportReport" disabled>
+            📊 Export Report
+        </button>
+        <div style="margin-left: auto; color: #666; font-size: 0.9rem;" id="fileName">
+            No file loaded
+        </div>
+    </div>
+
+    <div class="stats-panel" id="statsPanel" style="display: none;">
+        <h3 style="margin-bottom: 1rem;">Statistics</h3>
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="label">Total References</div>
+                <div class="value" id="statTotal">0</div>
+            </div>
+            <div class="stat-card clean">
+                <div class="label">✅ Clean</div>
+                <div class="value" id="statClean">0</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="label">🟡 Warnings</div>
+                <div class="value" id="statWarning">0</div>
+            </div>
+            <div class="stat-card critical">
+                <div class="label">🔴 Critical</div>
+                <div class="value" id="statCritical">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar" id="filterBar" style="display: none;">
+        <div class="filter-group">
+            <label>Filter:</label>
+            <select id="filterSelect" onchange="app.applyFilters()">
+                <option value="all">All References</option>
+                <option value="critical">🔴 Critical Only</option>
+                <option value="warning">🟡 Warnings Only</option>
+                <option value="clean">✅ Clean Only</option>
+                <option value="issues">Has Issues (Critical + Warning)</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Sort:</label>
+            <select id="sortSelect" onchange="app.applyFilters()">
+                <option value="rid">By RID</option>
+                <option value="severity">By Severity</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent" style="display: none;">
+        <div class="reference-list" id="referenceList">
+            <!-- References will be populated here -->
+        </div>
+
+        <div class="editor-panel" id="editorPanel">
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p>Select a reference to view and edit</p>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".txt" onchange="app.handleFileLoad(event)">
+
+    <script>
+        // ============================================
+        // REFERENCE PARSER MODULE
+        // ============================================
+        const ReferenceParser = {
+            parse(line) {
+                const ref = {
+                    raw: line.trim(),
+                    rid: null,
+                    author: null,
+                    year: null,
+                    title: null,
+                    publication: null,
+                    relevance: null,
+                    urls: [],
+                    flags: [],
+                    confidence: {}
+                };
+
+                if (!ref.raw) return null;
+
+                // Extract RID (GUARANTEED)
+                const ridMatch = ref.raw.match(/^\[(\d+)\]/);
+                if (!ridMatch) return null; // Skip lines without RID
+                ref.rid = parseInt(ridMatch[1]);
+
+                // Get text after RID
+                let remaining = ref.raw.substring(ridMatch[0].length).trim();
+
+                // Extract URLs (if present - indicates contamination)
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                let urlMatch;
+                while ((urlMatch = urlRegex.exec(remaining)) !== null) {
+                    ref.urls.push(urlMatch[1]);
+                }
+                // Remove URLs from text
+                remaining = remaining.replace(urlRegex, '').trim();
+
+                // Extract FLAGS (if present - indicates contamination)
+                const flagRegex = /FLAGS\[([^\]]+)\]/g;
+                let flagMatch;
+                while ((flagMatch = flagRegex.exec(remaining)) !== null) {
+                    ref.flags.push(flagMatch[1]);
+                }
+                // Remove FLAGS from text
+                remaining = remaining.replace(flagRegex, '').trim();
+
+                // Extract Relevance (if present)
+                const relevanceMatch = remaining.match(/Relevance:\s*(.+)$/i);
+                if (relevanceMatch) {
+                    ref.relevance = relevanceMatch[1].trim();
+                    ref.confidence.relevance = 'found';
+                    remaining = remaining.substring(0, relevanceMatch.index).trim();
+                } else {
+                    // Check if there's a long text block at the end (heuristic)
+                    const parts = remaining.split(/\.\s+(?=[A-Z])/);
+                    if (parts.length > 1 && parts[parts.length - 1].length > 100) {
+                        ref.relevance = parts[parts.length - 1].trim();
+                        ref.confidence.relevance = 'uncertain';
+                        remaining = parts.slice(0, -1).join('. ').trim() + '.';
+                    } else {
+                        ref.confidence.relevance = 'missing';
+                    }
+                }
+
+                // Extract Year (multiple patterns)
+                const yearMatch = remaining.match(/\((\d{4})\)/) || remaining.match(/(\b19\d{2}\b|\b20\d{2}\b)/);
+                if (yearMatch) {
+                    ref.year = yearMatch[1];
+                    ref.confidence.year = 'found';
+                } else {
+                    ref.confidence.year = 'missing';
+                }
+
+                // Extract Author (before year)
+                if (ref.year) {
+                    const yearIndex = remaining.indexOf(ref.year);
+                    const beforeYear = remaining.substring(0, yearIndex).trim();
+
+                    // Try various author patterns
+                    const authorPatterns = [
+                        /^([A-Z][a-z]+,\s+[A-Z]\.\s*(?:[A-Z]\.)?)/, // Last, F. M.
+                        /^([A-Z][a-z]+,\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/, // Last, First Middle
+                        /^([A-Z][a-z]+\s+&\s+[A-Z][a-z]+)/, // Last & Last
+                        /^([A-Z][A-Z\s]+\.)/, // CORPORATE NAME.
+                        /^([^(]+)\s+\(/ // Anything before first parenthesis
+                    ];
+
+                    for (const pattern of authorPatterns) {
+                        const authorMatch = beforeYear.match(pattern);
+                        if (authorMatch) {
+                            ref.author = authorMatch[1].trim().replace(/\($/, '').trim();
+                            ref.confidence.author = 'found';
+                            break;
+                        }
+                    }
+
+                    if (!ref.author) {
+                        ref.confidence.author = 'missing';
+                    }
+                }
+
+                // Extract Title and Publication
+                // Title is typically after year and before the last period-separated segment
+                let afterYear = remaining;
+                if (ref.year) {
+                    const yearIndex = remaining.indexOf(ref.year);
+                    afterYear = remaining.substring(yearIndex + 4).trim();
+                    // Remove leading punctuation
+                    afterYear = afterYear.replace(/^[.,:\s]+/, '');
+                }
+
+                // Split by periods to separate title from publication
+                const segments = afterYear.split(/\.\s+/);
+                if (segments.length >= 2) {
+                    ref.title = segments[0].trim();
+                    ref.publication = segments.slice(1).join('. ').trim();
+                    ref.confidence.title = 'found';
+                    ref.confidence.publication = 'found';
+                } else if (segments.length === 1 && segments[0].length > 0) {
+                    ref.title = segments[0].trim();
+                    ref.confidence.title = 'uncertain';
+                    ref.confidence.publication = 'missing';
+                } else {
+                    ref.confidence.title = 'missing';
+                    ref.confidence.publication = 'missing';
+                }
+
+                return ref;
+            }
+        };
+
+        // ============================================
+        // EXCEPTION DETECTOR MODULE
+        // ============================================
+        const ExceptionDetector = {
+            detect(ref) {
+                const issues = [];
+
+                // Critical checks
+                if (!ref.rid) {
+                    issues.push({ type: 'NO_RID', severity: 'critical', message: 'RID not found' });
+                }
+
+                // Warning checks
+                if (ref.confidence.author === 'missing') {
+                    issues.push({ type: 'NO_AUTHOR', severity: 'warning', message: 'Author not detected' });
+                }
+                if (ref.confidence.year === 'missing') {
+                    issues.push({ type: 'NO_YEAR', severity: 'warning', message: 'Year not detected' });
+                }
+                if (ref.confidence.title === 'missing') {
+                    issues.push({ type: 'NO_TITLE', severity: 'warning', message: 'Title not detected' });
+                }
+                if (ref.confidence.title === 'uncertain') {
+                    issues.push({ type: 'UNCLEAR_TITLE', severity: 'warning', message: 'Title detection uncertain' });
+                }
+
+                // Info checks
+                if (ref.confidence.relevance === 'missing') {
+                    issues.push({ type: 'NO_RELEVANCE', severity: 'info', message: 'Relevance text not found' });
+                }
+                if (ref.confidence.relevance === 'uncertain') {
+                    issues.push({ type: 'UNCLEAR_RELEVANCE', severity: 'info', message: 'Relevance text uncertain (heuristic)' });
+                }
+                if (ref.confidence.publication === 'missing') {
+                    issues.push({ type: 'NO_PUBLICATION', severity: 'info', message: 'Publication info not found' });
+                }
+
+                // Contamination checks
+                if (ref.urls.length > 0) {
+                    issues.push({ type: 'HAS_URLS', severity: 'info', message: `Contains ${ref.urls.length} URL(s) - already processed?` });
+                }
+                if (ref.flags.length > 0) {
+                    issues.push({ type: 'HAS_FLAGS', severity: 'info', message: `Contains FLAGS: ${ref.flags.join(', ')}` });
+                }
+
+                return issues;
+            },
+
+            getSeverity(issues) {
+                if (issues.some(i => i.severity === 'critical')) return 'critical';
+                if (issues.some(i => i.severity === 'warning')) return 'warning';
+                if (issues.length > 0) return 'info';
+                return 'clean';
+            }
+        };
+
+        // ============================================
+        // MAIN APPLICATION CONTROLLER
+        // ============================================
+        const app = {
+            references: [],
+            filteredReferences: [],
+            selectedRef: null,
+            fileName: '',
+
+            loadFile() {
+                document.getElementById('fileInput').click();
+            },
+
+            handleFileLoad(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                this.fileName = file.name;
+                document.getElementById('fileName').textContent = file.name;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    this.parseContent(content);
+                };
+                reader.readAsText(file);
+            },
+
+            parseContent(content) {
+                const lines = content.split('\n');
+                this.references = [];
+
+                for (const line of lines) {
+                    if (!line.trim()) continue; // Skip blank lines
+
+                    const ref = ReferenceParser.parse(line);
+                    if (ref) {
+                        ref.issues = ExceptionDetector.detect(ref);
+                        ref.severity = ExceptionDetector.getSeverity(ref.issues);
+                        ref.edited = false;
+                        this.references.push(ref);
+                    }
+                }
+
+                this.showToast(`Loaded ${this.references.length} references`, 'success');
+                this.updateUI();
+                this.applyFilters();
+            },
+
+            updateUI() {
+                // Show panels
+                document.getElementById('statsPanel').style.display = 'block';
+                document.getElementById('filterBar').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'grid';
+
+                // Enable export buttons
+                document.getElementById('btnExportDecisions').disabled = false;
+                document.getElementById('btnExportReport').disabled = false;
+
+                // Update statistics
+                const stats = {
+                    total: this.references.length,
+                    clean: this.references.filter(r => r.severity === 'clean').length,
+                    warning: this.references.filter(r => r.severity === 'warning').length,
+                    critical: this.references.filter(r => r.severity === 'critical').length
+                };
+
+                document.getElementById('statTotal').textContent = stats.total;
+                document.getElementById('statClean').textContent = stats.clean;
+                document.getElementById('statWarning').textContent = stats.warning;
+                document.getElementById('statCritical').textContent = stats.critical;
+            },
+
+            applyFilters() {
+                const filterValue = document.getElementById('filterSelect').value;
+                const sortValue = document.getElementById('sortSelect').value;
+
+                // Filter
+                this.filteredReferences = this.references.filter(ref => {
+                    if (filterValue === 'all') return true;
+                    if (filterValue === 'critical') return ref.severity === 'critical';
+                    if (filterValue === 'warning') return ref.severity === 'warning';
+                    if (filterValue === 'clean') return ref.severity === 'clean';
+                    if (filterValue === 'issues') return ref.severity === 'critical' || ref.severity === 'warning';
+                    return true;
+                });
+
+                // Sort
+                if (sortValue === 'rid') {
+                    this.filteredReferences.sort((a, b) => a.rid - b.rid);
+                } else if (sortValue === 'severity') {
+                    const severityOrder = { critical: 0, warning: 1, info: 2, clean: 3 };
+                    this.filteredReferences.sort((a, b) => {
+                        return severityOrder[a.severity] - severityOrder[b.severity];
+                    });
+                }
+
+                this.renderReferenceList();
+            },
+
+            renderReferenceList() {
+                const listEl = document.getElementById('referenceList');
+
+                if (this.filteredReferences.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><p>No references match the current filter</p></div>';
+                    return;
+                }
+
+                listEl.innerHTML = this.filteredReferences.map(ref => {
+                    const severityIcon = {
+                        critical: '🔴',
+                        warning: '🟡',
+                        info: '🔵',
+                        clean: '✅'
+                    }[ref.severity];
+
+                    const preview = ref.title || ref.raw.substring(0, 80) + '...';
+                    const issuesSummary = ref.issues.length > 0
+                        ? ref.issues.map(i => i.message).join(', ')
+                        : 'No issues detected';
+
+                    const editedBadge = ref.edited ? ' <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem;">EDITED</span>' : '';
+
+                    return `
+                        <div class="reference-item ${ref.severity} ${this.selectedRef?.rid === ref.rid ? 'selected' : ''}"
+                             onclick="app.selectReference(${ref.rid})">
+                            <div>
+                                <span class="rid">${severityIcon} [${ref.rid}]</span>${editedBadge}
+                            </div>
+                            <div class="preview">${preview}</div>
+                            <div class="issues">${issuesSummary}</div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            selectReference(rid) {
+                this.selectedRef = this.references.find(r => r.rid === rid);
+                this.renderEditor();
+                this.renderReferenceList(); // Re-render to update selection
+            },
+
+            renderEditor() {
+                const ref = this.selectedRef;
+                const editorEl = document.getElementById('editorPanel');
+
+                if (!ref) {
+                    editorEl.innerHTML = `
+                        <div class="empty-state">
+                            <p>Select a reference to view and edit</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const severityIcon = {
+                    critical: '🔴',
+                    warning: '🟡',
+                    info: '🔵',
+                    clean: '✅'
+                }[ref.severity];
+
+                const getStatusBadge = (confidence) => {
+                    if (confidence === 'found') return '<span class="field-status found">✅ Found</span>';
+                    if (confidence === 'uncertain') return '<span class="field-status uncertain">⚠️ Uncertain</span>';
+                    return '<span class="field-status missing">❌ Missing</span>';
+                };
+
+                const issuesHTML = ref.issues.length > 0 ? `
+                    <div class="section">
+                        <div class="section-title">Detected Issues</div>
+                        <div class="issues-list">
+                            <ul>
+                                ${ref.issues.map(issue => `<li><strong>${issue.severity.toUpperCase()}:</strong> ${issue.message}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : '';
+
+                editorEl.innerHTML = `
+                    <h2>${severityIcon} [${ref.rid}] ${ref.title || 'Untitled'}</h2>
+
+                    <div class="section">
+                        <div class="section-title">Raw Text</div>
+                        <div class="raw-text">${ref.raw}</div>
+                    </div>
+
+                    ${issuesHTML}
+
+                    <div class="section">
+                        <div class="section-title">Parsed Fields</div>
+                        <div class="field-grid">
+                            <div class="field">
+                                <label>
+                                    Author ${getStatusBadge(ref.confidence.author)}
+                                </label>
+                                <input type="text" id="editAuthor" value="${ref.author || ''}" placeholder="Enter author name">
+                            </div>
+
+                            <div class="field">
+                                <label>
+                                    Year ${getStatusBadge(ref.confidence.year)}
+                                </label>
+                                <input type="text" id="editYear" value="${ref.year || ''}" placeholder="Enter year (YYYY)">
+                            </div>
+
+                            <div class="field">
+                                <label>
+                                    Title ${getStatusBadge(ref.confidence.title)}
+                                </label>
+                                <input type="text" id="editTitle" value="${ref.title || ''}" placeholder="Enter title">
+                            </div>
+
+                            <div class="field">
+                                <label>
+                                    Publication ${getStatusBadge(ref.confidence.publication)}
+                                </label>
+                                <input type="text" id="editPublication" value="${ref.publication || ''}" placeholder="Enter publication info">
+                            </div>
+
+                            <div class="field">
+                                <label>
+                                    Relevance ${getStatusBadge(ref.confidence.relevance)}
+                                </label>
+                                <textarea id="editRelevance" placeholder="Enter relevance description">${ref.relevance || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="editor-actions">
+                        <button class="btn btn-success" onclick="app.saveChanges()">💾 Save Changes</button>
+                        <button class="btn btn-primary" onclick="app.markClean()">✅ Mark as Clean</button>
+                        <button class="btn btn-secondary" onclick="app.nextReference()">⏭️ Next</button>
+                    </div>
+                `;
+            },
+
+            saveChanges() {
+                const ref = this.selectedRef;
+
+                ref.author = document.getElementById('editAuthor').value.trim() || null;
+                ref.year = document.getElementById('editYear').value.trim() || null;
+                ref.title = document.getElementById('editTitle').value.trim() || null;
+                ref.publication = document.getElementById('editPublication').value.trim() || null;
+                ref.relevance = document.getElementById('editRelevance').value.trim() || null;
+
+                // Update confidence based on edits
+                ref.confidence.author = ref.author ? 'found' : 'missing';
+                ref.confidence.year = ref.year ? 'found' : 'missing';
+                ref.confidence.title = ref.title ? 'found' : 'missing';
+                ref.confidence.publication = ref.publication ? 'found' : 'missing';
+                ref.confidence.relevance = ref.relevance ? 'found' : 'missing';
+
+                // Re-run exception detection
+                ref.issues = ExceptionDetector.detect(ref);
+                ref.severity = ExceptionDetector.getSeverity(ref.issues);
+                ref.edited = true;
+
+                this.showToast(`Saved changes to [${ref.rid}]`, 'success');
+                this.updateUI();
+                this.renderEditor();
+                this.applyFilters();
+            },
+
+            markClean() {
+                const ref = this.selectedRef;
+
+                // Clear all issues
+                ref.issues = [];
+                ref.severity = 'clean';
+                ref.edited = true;
+
+                this.showToast(`Marked [${ref.rid}] as clean`, 'success');
+                this.updateUI();
+                this.renderEditor();
+                this.applyFilters();
+            },
+
+            nextReference() {
+                const currentIndex = this.filteredReferences.findIndex(r => r.rid === this.selectedRef.rid);
+                if (currentIndex < this.filteredReferences.length - 1) {
+                    this.selectReference(this.filteredReferences[currentIndex + 1].rid);
+                } else {
+                    this.showToast('No more references in current filter', 'info');
+                }
+            },
+
+            exportDecisions() {
+                let output = '';
+
+                for (const ref of this.references) {
+                    // Build reference line
+                    let line = `[${ref.rid}]`;
+
+                    if (ref.author) line += ` ${ref.author}`;
+                    if (ref.year) line += ` (${ref.year}).`;
+                    if (ref.title) line += ` ${ref.title}.`;
+                    if (ref.publication) line += ` ${ref.publication}.`;
+
+                    output += line + '\n';
+                    output += 'FLAGS[UNFINALIZED]\n';
+
+                    if (ref.relevance) {
+                        output += `Relevance: ${ref.relevance}\n`;
+                    }
+
+                    output += '\n'; // Blank line between references
+                }
+
+                this.downloadFile('decisions.txt', output);
+                this.showToast('Exported decisions.txt', 'success');
+            },
+
+            exportReport() {
+                let output = 'Reference Repair Report\n';
+                output += '='.repeat(50) + '\n';
+                output += `Generated: ${new Date().toLocaleString()}\n`;
+                output += `Source File: ${this.fileName}\n\n`;
+
+                const stats = {
+                    total: this.references.length,
+                    clean: this.references.filter(r => r.severity === 'clean').length,
+                    warning: this.references.filter(r => r.severity === 'warning').length,
+                    critical: this.references.filter(r => r.severity === 'critical').length,
+                    edited: this.references.filter(r => r.edited).length
+                };
+
+                output += 'STATISTICS\n';
+                output += '-'.repeat(50) + '\n';
+                output += `Total References: ${stats.total}\n`;
+                output += `Clean: ${stats.clean} (${(stats.clean/stats.total*100).toFixed(1)}%)\n`;
+                output += `Warnings: ${stats.warning} (${(stats.warning/stats.total*100).toFixed(1)}%)\n`;
+                output += `Critical: ${stats.critical} (${(stats.critical/stats.total*100).toFixed(1)}%)\n`;
+                output += `Manually Edited: ${stats.edited}\n\n`;
+
+                // Group issues by type
+                const issuesByType = {};
+                for (const ref of this.references) {
+                    for (const issue of ref.issues) {
+                        if (!issuesByType[issue.type]) {
+                            issuesByType[issue.type] = [];
+                        }
+                        issuesByType[issue.type].push(ref.rid);
+                    }
+                }
+
+                output += 'ISSUES BY TYPE\n';
+                output += '-'.repeat(50) + '\n';
+                for (const [type, rids] of Object.entries(issuesByType)) {
+                    output += `${type}: ${rids.length} occurrences\n`;
+                    output += `  RIDs: ${rids.join(', ')}\n\n`;
+                }
+
+                // List critical and warning references
+                const problemRefs = this.references.filter(r => r.severity === 'critical' || r.severity === 'warning');
+                if (problemRefs.length > 0) {
+                    output += '\nPROBLEMATIC REFERENCES\n';
+                    output += '-'.repeat(50) + '\n';
+                    for (const ref of problemRefs) {
+                        output += `[${ref.rid}] ${ref.title || 'Untitled'}\n`;
+                        output += `  Severity: ${ref.severity.toUpperCase()}\n`;
+                        output += `  Issues: ${ref.issues.map(i => i.message).join(', ')}\n`;
+                        if (ref.edited) output += `  Status: MANUALLY EDITED\n`;
+                        output += '\n';
+                    }
+                }
+
+                this.downloadFile('repair-report.txt', output);
+                this.showToast('Exported repair report', 'success');
+            },
+
+            downloadFile(filename, content) {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            },
+
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+        };
+
+        // Initialize on load
+        console.log('Reference Repair Utility v1.0 - Ready');
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+# Batch Processing Configuration - TEST 5 SPECIFIC REFS
+# Test on refs 102-106 repeatedly, ignoring finalized status
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION - Specific range for testing
+  selection_mode: "range"
+  max_references: 5
+
+  # Process refs 102-106 specifically
+  reference_range:
+    start: 102
+    end: 106
+
+  # QUERY GENERATION - Use standard mode for better coverage
+  query_mode: "standard"  # 8 queries
+
+  # AUTO-FINALIZATION - Disabled for testing (we want to see scores)
+  auto_finalize: false  # Don't auto-finalize during testing
+
+  finalize_criteria:
+    min_primary_score: 85
+    min_secondary_score: 85
+    require_title_match: true
+    require_author_match: false
+    max_warnings: 0
+
+  # RATE LIMITING - Faster for testing
+  rate_limiting:
+    delay_between_refs: 2000   # 2 seconds
+    delay_after_search: 1000   # 1 second
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING - Extra verbose for debugging
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 1

@@ -1,0 +1,149 @@
+
+📦 Reference Refinement - Batch Processor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ℹ️  Loading configuration...
+ℹ️  Reading decisions.txt...
+✓ Loaded 288 references
+ℹ️  Filtering references (mode: range)...
+✓ Selected 5 references to process
+
+Configuration:
+  Selection: range
+  Range: 107-111
+  Query Mode: simple (3 queries)
+  Auto-finalize: YES
+  Finalize threshold: P≥85, S≥85
+
+Estimated cost:
+  Google: $0.07 (15 searches)
+  Claude: $0.24
+  Total: $0.32
+  Estimated time: ~2 minutes
+
+⚠️  IMPORTANT: Close iPad app before running batch processor!
+   Running both simultaneously can cause file conflicts and data loss.
+   After batch completes: Terminate and restart iPad app to see changes.
+
+Starting in 5 seconds... (Ctrl+C to cancel)
+
+✓ Created backup: decisions_backup_2025-10-28T18-22-36.txt
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ℹ️  Logging to: batch-logs/batch_2025-10-28T18-22-36.log
+
+🔄 Processing REF [107]: Here Comes Everybody: The Power of Organizing Without Organizations (1/5 - 20%)
+  1️⃣  Generating queries...
+      ✓ Generated 3 queries
+  2️⃣  Searching...
+      ✓ Found 23 unique candidates
+  3️⃣  Ranking candidates...
+      ✓ Ranked 23 candidates
+
+      Top candidates:
+      P:95 S:20 - https://archive.org/details/herecomeseverybo0000sh...
+      P:25 S:95 - https://ieeexplore.ieee.org/document/4607925/
+      P:30 S:90 - https://dansiegel.me/a-review-of-clay-shirkys-here...
+      P:85 S:25 - https://www.researchgate.net/publication/237132422...
+      P:35 S:85 - https://commons.emich.edu/cgi/viewcontent.cgi?refe...
+
+      ✓ Primary: https://archive.org/details/herecomeseverybo0000shir (P:95)
+      ✓ Secondary: https://ieeexplore.ieee.org/document/4607925/ (S:95)
+      ✅ Auto-finalized: P:95, S:95, matches confirmed
+✓ REF [107] Complete
+
+🔄 Processing REF [108]: Convergence Culture: Where Old and New Media Collide (2/5 - 40%)
+  1️⃣  Generating queries...
+      ✓ Generated 3 queries
+  2️⃣  Searching...
+      ✓ Found 25 unique candidates
+  3️⃣  Ranking candidates...
+      ✓ Ranked 25 candidates
+
+      Top candidates:
+      P:95 S:10 - https://www.jstor.org/stable/j.ctt9qffwr
+      P:25 S:95 - https://ijoc.org/index.php/ijoc/article/viewFile/4...
+      P:90 S:15 - https://www.dhi.ac.uk/san/waysofbeing/data/communi...
+      P:30 S:90 - https://journals.sagepub.com/doi/10.1177/089443930...
+      P:85 S:15 - https://books.google.com/books?id=RlRVNikT06YC&pri...
+
+      ✓ Primary: https://www.jstor.org/stable/j.ctt9qffwr (P:95)
+      ✓ Secondary: https://ijoc.org/index.php/ijoc/article/viewFile/48/12 (S:95)
+      ✅ Auto-finalized: P:95, S:95, matches confirmed
+✓ REF [108] Complete
+
+🔄 Processing REF [109]: Relevance: Amnesty International's work is pivotal in elucidating the complex interplay between social media platforms, specifically Facebook, and the propagation of hate speech, particularly in the context of genocide (3/5 - 60%)
+  1️⃣  Generating queries...
+      ✓ Generated 3 queries
+  2️⃣  Searching...
+      ✓ Found 10 unique candidates
+  3️⃣  Ranking candidates...
+      ✓ Ranked 10 candidates
+
+      Top candidates:
+      P:25 S:60 - https://www.asc.upenn.edu/research/centers/milton-...
+      P:25 S:55 - https://www.universiteitleiden.nl/en/news/2025/07/...
+      P:25 S:55 - https://www.developmenteducationreview.com/issue/i...
+      P:30 S:50 - https://www.amnestyusa.org/wp-content/uploads/2022...
+      P:25 S:45 - https://www.amnesty.org/en/latest/news/2022/09/mya...
+
+⚠️  No suitable primary URL found
+      ⏸️  Not finalized: No primary URL found
+✓ REF [109] Complete
+
+🔄 Processing REF [110]: Relevance: The work cited from CNBC provides a critical overview of the rapid advancements and investments in artificial intelligence, highlighting the emergence of various AI systems and the substantial financial commitments from major corporations and venture capitalists (4/5 - 80%)
+  1️⃣  Generating queries...
+      ✓ Generated 3 queries
+  2️⃣  Searching...
+      ✓ Found 10 unique candidates
+  3️⃣  Ranking candidates...
+      ✓ Ranked 10 candidates
+
+      Top candidates:
+      P:25 S:10 - https://ainowinstitute.org/publications/2-heads-i-...
+      P:25 S:15 - https://www.ftc.gov/system/files/ftc_gov/pdf/p2462...
+      P:20 S:5 - https://sequoiacap.com/article/ai-in-2025/
+      P:20 S:5 - https://iot-analytics.com/leading-generative-ai-co...
+      P:20 S:10 - https://blogs.microsoft.com/on-the-issues/2025/05/...
+
+⚠️  No suitable primary URL found
+      ⏸️  Not finalized: No primary URL found
+✓ REF [110] Complete
+
+🔄 Processing REF [111]: Social Media, Political Polarization, and Political Disinformation: A Review of the Scientific Literature (5/5 - 100%)
+  1️⃣  Generating queries...
+      ✓ Generated 3 queries
+  2️⃣  Searching...
+      ✓ Found 25 unique candidates
+  3️⃣  Ranking candidates...
+      ✓ Ranked 25 candidates
+
+      Top candidates:
+      P:95 S:0 - https://papers.ssrn.com/sol3/papers.cfm?abstract_i...
+      P:95 S:0 - https://www.hewlett.org/wp-content/uploads/2018/03...
+      P:95 S:0 - https://www.researchgate.net/publication/323962120...
+      P:85 S:0 - https://repository.lboro.ac.uk/articles/report/Soc...
+      P:85 S:0 - https://scispace.com/papers/social-media-political...
+
+      ✓ Primary: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3144139 (P:95)
+      ✓ Secondary: https://www.brookings.edu/articles/how-to-fix-social-media-s... (S:75)
+      ⏸️  Not finalized: Secondary score 75 below threshold 85
+ℹ️  Checkpoint: Saved progress and updated decisions.txt
+✓ REF [111] Complete
+✓ Updated decisions.txt
+✓ Generated Final.txt (2 references)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 Batch Processing Complete
+
+   Processed: 10
+   Finalized: 2
+   Errors: 0
+   Total Time: 1m 53s
+   Average per Reference: 11s
+
+📄 Log saved: batch-logs/batch_2025-10-28T18-22-36.log
+
+✅ Batch complete!
+

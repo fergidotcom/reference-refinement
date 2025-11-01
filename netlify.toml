@@ -44,11 +44,9 @@
   status = 200
 
 # Default redirect - serve main app
-# Using 301 (redirect) instead of 200 (rewrite) to avoid edge caching issues
-[[redirects]]
-  from = "/"
-  to = "/rr_v137.html"
-  status = 301
+# v13.12: Switched to index.html (no redirect needed, Netlify serves automatically)
+# This eliminates 301 redirect caching issues - index.html is always fresh
+# Versioned files (rr_vXXX.html) kept as backups, but index.html is the live version
 
 # CORS headers for all function endpoints
 [[headers]]
@@ -65,5 +63,13 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+
+# Extra cache control for root index.html (belt and suspenders)
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"

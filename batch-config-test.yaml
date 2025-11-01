@@ -1,0 +1,49 @@
+# Batch Processing Configuration - TEST MODE
+# Small reference range for testing the batch processor
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION - TEST WITH SMALL RANGE
+  selection_mode: "range"
+
+  # Test with just 3 references
+  reference_range:
+    start: 1
+    end: 3
+
+  # QUERY GENERATION - Use simple mode for testing (faster, cheaper)
+  query_mode: "simple"  # 3 queries instead of 8
+
+  # AUTO-FINALIZATION - Enable for testing
+  auto_finalize: true
+  finalize_criteria:
+    min_primary_score: 85
+    min_secondary_score: 85
+    require_title_match: true
+    require_author_match: false
+    max_warnings: 0
+
+  # RATE LIMITING - Faster for testing
+  rate_limiting:
+    delay_between_refs: 2000   # 2 seconds between refs
+    delay_after_search: 1000   # 1 second after search
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING - Verbose for testing
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 1  # Save after every reference during testing

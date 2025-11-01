@@ -1,0 +1,95 @@
+REFERENCE REPAIR REPORT
+═══════════════════════════════════════════════════
+
+Source File: 250904 Caught In The Act - REFERENCES ONLY.txt
+Output File: decisions-clean-AUTO.txt
+Generated: 10/30/2025, 12:14:38 PM
+
+STATISTICS
+─────────────────────────────────────────────────
+Total References: 288
+Clean: 0 (0.0%)
+Info: 283 (98.3%)
+Warnings: 5 (1.7%)
+Critical: 0 (0.0%)
+
+ISSUES BY TYPE
+─────────────────────────────────────────────────
+HEURISTIC_RELEVANCE: 168 occurrences
+  RIDs: 1, 2, 3, 4, 5, 6, 7, 8, 500, 501, 502, 503, 504, 505, 506, 507, 509, 510, 512, 513, 514, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 817, 818, 819, 820, 821, 822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846
+
+HAS_URLS: 288 occurrences
+  RIDs: 1, 2, 3, 4, 5, 6, 7, 8, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 217, 218, 219, 222, 223, 224, 225, 226, 227, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 314, 315, 318, 319, 320, 322, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 434, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846
+
+UNCLEAR_TITLE: 5 occurrences
+  RIDs: 237, 244, 246, 247, 816
+
+NO_PUBLICATION: 5 occurrences
+  RIDs: 237, 244, 246, 247, 816
+
+NO_RELEVANCE: 4 occurrences
+  RIDs: 508, 511, 800, 816
+
+
+PROBLEMATIC REFERENCES (NEEDS REVIEW)
+─────────────────────────────────────────────────
+
+[237] Parent Pledge Movement.
+  Severity: WARNING
+  Issues: Title detection uncertain, Publication info not found, Contains 2 URL(s)
+  Line: 84
+
+[244] November 9) Interview at Axios event, National Constitution Center, Philadelphia.
+  Severity: WARNING
+  Issues: Title detection uncertain, Publication info not found, Contains 2 URL(s)
+  Line: 91
+
+[246] -2024) Passed April 20, 2024.
+  Severity: WARNING
+  Issues: Title detection uncertain, Publication info not found, Contains 2 URL(s)
+  Line: 93
+
+[247] UNESCO Atlas of the World's Languages in Danger.
+  Severity: WARNING
+  Issues: Title detection uncertain, Publication info not found, Contains 2 URL(s)
+  Line: 94
+
+[816] Supreme Court decision enabling unlimited corporate political spending, fundamentally altering campaign finance landscape to favor those with access to wealthy donors demanding performative certainty rather than governance complexity.
+  Severity: WARNING
+  Issues: Title detection uncertain, Relevance text not found, Publication info not found, Contains 2 URL(s)
+  Line: 282
+
+
+═══════════════════════════════════════════════════
+           SESSION COST ANALYSIS REPORT
+═══════════════════════════════════════════════════
+
+Session Started: 2025-10-30T18:14:38.024Z
+Report Generated: 2025-10-30T18:14:38.047Z
+
+─────────────────────────────────────────────────
+  TOTALS
+─────────────────────────────────────────────────
+Total Cost: $0.0000
+  Claude API: $0.0000
+  Google Search: $0.0000
+
+─────────────────────────────────────────────────
+  CLAUDE API USAGE
+─────────────────────────────────────────────────
+API Calls: 0
+Input Tokens: 0
+Output Tokens: 0
+Total Tokens: 0
+Cost per Call (avg): $0.0000
+Cost per 1K Input Tokens: $0.0000
+Cost per 1K Output Tokens: $0.0000
+
+─────────────────────────────────────────────────
+  GOOGLE SEARCH USAGE
+─────────────────────────────────────────────────
+Queries: 0
+Cost per Query: $0.0000
+
+
+═══════════════════════════════════════════════════

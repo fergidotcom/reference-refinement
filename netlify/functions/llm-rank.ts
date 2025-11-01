@@ -105,22 +105,146 @@ export const handler: Handler = async (event, context) => {
     const systemPrompt = `You rank URLs. Reply with ONLY the scores table, nothing else.`;
 
     const initialPrompt = `Rank these URLs for: "${reference.title || 'Unknown'}" by ${reference.authors || 'Unknown'} (${reference.year || 'Unknown'})
+${reference.other ? `\nPublication Info: ${reference.other}` : ''}
+${reference.relevance ? `\nRelevance: ${reference.relevance.substring(0, 200)}...` : ''}
 
-Score each URL:
-- PRIMARY (0-100): How good as direct source? 100=free PDF from .edu/.gov, 60+=exact match, <60=wrong work
-- SECONDARY (0-100): How good as backup? 90+=alt format/review, 60+=related work by author, <60=different author
+Score each URL independently using content-type detection:
+
+PRIMARY SCORE (0-100) - Detect if this is THE WORK ITSELF or ABOUT the work:
+
+⚠️ CRITICAL MUTUAL EXCLUSIVITY RULES:
+• Full-text sources and publisher pages → HIGH PRIMARY scores (60-100)
+• Reviews, analyses, thematic discussions → LOW PRIMARY scores (0-55), HIGH SECONDARY scores
+• A URL should be EITHER a primary candidate OR a secondary candidate, not both
+
+LANGUAGE MISMATCH (max 70):
+⚠️ CRITICAL: Non-English domain indicators → MAX SCORE 70
+⚠️ Domain: .de (German), .fr (French), .li (Liechtenstein/German), .es (Spanish), .it (Italian), .jp (Japanese), .cn (Chinese)
+⚠️ books.google.li, books.google.de, books.google.fr → Likely non-English content
+⚠️ Exception: If snippet clearly shows English text, score normally
+
+FULL-TEXT SOURCE INDICATORS (95-100):
+✓ Title/URL matches book title (no "review" language)
+✓ Snippet mentions "full text", "complete", "entire work", "read online"
+✓ PDF/HTML from academic repository (.edu/.gov/archive.org/researchgate)
+✓ No reviewer or different author mentioned in snippet
+✓ English language domain (.com, .edu, .org, .gov, .uk)
+
+FULL-TEXT (uncertain) (85-95):
+• Free PDF/HTML from non-academic domains
+• Archive.org links with "borrow" or "preview" signals (not guaranteed full text)
+• Snippet unclear about completeness
+
+QUOTATIONS/EXCERPTS/ANTHOLOGIES (max 65):
+⚠️ CRITICAL: If title or URL contains "quotations", "excerpts", "anthology", "selections", "reader" → MAX SCORE 65
+⚠️ These are PARTIAL collections, not complete works
+⚠️ Example: "Peter Berger Quotations" ≠ Full text of Berger's work
+⚠️ Example: "Readings in..." or "Selected Works" ≠ Complete book
+⚠️ Even from .edu or as PDF, partial content scores lower than full text
+
+PAYWALLED/PREVIEW (70-85):
+• Publisher site with preview access
+• Paywalled full text access
+
+PUBLISHER PAGE (60-75):
+• Official purchase page (no full text)
+• URL contains "product", "buy", "isbn"
+
+REVIEW/ABOUT THE WORK (max 55):
+⚠️ CRITICAL: If title contains "review of", "book review", "reviewed by" → MAX SCORE 55
+⚠️ If snippet mentions "reviewer", "I argue that", "this review"
+⚠️ If author name in snippet differs from book author
+⚠️ If from journal domain but appears to be a review article
+⚠️ Even if from .edu or as PDF, reviews are NOT the source
+
+NEWS ABOUT RESEARCH (max 55):
+⚠️ CRITICAL: If news.mit.edu, sciencedaily.com, phys.org, or university press release
+⚠️ If snippet contains "study shows", "researchers found", "according to research"
+⚠️ These are NEWS REPORTS about research, not the research itself
+⚠️ The actual journal article is the primary source, news coverage is secondary
+⚠️ PRIMARY score: max 55 (this is coverage, not the source)
+⚠️ Note: These CAN be good SECONDARY candidates (score 60-75 for coverage)
+
+WRONG WORK (0-30):
+• Different book/article entirely
+⚠️ CRITICAL TITLE+AUTHOR MATCHING:
+• Partial title match with WRONG AUTHOR → MAX SCORE 30
+• Example: "Web of Politics" by Aberbach ≠ "Web of Politics" by Davis
+• ALWAYS verify: Title match + Author match TOGETHER
+• When title is ambiguous, author match is REQUIRED for high scores
+
+SECONDARY SCORE (0-100) - Detect if this is a REVIEW or just a LISTING:
+
+⚠️ CRITICAL MUTUAL EXCLUSIVITY RULES:
+• If PRIMARY score is 70+: This is the work itself or a publisher page → SECONDARY score MUST be 0-30
+• Full-text sources (PDFs, HTML of the work) → NOT candidates for SECONDARY
+• Publisher/seller pages (buy links, product pages) → NOT candidates for SECONDARY
+• SECONDARY candidates must be ABOUT the work, not the work itself
+
+SCHOLARLY BOOK REVIEW (90-100):
+✓ PDF format AND title contains "review" (actual review article)
+✓ From academic journal (.edu, sagepub, oxford, cambridge, etc.) AND title contains "review"
+✓ Snippet discusses specific merits, flaws, critique, analysis of the book
+✓ Mentions specific pages, chapters, or quotes from the book
+✓ Evaluative/analytical language about THIS specific work
+
+NON-ACADEMIC REVIEW (75-90):
+✓ Blog, magazine, or news review with critical analysis
+✓ Title includes "review", "critique", "thoughts on"
+✓ Contains discussion of book's arguments and quality
+✓ Still analytical, just not scholarly
+
+REVIEW WEBSITE/AGGREGATOR (max 60):
+⚠️ CRITICAL: Sites like complete-review.com, goodreads.com → MAX SCORE 60
+⚠️ These are ABOUT reviews or AGGREGATE reviews, not reviews themselves
+⚠️ URL patterns: complete-review.com/reviews/*, goodreads.com/book/*
+⚠️ Typically show excerpts or summaries OF other reviews
+⚠️ Not original critical analysis
+
+ACADEMIC DISCUSSION (75-90):
+• Paper that cites/discusses the work substantively
+• Analyzes themes, applications, or implications of this specific work
+• Scholarly treatment of the work's concepts or methodology
+• Not a review but still work-focused analysis
+• Contextualizes the work within broader literature
+
+BIBLIOGRAPHY/METADATA PAGE (max 55):
+⚠️ CRITICAL: PhilPapers, WorldCat, library catalogs → MAX SCORE 55
+⚠️ Just lists: title, author, ISBN, publisher, abstract
+⚠️ No critical analysis or evaluation present
+⚠️ URL pattern: philpapers.org/rec/, worldcat.org, library catalogs
+⚠️ Even if title appears, these are listings not reviews
+
+TOPIC DISCUSSION (60-75):
+• Discusses broader concepts or themes from the work
+• Contextualizes work within field or theoretical framework
+• Thematic exploration that includes this work
+• Not specific to this work alone but relevant and substantial
+
+UNRELATED (0-30):
+• Different work or topic
 
 CANDIDATES:
-${candidates.map((c, i) => `${i}. ${c.title}\n${c.url}`).join('\n\n')}
+${candidates.map((c, i) => `${i}. ${c.title}\n   ${c.url}\n   ${c.snippet || ''}`).join('\n\n')}
+
+IMPORTANT: After scoring, identify:
+- PRIMARY RECOMMENDATION: The candidate with the HIGHEST primary score
+- SECONDARY RECOMMENDATION: The candidate with the HIGHEST secondary score (that isn't already primary)
 
 Return ONLY this format (one line per candidate, no headers, no explanations):
 INDEX|PRIMARY|SECONDARY|PRIMARY_REASON|SECONDARY_REASON|TITLE_MATCH|AUTHOR_MATCH|RECOMMEND
 
 Example:
-0|95|40|Publisher PDF|Not backup source|exact|yes|primary
-1|70|80|Paywalled page|Review article|exact|yes|secondary
+0|100|40|Free PDF from archive.org|Not a review|exact|yes|primary
+1|80|95|Publisher paywalled|Scholarly review of this work|exact|yes|secondary
+2|45|60|Review article|Discusses same concepts|partial|yes|neither
 
-Use exact/partial/none for TITLE_MATCH, yes/no for AUTHOR_MATCH, primary/secondary/neither for RECOMMEND.`;
+Rules for RECOMMEND field:
+- Mark the ONE candidate with highest primary score as "primary"
+- Mark the ONE candidate with highest secondary score (excluding primary) as "secondary"
+- All others: "neither"
+
+Use exact/partial/none for TITLE_MATCH, yes/no for AUTHOR_MATCH.`;
 
     // Tool calling loop
     let allCandidates = [...candidates];

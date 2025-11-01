@@ -1,0 +1,635 @@
+[1] Line 1:
+  - Missing Relevance: text
+
+[2] Line 2:
+  - Missing Relevance: text
+
+[3] Line 3:
+  - Missing Relevance: text
+
+[4] Line 4:
+  - Missing Relevance: text
+
+[5] Line 5:
+  - Missing Relevance: text
+
+[6] Line 6:
+  - Missing Relevance: text
+
+[7] Line 7:
+  - Missing Relevance: text
+
+[8] Line 8:
+  - Missing Relevance: text
+
+[110] Line 26:
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[123] Line 52:
+  - Missing or unclear author
+
+[125] Line 56:
+  - Missing publication year
+  - Missing or very short title
+
+[126] Line 58:
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[127] Line 59:
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[243] Line 90:
+  - Missing publication year
+  - Missing or very short title
+
+[244] Line 91:
+  - Missing publication year
+  - Missing or very short title
+
+[246] Line 93:
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[247] Line 94:
+  - Missing or unclear author
+
+[249] Line 96:
+  - Missing or unclear author
+
+[305] Line 102:
+  - Missing or unclear author
+
+[314] Line 110:
+  - Missing or unclear author
+
+[417] Line 133:
+  - Missing or unclear author
+
+[419] Line 135:
+  - Missing or unclear author
+
+[500] Line 149:
+  - Missing Relevance: text
+
+[501] Line 150:
+  - Missing Relevance: text
+
+[502] Line 151:
+  - Missing Relevance: text
+
+[503] Line 152:
+  - Missing Relevance: text
+
+[504] Line 153:
+  - Missing Relevance: text
+
+[505] Line 154:
+  - Missing Relevance: text
+
+[506] Line 155:
+  - Missing Relevance: text
+
+[507] Line 156:
+  - Missing Relevance: text
+
+[508] Line 157:
+  - Missing Relevance: text
+
+[509] Line 158:
+  - Missing Relevance: text
+
+[510] Line 159:
+  - Missing Relevance: text
+
+[511] Line 160:
+  - Missing Relevance: text
+
+[512] Line 161:
+  - Missing Relevance: text
+
+[513] Line 162:
+  - Missing Relevance: text
+
+[514] Line 163:
+  - Missing Relevance: text
+
+[600] Line 164:
+  - Missing Relevance: text
+
+[601] Line 165:
+  - Missing Relevance: text
+
+[602] Line 166:
+  - Missing Relevance: text
+
+[603] Line 167:
+  - Missing Relevance: text
+
+[604] Line 168:
+  - Missing Relevance: text
+
+[605] Line 169:
+  - Missing Relevance: text
+
+[606] Line 170:
+  - Missing Relevance: text
+
+[607] Line 171:
+  - Missing Relevance: text
+
+[608] Line 172:
+  - Missing Relevance: text
+
+[609] Line 173:
+  - Missing Relevance: text
+
+[610] Line 174:
+  - Missing Relevance: text
+
+[611] Line 175:
+  - Missing Relevance: text
+
+[612] Line 176:
+  - Missing Relevance: text
+
+[613] Line 177:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[614] Line 178:
+  - Missing Relevance: text
+
+[615] Line 179:
+  - Missing Relevance: text
+
+[616] Line 180:
+  - Missing Relevance: text
+
+[617] Line 181:
+  - Missing Relevance: text
+
+[618] Line 182:
+  - Missing Relevance: text
+
+[619] Line 183:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[620] Line 184:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[621] Line 185:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[622] Line 186:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[623] Line 187:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[624] Line 188:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[625] Line 189:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[626] Line 190:
+  - Missing Relevance: text
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[627] Line 191:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[628] Line 192:
+  - Missing Relevance: text
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[629] Line 193:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[630] Line 194:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[631] Line 195:
+  - Missing Relevance: text
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[632] Line 196:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[633] Line 197:
+  - Missing Relevance: text
+
+[634] Line 198:
+  - Missing Relevance: text
+
+[635] Line 199:
+  - Missing Relevance: text
+
+[636] Line 200:
+  - Missing Relevance: text
+
+[637] Line 201:
+  - Missing Relevance: text
+
+[638] Line 202:
+  - Missing Relevance: text
+
+[639] Line 203:
+  - Missing Relevance: text
+
+[640] Line 204:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[641] Line 205:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[642] Line 206:
+  - Missing Relevance: text
+
+[643] Line 207:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[644] Line 208:
+  - Missing Relevance: text
+
+[645] Line 209:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[646] Line 210:
+  - Missing Relevance: text
+
+[647] Line 211:
+  - Missing Relevance: text
+
+[648] Line 212:
+  - Missing Relevance: text
+
+[649] Line 213:
+  - Missing Relevance: text
+
+[650] Line 214:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[651] Line 215:
+  - Missing Relevance: text
+
+[652] Line 216:
+  - Missing Relevance: text
+
+[653] Line 217:
+  - Missing Relevance: text
+
+[700] Line 218:
+  - Missing Relevance: text
+
+[701] Line 219:
+  - Missing Relevance: text
+
+[702] Line 220:
+  - Missing Relevance: text
+
+[703] Line 221:
+  - Missing Relevance: text
+
+[704] Line 222:
+  - Missing Relevance: text
+
+[705] Line 223:
+  - Missing Relevance: text
+
+[706] Line 224:
+  - Missing Relevance: text
+
+[707] Line 225:
+  - Missing Relevance: text
+
+[708] Line 226:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[709] Line 227:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[710] Line 228:
+  - Missing Relevance: text
+
+[711] Line 229:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[712] Line 230:
+  - Missing Relevance: text
+
+[713] Line 231:
+  - Missing Relevance: text
+
+[714] Line 232:
+  - Missing Relevance: text
+
+[715] Line 233:
+  - Missing Relevance: text
+
+[716] Line 234:
+  - Missing Relevance: text
+
+[717] Line 235:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[718] Line 236:
+  - Missing Relevance: text
+
+[719] Line 237:
+  - Missing Relevance: text
+
+[720] Line 238:
+  - Missing Relevance: text
+
+[721] Line 239:
+  - Missing Relevance: text
+
+[722] Line 240:
+  - Missing Relevance: text
+
+[723] Line 241:
+  - Missing Relevance: text
+
+[724] Line 242:
+  - Missing Relevance: text
+
+[725] Line 243:
+  - Missing Relevance: text
+
+[726] Line 244:
+  - Missing Relevance: text
+
+[727] Line 245:
+  - Missing Relevance: text
+
+[728] Line 246:
+  - Missing Relevance: text
+
+[729] Line 247:
+  - Missing Relevance: text
+
+[730] Line 248:
+  - Missing Relevance: text
+
+[731] Line 249:
+  - Missing Relevance: text
+
+[732] Line 250:
+  - Missing Relevance: text
+
+[733] Line 251:
+  - Missing Relevance: text
+
+[734] Line 252:
+  - Missing Relevance: text
+
+[735] Line 253:
+  - Missing Relevance: text
+
+[736] Line 254:
+  - Missing Relevance: text
+
+[737] Line 255:
+  - Missing Relevance: text
+
+[738] Line 256:
+  - Missing Relevance: text
+
+[739] Line 257:
+  - Missing Relevance: text
+
+[740] Line 258:
+  - Missing Relevance: text
+
+[741] Line 259:
+  - Missing Relevance: text
+
+[742] Line 260:
+  - Missing Relevance: text
+
+[743] Line 261:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[744] Line 262:
+  - Missing Relevance: text
+
+[745] Line 263:
+  - Missing Relevance: text
+
+[746] Line 264:
+  - Missing Relevance: text
+
+[747] Line 265:
+  - Missing Relevance: text
+
+[748] Line 266:
+  - Missing Relevance: text
+
+[749] Line 267:
+  - Missing Relevance: text
+
+[750] Line 268:
+  - Missing Relevance: text
+
+[751] Line 269:
+  - Missing Relevance: text
+
+[752] Line 270:
+  - Missing Relevance: text
+
+[800] Line 271:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[801] Line 272:
+  - Missing Relevance: text
+
+[802] Line 273:
+  - Missing Relevance: text
+
+[803] Line 274:
+  - Missing Relevance: text
+
+[804] Line 275:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[805] Line 276:
+  - Missing Relevance: text
+
+[806] Line 277:
+  - Missing Relevance: text
+
+[807] Line 278:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[808] Line 279:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[809] Line 280:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[810] Line 281:
+  - Missing Relevance: text
+
+[816] Line 282:
+  - Missing Relevance: text
+
+[817] Line 283:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[818] Line 284:
+  - Missing Relevance: text
+
+[819] Line 285:
+  - Missing Relevance: text
+
+[820] Line 286:
+  - Missing Relevance: text
+
+[821] Line 287:
+  - Missing Relevance: text
+
+[822] Line 288:
+  - Missing Relevance: text
+
+[823] Line 289:
+  - Missing Relevance: text
+
+[824] Line 290:
+  - Missing Relevance: text
+
+[825] Line 291:
+  - Missing Relevance: text
+
+[826] Line 292:
+  - Missing Relevance: text
+  - Missing or unclear author
+  - Missing publication year
+  - Missing or very short title
+
+[827] Line 293:
+  - Missing Relevance: text
+
+[828] Line 294:
+  - Missing Relevance: text
+
+[829] Line 295:
+  - Missing Relevance: text
+
+[830] Line 296:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[831] Line 297:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[832] Line 298:
+  - Missing Relevance: text
+
+[833] Line 299:
+  - Missing Relevance: text
+
+[834] Line 300:
+  - Missing Relevance: text
+
+[835] Line 301:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[836] Line 302:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[837] Line 303:
+  - Missing Relevance: text
+  - Missing publication year
+  - Missing or very short title
+
+[838] Line 304:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[839] Line 305:
+  - Missing Relevance: text
+
+[840] Line 306:
+  - Missing Relevance: text
+  - Missing or unclear author
+
+[841] Line 307:
+  - Missing Relevance: text
+
+[842] Line 308:
+  - Missing Relevance: text
+
+[843] Line 309:
+  - Missing Relevance: text
+
+[844] Line 310:
+  - Missing Relevance: text
+
+[845] Line 311:
+  - Missing Relevance: text
+
+[846] Line 312:
+  - Missing Relevance: text
