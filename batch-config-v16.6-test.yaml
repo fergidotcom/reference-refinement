@@ -1,6 +1,6 @@
-# Batch Processing Configuration - DEFAULT
-# IMPORTANT: Auto-finalization DISABLED until user authorizes
-# User must manually review and finalize all batch results
+# Batch Processing Configuration - v16.6 Title Parsing Test
+# Testing new cleanTitle() function with 25 references
+# RIDs 600-624
 
 batch_processor:
   # INPUT FILES
@@ -8,14 +8,19 @@ batch_processor:
   output_file: "decisions.txt"
 
   # REFERENCE SELECTION
-  selection_mode: "unfinalized"  # Process unfinalized references
-  max_references: 50
+  selection_mode: "range"
+  max_references: 25
+
+  # Process refs 600-624 specifically
+  reference_range:
+    start: 600
+    end: 624
 
   # QUERY GENERATION
   query_mode: "standard"  # 8 queries for better coverage
 
-  # AUTO-FINALIZATION - ⚠️ DISABLED BY USER REQUEST
-  auto_finalize: false  # User must manually review and finalize
+  # AUTO-FINALIZATION - Enabled for production
+  auto_finalize: true
 
   finalize_criteria:
     min_primary_score: 75

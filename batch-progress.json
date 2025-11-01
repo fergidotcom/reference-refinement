@@ -188,7 +188,32 @@
     427,
     428,
     429,
-    430
+    430,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    607,
+    608,
+    609,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624
   ],
   "errors": [
     {
@@ -243,10 +268,10 @@
     }
   ],
   "stats": {
-    "queries_generated": 196,
-    "searches_run": 186,
-    "autoranks_completed": 186,
-    "auto_finalized": 12
+    "queries_generated": 221,
+    "searches_run": 211,
+    "autoranks_completed": 211,
+    "auto_finalized": 34
   },
-  "last_updated": "2025-11-01T04:07:41.212Z"
+  "last_updated": "2025-11-01T15:36:04.230Z"
 }

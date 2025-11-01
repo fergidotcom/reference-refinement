@@ -1,67 +1,375 @@
-[1] Ferguson, J. (2024). Authoritarian Ascent In The USA: How MAGA Seeks Permanent Supremacy. Independently published on Amazon. ISBN: 9798299726562.
-Primary URL: https://www.amazon.com/Authoritarian-Ascent-USA-Permanent-Supremacy/dp/B0FBRR1WYV
-Secondary URL: https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=qoqFZVLPQMWMdxuy-jcOsg
+[1] Ferguson, J. (2024). Authoritarian ascent in the USA: How we got here and what comes next. Independently published on Amazon. ISBN: 9798299726562.
+Primary URL: https://www.amazon.com/Authoritarian-Ascent-USA-Permanent-Supremacy/dp/B0FBRR1WYV/
+Secondary URL: https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=1b5f4e8498324ad1
 
-[2] Gergen, K. J. (1999). An Invitation to Social Construction. SAGE Publications, London. ISBN: 9780803985735.
+[2] Gergen, K. J. (1999). An Invitation to Social Construction. London: SAGE Publications.
 Primary URL: https://methods.sagepub.com/book/mono/preview/an-invitation-to-social-construction-3e.pdf
-Secondary URL: https://www.researchgate.net/publication/302871718_The_Social_Constructionist_Movement_in_Modern_Psychology
+Secondary URL: https://engagedscholarship.csuohio.edu/cgi/viewcontent.cgi?article=1028&context=clsoc_crim_facpub
 
-[3] Berger, P. L., & Luckmann, T. (1966). The Social Construction of Reality: A Treatise in the Sociology of Knowledge. Doubleday, Garden City, NY. ISBN: 9780385058988.
-Primary URL: http://sukoharjokab.go.id/laporan_keuangan/assets/temp_pemda/f8e97ff82f01fa03284719e56af3d744.pdf
-Secondary URL: https://www.hsaj.org/articles/21407
+[3] Berger, P. L. (1966). The Social Construction of Reality: A Treatise in the Sociology of Knowledge. Garden City, NY: Doubleday.
+Primary URL: https://archive.org/details/socialconstructi0000berg
+Secondary URL: https://journals.sagepub.com/doi/abs/10.1177/1749975515614869
 
-[4] Kahneman, D. (2011). Thinking, Fast and Slow. Farrar, Straus and Giroux, New York. ISBN: 9780374275631.
+[4] Kahneman, D. (2011). Thinking, Fast and Slow. New York: Farrar, Straus and Giroux.
 Primary URL: https://archive.org/download/DanielKahnemanThinkingFastAndSlow/Daniel%20Kahneman-Thinking%2C%20Fast%20and%20Slow%20%20.pdf
 Secondary URL: https://scholar.harvard.edu/files/shleifer/files/kahneman_review_jel_final.pdf
 
-[5] Tversky, A., & Kahneman, D. (1974). Judgment under Uncertainty: Heuristics and Biases. Science, 185(4157), 1124–1131.
-Primary URL: https://www.cs.tufts.edu/comp/150AIH/pdf/TverskyKa74.pdf
-Secondary URL: https://www.jstor.org/stable/1914185
+[5] Tversky, A. (1974). Judgment under uncertainty: Heuristics and biases. Science, 185(4157), 1124-1131.
+Primary URL: https://www.jstor.org/stable/1738360
+Secondary URL: https://www.researchgate.net/publication/280981235_Heuristics_and_Biases_Beyond_Tversky_and_Kahneman's_1974_Judgment_under_Uncertainty
 
-[6] Searle, J. R. (1995). The Construction of Social Reality. Free Press, New York. ISBN: 9780684831792.
-Primary URL: https://public.econ.duke.edu/~kdh9/Source%20Materials/Zurich%20Papers/Searle%20Chapter%201.pdf
-Secondary URL: https://plato.stanford.edu/entries/social-construction-naturalistic/
+[6] Searle, J. R. (1995). The Construction of Social Reality. New York: The Free Press.
+Primary URL: https://www.simonandschuster.com/books/The-Construction-of-Social-Reality/John-R-Searle/9780684831794
+Secondary URL: http://www.protosociology.de/Rubrum/Burman-Searle.pdf
 
-[7] Searle, J. R. (2010). Making the Social World: The Structure of Human Civilization. Oxford University Press, Oxford. ISBN: 9780199576912.
-Primary URL: https://public.econ.duke.edu/~kdh9/Source%20Materials/Zurich%20Papers/Searle%20Chapter%201.pdf
+[7] Searle, J. R. (2010). Making the Social World: The Structure of Human Civilization. Oxford: Oxford University Press.
+Primary URL: https://archive.org/details/makingsocialworl0001sear
 Secondary URL: https://d-nb.info/1369238320/34
 
-[8] Hacking, I. (1999). The Social Construction of What? Harvard University Press, Cambridge, MA. ISBN: 9780674004123.
+[8] Hacking, I. (1999). The Social Construction of What? Cambridge, MA: Harvard University Press.
 Primary URL: https://larvalsubjects.files.wordpress.com/2011/01/hacking-the-social-construction-of-what2.pdf
-Secondary URL: https://journals.sagepub.com/doi/pdf/10.1177/016224390102600104
+Secondary URL: http://www.journals.uchicago.edu/doi/pdfplus/10.1086/338162
 
 [100] Zarefsky, D. (1990). Lincoln, Douglas, and Slavery: In the Crucible of Public Debate. University of Chicago Press, Chicago, Illinois. ISBN: 9780226978765.
 Primary URL: https://press.uchicago.edu/ucp/books/book/chicago/L/bo3774383.html
 Secondary URL: https://quod.lib.umich.edu/j/jala/2629860.0030.106/--lincoln-and-douglas-the-debates-that-defined-america?rgn=main;view=fulltext
 
 [101] Craig, D. B. (2000). Fireside Politics: Radio and Political Culture in the United States, 1920-1940. Johns Hopkins University Press, Baltimore, Maryland. ISBN: 9780801864391.
-Primary URL: https://books.google.ws/books?id=MqsJbsnCYy4C&printsec=copyright
-Secondary URL: https://muse.jhu.edu/article/16340/summary
+Primary URL: https://muse.jhu.edu/book/16011
+Secondary URL: https://www.nps.gov/articles/fdr-s-fireside-chats.htm
 
-[102] Kraus, S. (2000). Televised Presidential Debates and Public Policy. Routledge, New York/London. ISBN: 9780805816037.
-Primary URL: https://api.pageplace.de/preview/DT0400.9781135447588_A23802868/preview-9781135447588_A23802868.pdf
-Secondary URL: https://www.researchgate.net/publication/323871615_Analyzing_Televised_Presidential_General_Election_Debates/fulltext/60e6d75030e8e50c01ec348e/Analyzing-Televised-Presidential-General-Election-Debates.pdf
+[102] Kraus, S. (2000). Televised Presidential Debates and Public Policy. (2nd ed) Routledge, New York/London, ISBN: 9780805816037.
+Primary URL: https://books.google.com/books/about/Televised_Presidential_Debates_and_Publi.html?id=FdOQAgAAQBAJ
+Secondary URL: https://www.debates.org/voter-education/debate-transcripts/september-26-1960-debate-transcript/
 
 [103] Cannon, L. (1991). President Reagan: The Role of a Lifetime. Simon & Schuster, New York. ISBN: 9780671542948.
 Primary URL: https://archive.org/details/presidentreagan000cann
 Secondary URL: https://www.nytimes.com/1991/04/24/books/books-of-the-times-damning-a-president-with-fairness.html
 
-[104] Iyengar, S., & Kinder, D. R. (2010). News That Matters: Television and American Opinion, Updated Edition. University of Chicago Press, Chicago, IL. ISBN: 978-0226388588.
-Primary URL: https://www.uvm.edu/~dguber/POLS293/articles/iyengar.pdf
-Secondary URL: https://www.brucesabin.com/news_that_matters.html
+[104] Iyengar, S. (2010). News That Matters: Television and American Opinion. Updated Edition, University of Chicago Press, Chicago, IL. ISBN: 978-0226388588.
+Primary URL: https://archive.org/details/newsthatmatterst0000iyen
+Secondary URL: https://adambrown.info/p/notes/iyengar_and_kinder_news_that_matters
 
 [105] Abbate, J. (1999). Inventing the Internet. MIT Press, Cambridge, MA. ISBN: 978-0262011723.
 Primary URL: https://archive.org/details/inventinginterne00jane
-Secondary URL: https://journals.sagepub.com/doi/10.1057/jit.2013.4
+Secondary URL: https://muse.jhu.edu/article/33635/pdf
 
 [106] Davis, R. (1999). The Web of Politics: The Internet's Impact on the American Political System. Oxford University Press, New York, NY. ISBN: 978-0195114850.
-Primary URL: https://www.semanticscholar.org/paper/The-Internet-and-Democratic-Discourse%3A-Exploring-of-Dahlberg/29a270601c57034dbdcc96a9b3052d66be18b46a
-Secondary URL: https://www.oxfordbibliographies.com/abstract/document/obo-9780199756841/obo-9780199756841-0059.xml
+Primary URL: https://ir.canterbury.ac.nz/server/api/core/bitstreams/8b46b598-32a3-41f0-85b1-0dd17050e61f/content
+Secondary URL: https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=1176&context=dltr
 
 [107] Shirky, C. (2008). Here Comes Everybody: The Power of Organizing Without Organizations. Penguin Press, New York, NY. ISBN: 978-1594201530.
-Primary URL: https://people.uncw.edu/borretts/courses/hon120networks/shirky_sharing.pdf
-Secondary URL: https://akastrategy.com/articles/here-comes-everybody-the-power-of-organizing-without-organizations/
+Primary URL: https://archive.org/details/herecomeseverybo0000shir
+Secondary URL: https://commons.emich.edu/cgi/viewcontent.cgi?referer=&httpsredir=1&article=1019&context=loexquarterly
 
 [108] Jenkins, H. (2006). Convergence Culture: Where Old and New Media Collide. New York University Press, New York, NY. ISBN: 9780814742952.
 Primary URL: https://www.dhi.ac.uk/san/waysofbeing/data/communication-zangana-jenkins-2006.pdf
 Secondary URL: https://ijoc.org/index.php/ijoc/article/viewFile/48/12
+
+[109] Amnesty International. (2022). The social atrocity: Meta and the right to remedy for the Rohingya. Amnesty International, London, UK.
+Primary URL: https://www.amnestyusa.org/wp-content/uploads/2022/09/Updated-Final-Report_The-Social-Atrocity-_0609202259.pdf
+Secondary URL: https://www.tandfonline.com/doi/full/10.1080/14623528.2024.2375122
+
+[110] CNBC (2024). Microsoft CFO says OpenAI investment will cut into profit this quarter. October 30.
+Primary URL: https://www.cnbc.com/2024/10/30/microsoft-cfo-says-openai-investment-will-cut-into-profit-this-quarter.html
+Secondary URL: https://www.fool.com/investing/2024/11/10/microsoft-13-billion-openai-best-money-ever-spent/
+
+[111] Tucker, J. A. (2018). Social Media, Political Polarization, and Political Disinformation: A Review of the Scientific Literature. William and Flora Hewlett Foundation, Menlo Park, CA. DOI: 10.2139/s.
+Primary URL: https://hewlett.org/library/social-media-political-polarization-political-disinformation-review-scientific-literature/
+Secondary URL: https://www.tandfonline.com/doi/full/10.1080/23808985.2021.1976070
+
+[112] Southern Environmental Law Center (2024). Multiple press releases and reports on xAI datacenter operations in Memphis, Tennessee. Southern Environmental Law Center, Charlottesville, VA.
+Primary URL: https://www.selc.org/press-release/new-images-reveal-elon-musks-xai-datacenter-has-nearly-doubled-its-number-of-polluting-unpermitted-gas-turbines/
+Secondary URL: https://naacp.org/articles/elon-musks-xai-threatened-lawsuit-over-air-pollution-memphis-data-center-filed-behalf
+
+[113] Harari, Y. N. (2017). Homo Deus: A Brief History of Tomorrow. Harper, New York. ISBN: 978-0062464316.
+Primary URL: https://www.ynharari.com/book/homo-deus/
+Secondary URL: https://rsbakker.wordpress.com/2016/10/20/visions-of-the-semantic-apocalypse-a-critical-review-of-yuval-noah-hararis-homo-deus/
+
+[114] Vosoughi, S. (2018). The spread of true and false news online. Science, 359(6380), 1146-1151. DOI: 10.1126/s.
+Primary URL: https://politics.media.mit.edu/papers/Vosoughi_Science.pdf
+Secondary URL: https://www.nature.com/articles/s41591-022-01713-6
+
+[115] Bossetta, M. (2018). The Digital Architectures of Social Media: Comparing Political Campaigning on Facebook, Twitter, Instagram, and Snapchat in the 2016 U S. Election. Journalism & Mass Communication Quarterly, 95(2), 471-496. DOI: 10.1177/1077699018763307.
+Primary URL: https://www.researchgate.net/publication/324075633_The_Digital_Architectures_of_Social_Media_Comparing_Political_Campaigning_on_Facebook_Twitter_Instagram_and_Snapchat_in_the_2016_US_Election
+Secondary URL: https://portal.findresearcher.sdu.dk/files/220989667/Cross_Platform_Emotions_and_Audience_Engagement_in_Social_Media_Political_Campaigning_Comparing_Candidates_Facebook_and_Instagram_Images_in_the_2020.pdf
+
+[116] Enli, G. (2017). Twitter as arena for the authentic outsider: exploring the social media campaigns of Trump and Clinton in the 2016 US presidential election. European Journal of Communication, 32(1), 50-61. DOI: 10.1177/0267323116682802.
+Primary URL: https://www.researchgate.net/profile/Gunn-Enli/publication/315693998_Twitter_as_arena_for_the_authentic_outsider_exploring_the_social_media_campaigns_of_Trump_and_Clinton_in_the_2016_US_presidential_election/links/5a86cd9aa6fdcc6b1a36e584/Twitter-as-arena-for-the-authentic-outsider-exploring-the-social-media-campaigns-of-Trump-and-Clinton-in-the-2016-US-presidential-election.pdf
+Secondary URL: https://revista.profesionaldelainformacion.com/index.php/EPI/article/view/epi.2018.nov.03
+
+[117] Cervi, L. (2023). TikTok and Political Communication: The Latest Frontier of Politainment? A Case Study. Media and Communication, 11(2), 203-217. DOI: 10.17645/m.
+Primary URL: https://www.ssoar.info/ssoar/bitstream/handle/document/88232/ssoar-mediacomm-2023-2-cervi_et_al-TikTok_and_Political_Communication_The.pdf?sequence=1&isAllowed=y
+Secondary URL: https://www.researchgate.net/publication/381462812_Usage_of_TikTok_for_Political_Communication_A_Systematic_Literature_Review
+
+[118] Prior, M. (2007). Post-Broadcast Democracy: How Media Choice Increases Inequality in Political Involvement and Polarizes Elections. Cambridge University Press, Cambridge, UK. ISBN: 9780521675338.
+Primary URL: https://www.cambridge.org/core/books/postbroadcast-democracy/A0D17A3CD156A0D1BB4318EE5DBCC60B
+Secondary URL: https://www.journals.uchicago.edu/doi/10.1017/S0022381609090677
+
+[119] Hallin, D. C. (2004). Comparing Media Systems: Three Models of Media and Politics. Cambridge University Press, Cambridge, UK. ISBN: 9780521835350.
+Primary URL: https://assets.cambridge.org/97805215/43088/frontmatter/9780521543088_frontmatter.pdf
+Secondary URL: https://www.researchgate.net/publication/237968298_Book_Review_Comparing_Media_Systems_Three_Models_of_Media_and_Politics
+
+[120] Patterson, T. E. (2016). News Coverage of the 2016 General Election: How the Press Failed the Voters. Shorenstein Center on Media, Politics and Public Policy, Cambridge, MA (Harvard Kennedy School) [SHORENSTEIN CENTER].
+Primary URL: https://appext.hks.harvard.edu/publications/getFile.aspx?Id=1463
+Secondary URL: https://journalistsresource.org/politics-and-government/horse-race-coverage-elections-improve/
+
+[121] Prior, M. (2013). Media and Political Polarization. Annual Review of Political Science, 16, 101-127. DOI: 10.1146/a.
+Primary URL: https://mprior.scholar.princeton.edu/document/35
+Secondary URL: https://www.tandfonline.com/doi/full/10.1080/23808985.2021.1976070
+
+[122] Cmiel, K. (1990). Democratic Eloquence: The Fight over Popular Speech in Nineteenth-Century America. William Morrow, New York. ISBN: 978-0688083526.
+Primary URL: https://books.google.com/books/about/Democratic_Eloquence.html?id=Frx5AAAAIAAJ
+Secondary URL: https://www.jstor.org/stable/366361
+
+[123] McLuhan, M. (1964). Understanding Media: The Extensions of Man. McGraw-Hill, New York. ISBN: 978-0262631594.
+Primary URL: https://designopendata.wordpress.com/wp-content/uploads/2014/05/understanding-media-mcluhan.pdf
+Secondary URL: https://direct.mit.edu/leon/article-abstract/55/5/551/112355
+
+[124] Morreale, J. (1991). A New Beginning: A Textual Frame Analysis of the Political Campaign Film. State University of New York Press, Albany, NY. ISBN: 978-0791408179.
+Primary URL: http://booksforunderstanding.org/reagan/list.html
+Secondary URL: https://onlinelibrary.wiley.com/doi/full/10.1002/symb.1218
+
+[125] Fox News Channel Launch. (1996). News Corporation/Fox Entertainment Group. [WIKIPEDIA]..................
+Primary URL: https://en.wikipedia.org/wiki/History_of_Fox_News
+Secondary URL: https://www.pewresearch.org/short-reads/2020/04/08/five-facts-about-fox-news/
+
+[126] American Public Media (2014). Radio: The Internet of the 1930s.
+Primary URL: https://www.apmreports.org/episode/2014/11/10/radio-the-internet-of-the-1930s
+Secondary URL: https://opentextbooks.clemson.edu/sts1010fidlerfall2022/chapter/a-communication-revolution-the-rise-of-radio-and-telephony-technologies/
+
+[127] U.S. Census Bureau (2023). History and the Census: Philo Farnsworth and the Invention of Television.
+Primary URL: https://www.census.gov/about/history/stories/monthly/2023/september-2023.html
+Secondary URL: https://www.britannica.com/biography/Philo-Farnsworth
+
+[200] Kahneman, D. (2011). Thinking, Fast and Slow. Farrar, Straus and Giroux.
+Primary URL: https://archive.org/details/thinkingfastslow0000kahn
+Secondary URL: https://scholar.harvard.edu/files/shleifer/files/kahneman_review_jel_final.pdf
+
+[201] Nietzsche, F. (1886). Beyond Good and Evil: Prelude to a Philosophy of the Future. Leipzig: C.G.
+Primary URL: https://www.holybooks.com/wp-content/uploads/Nietzsche-Beyond-Good-and-Evil.pdf
+Secondary URL: https://ndpr.nd.edu/reviews/the-soul-of-nietzsche-s-beyond-good-and-evil/
+
+[202] Bodhi, B. (2000). The Connected Discourses of the Buddha: A Translation of the Samyutta Nikaya. Wisdom Publications.
+Primary URL: https://archive.org/download/teachings-buddha4/%5BThe%20Teachings%20of%20the%20Buddha%5D%20Bhikkhu%20Bodhi%20-%20The%20Suttanip%C4%81ta%20_%20An%20Ancient%20Collection%20of%20the%20Buddha%E2%80%99s%20Discourses%20Together%20with%20Its%20Commentaries%20%28The%20Teachings%20of%20the%20Buddha%29%20%282017%2C%20Wisdom%20Publications%29%20-%20libgen.lc.pdf
+Secondary URL: https://www.accesstoinsight.org/tipitaka/sn/index.html
+
+[203] Duhem, P. (1906). The Aim and Structure of Physical Theory. Princeton University Press.
+Primary URL: https://archive.org/details/aimstructureofph0000duhe
+Secondary URL: https://www.jstor.org/stable/20116795
+
+[204] Sapir, E. (1929). The Status of Linguistics as a Science. Language, 5(4), 207-214. Whorf, B. L. (1956) Language, Thought, and Reality. MIT Press.
+Primary URL: https://www.jstor.org/stable/409588
+Secondary URL: https://plato.stanford.edu/entries/linguistics/whorfianism.html
+
+[205] Stiegler, B. (2010). For a New Critique of Political Economy. Polity Press.
+Primary URL: https://www.politybooks.com/bookdetail/?isbn=9780745648033
+Secondary URL: https://marxandphilosophy.org.uk/reviews/7687_for-a-new-critique-of-political-economy-review-by-christian-lotz/
+
+[206] Commons, M. L. (1984). A general model of stage theory. In M. L. Commons, F. A. Richards, & C. Armon (Eds), Beyond formal operations: Vol. 1. Late adolescent and adult cognitive development (pp. 120-140).
+Primary URL: https://www.dareassociation.org/documents/GWOF_A_330277%20Introduction.pdf
+Secondary URL: https://en.wikipedia.org/wiki/Model_of_hierarchical_complexity
+
+[207] Clark, A. (2008). Supersizing the Mind: Embodiment, Action, and Cognitive Extension. Oxford University Press.
+Primary URL: https://global.oup.com/academic/product/supersizing-the-mind-9780195333213
+Secondary URL: https://ppls.ed.ac.uk/philosophy/research/impact/the-extended-mind-in-science-and-society
+
+[208] Hutchins, E. (1995). Cognition in the Wild. MIT Press.
+Primary URL: https://uberty.org/wp-content/uploads/2015/07/Edwin_Hutchins_Cognition_in_the_Wild.pdf
+Secondary URL: https://www.researchgate.net/profile/Charles-Bazerman/publication/233474822_Cognition_in_the_Wild_Book/links/5484be580cf283750c370a00/Cognition-in-the-Wild-Book.pdf
+
+[209] Lanier, J. (2018). Ten Arguments for Deleting Your Social Media Accounts Right Now. Henry Holt. ISBN: 978-1250196682.
+Primary URL: https://archive.org/details/CSPAN2_20180714_214500_Jaron_Lanier_Ten_Arguments_for_Deleting_Your_Social_Media_Accounts_Right...
+Secondary URL: https://muse.jhu.edu/article/733178
+
+[210] Lodge, M. (2013). The Rationalizing Voter. Cambridge University Press.
+Primary URL: https://assets.cambridge.org/97805217/63509/frontmatter/9780521763509_frontmatter.pdf
+Secondary URL: https://onlinelibrary.wiley.com/doi/10.1111/pops.12245
+
+[211] Tversky, A. (1974). Judgment under uncertainty: Heuristics and biases. Science, 185(4157), 1124-1131.
+Primary URL: https://sites.socsci.uci.edu/~bskyrms/bio/readings/tversky_k_heuristics_biases.pdf
+Secondary URL: https://www.researchgate.net/publication/280981235_Heuristics_and_Biases_Beyond_Tversky_and_Kahneman's_1974_Judgment_under_Uncertainty
+
+[212] Schultz, W. (2015). Neuronal reward and decision signals: From theories to data. Physiological Reviews, 95(3), 853-951.
+Primary URL: https://www.pdn.cam.ac.uk/system/files/documents/2015-schultz-physiolrev.pdf
+Secondary URL: https://www.frontiersin.org/journals/cellular-neuroscience/articles/10.3389/fncel.2021.729791/pdf
+
+[213] Zuboff, S. (2019). The Age of Surveillance Capitalism: The Fight for a Human Future at the New Frontier of Power. PublicAffairs.
+Primary URL: https://we.riseup.net/assets/533560/Zuboff%2C+Shoshana.The+Age+of+Surveillance+Capitalism.2019.pdf
+Secondary URL: https://antipodeonline.org/wp-content/uploads/2019/10/Book-review_Whitehead-on-Zuboff.pdf
+
+[217] Van Dijck, J., Poell, T., & de Waal, M. (2018). The Platform Society: Public Values in a Connective World. Oxford University Press.
+Primary URL: https://www.academia.edu/38605333/Van_Dijk_Poell_and_de_Wall_The_Platform_Society_Public_Values_in_a_Connective_World_2018_
+Secondary URL: https://eprints.lse.ac.uk/90875/1/Plantin_Review-essay-the-platform-society.pdf
+
+[218] Tufekci, Z. (2017). Twitter and Tear Gas: The Power and Fragility of Networked Protest. Yale University Press.
+Primary URL: https://www.twitterandteargas.org/
+Secondary URL: https://antipodeonline.org/wp-content/uploads/2019/02/book-review_mobley-on-tufekci.pdf
+
+[219] Srnicek, N. (2017). Platform Capitalism. Polity Press.
+Primary URL: https://mudancatecnologicaedinamicacapitalista.files.wordpress.com/2019/02/platform-capitalism.pdf
+Secondary URL: https://eprints.lse.ac.uk/80352/1/blogs.lse.ac.uk-Book%20Review%20Platform%20Capitalism%20by%20Nick%20Srnicek.pdf
+
+[222] Anderson, B. (2006). Imagined Communities: Reflections on the Origin and Spread of Nationalism. Verso. ISBN: 978-1844670864.
+Primary URL: https://is.muni.cz/el/1423/podzim2013/SOC571E/um/Anderson_B_-_Imagined_Communities.pdf
+Secondary URL: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/32B510A66CA3862C8957373D61C520C3/S0090599224000631a.pdf/ethnoimagined_communities_rethinking_benedict_anderson_and_anthony_smiths_theories_of_nations_through_bernard_stieglers_theory_of_epiphylogenesis.pdf
+
+[223] Berger, P. L. (1966). The Social Construction of Reality: A Treatise in the Sociology of Knowledge. Anchor Books. ISBN: 978-0385058988.
+Primary URL: https://scholar.archive.org/work/jgqmcvsajzd7llunjaaf4s5zme/access/wayback/http://perflensburg.se/Berger%20social-construction-of-reality.pdf
+Secondary URL: https://www.hsaj.org/articles/21407
+
+[224] Foucault, M. (1982). The Subject and Power. Critical Inquiry, 8(4), 777-795.
+Primary URL: https://www2.kobe-u.ac.jp/~alexroni/IPD2018%20readings/IPD1%202018%20No.8/Foucault%20Subject%20and%20Power.pdf
+Secondary URL: https://muse.jhu.edu/article/940823
+
+[225] Lakoff, G. (1980). Metaphors We Live By. University of Chicago Press.
+Primary URL: https://archive.org/details/metaphorsweliveb00lako
+Secondary URL: https://www.researchgate.net/publication/361642446_Book_Review_Metaphors_We_Live_By
+
+[226] Kahan, D. M. (2017). Misconceptions, Misinformation, and the Logic of Identity-Protective Cognition. Cultural Cognition Project Working Paper Series No.
+Primary URL: https://www.researchgate.net/publication/317999685_Misconceptions_Misinformation_and_the_Logic_of_Identity-Protective_Cognition
+Secondary URL: https://www.culturalcognition.net/dan-kahans-publications/
+
+[227] Watzlawick, P. (1976). How Real Is Real? Confusion, Disinformation, Communication. Random House. ISBN: 978-0394722566.
+Primary URL: https://archive.org/details/howrealisreal00paul
+Secondary URL: https://onlinelibrary.wiley.com/doi/10.1111/j.1545-5300.1976.349_1.x
+
+[237] Wait Until 8th. (2024). Parent Pledge Movement.
+Primary URL: https://www.waituntil8th.org/
+Secondary URL: https://www.stpetersburg.usf.edu/news/2025/results-from-usf-study-on-kids-digital-media-use-reveal-benefits-of-smartphones.aspx
+
+[238] Bakshy, E. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science, 348(6239), 1130-1132.
+Primary URL: https://isps.yale.edu/sites/default/files/files/Exposure%20to%20Ideologically%20Diverse%20News%20and%20Opinion%20on%20Facebook.pdf
+Secondary URL: https://journalistsresource.org/politics-and-government/facebook-political-polarization-data-science-research/
+
+[239] Sparrow, B. (2011). Google Effects on Memory: Cognitive Consequences of Having Information at Our Fingertips. Science, 333(6043), 776-778. DOI: 10.1126/s.
+Primary URL: https://scholar.harvard.edu/files/dwegner/files/sparrow_et_al._2011.pdf
+Secondary URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC10830778/
+
+[240] Dahmani, L. (2020). Habitual use of GPS negatively impacts spatial memory during self-guided navigation. Scientific Reports, 10, Article 6310.
+Primary URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC7156656/
+Secondary URL: https://www.nature.com/articles/s41598-020-62877-0
+
+[241] Big Tech Companies. (2024). Market dominance statistics. Multiple sources.
+Primary URL: https://www.statista.com/topics/4213/google-apple-facebook-amazon-and-microsoft-gafam/
+Secondary URL: https://en.wikipedia.org/wiki/Big_Tech
+
+[242] Acemoglu, D. (2001). The Colonial Origins of Comparative Development: An Empirical Investigation. American Economic Review, 91(5), 1369-1401.
+Primary URL: https://economics.mit.edu/sites/default/files/publications/colonial-origins-of-comparative-development.pdf
+Secondary URL: https://statmodeling.stat.columbia.edu/2024/10/17/controversy-over-recently-honored-claims-in-the-paper-the-colonial-origins-of-comparative-development/
+
+[243] Pew Research Center (2024). Mobile Technology and Home Broadband.
+Primary URL: https://www.pewresearch.org/internet/2024/01/31/americans-use-of-mobile-technology-and-home-broadband/
+Secondary URL: https://www.researchgate.net/publication/372001632_Online_but_still_falling_behind_measuring_barriers_to_internet_use_'after_access'/fulltext/64c40ea1141074110edf4676/Online-but-still-falling-behind-measuring-barriers-to-internet-use-after-access.pdf?origin=scientificContributions
+
+[244] Parker, S. (2017). Interview at Axios event, National Constitution Center, Philadelphia.
+Primary URL: https://www.cbsnews.com/news/sean-parker-facebook-takes-advantage-of-vulnerability-in-human-psychology/
+Secondary URL: https://www.axios.com/2017/12/15/sean-parker-facebook-was-designed-to-exploit-human-vulnerability-1513306782
+
+[245] Ophir, E. (2009). Cognitive control in media multitaskers. Proceedings of the National Academy of Sciences, 106(37), 15583-15587.
+Primary URL: http://web.uvic.ca/~dbub/Cognition_Action/Essaytopicscontrol_files/Mediamultitaskers.pdf
+Secondary URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC2747151/
+
+[246] 118th Congress (2024). H. R.7888 - Reforming Intelligence and Securing America Act. Passed April 20, 2024.
+Primary URL: https://www.congress.gov/118/plaws/publ49/PLAW-118publ49.pdf
+Secondary URL: https://www.eff.org/deeplinks/2024/04/us-senate-and-biden-administration-shamefully-renew-and-expand-fisa-section-702-0
+
+[247] UNESCO (2019). UNESCO Atlas of the World's Languages in Danger.
+Primary URL: https://unesdoc.unesco.org/ark:/48223/pf0000192416
+Secondary URL: https://scholars.sil.org/sites/scholars/files/gary_f_simons/preprint/wisconsin_symposium.pdf
+
+[248] Pariser, E. (2011). The Filter Bubble: What the Internet is Hiding from You. Penguin Press.
+Primary URL: https://archive.org/details/filterbubblewhat0000pari_z3l4
+Secondary URL: https://www.researchgate.net/publication/352318481_Review_The_Filter_Bubble_What_the_Internet_is_Hiding_from_You_by_Eli_Pariser
+
+[249] McLuhan, M. (1964). Understanding Media: The Extensions of Man. McGraw-Hill. MIT Press reprint (1994) ISBN: 978-0262631594.
+Primary URL: https://designopendata.wordpress.com/wp-content/uploads/2014/05/understanding-media-mcluhan.pdf
+Secondary URL: https://direct.mit.edu/leon/article-abstract/55/5/551/112355
+
+[600] Simon, H. A. (1971). Designing organizations for an information-rich world. In M. Greenberger (Ed), Computers, communications, and the public interest (pp. 37-72).
+Primary URL: https://knowen-production.s3.amazonaws.com/uploads/attachment/file/2005/DESIGNING%2BORGANIZATIONS%2Bfor%2BInformation-Rich%2Bworld%2B--%2BSImon.pdf
+Secondary URL: https://sites.psu.edu/digitalshred/2021/05/07/designing-organizations-for-an-information-rich-world-simon/
+
+[601] Wu, T. (2016). The attention merchants: The epic scramble to get inside our heads. Knopf.
+Primary URL: https://archive.org/details/attentionmerchan0000wuti_a1k1
+Secondary URL: https://www.nytimes.com/2016/11/03/books/review-attention-merchants-tim-wu.html
+
+[602] Seymour, E. (2019). The data economy: How technological change has altered the role of the citizen-consumer. Technology in Society, 59, 101157.
+Primary URL: https://doi.org/10.1016/j.techsoc.2019.101157
+Secondary URL: https://www.sciencedirect.com/science/article/pii/S0160791X19300569
+
+[603] Tufekci, Z. (2017). Twitter and tear gas: The power and fragility of networked protest. Yale University Press.
+Primary URL: https://archive.org/details/twitterteargaspo0000tufe
+Secondary URL: https://antipodeonline.org/wp-content/uploads/2019/02/book-review_mobley-on-tufekci.pdf
+
+[604] Brady, W. J. (2017). Emotion shapes the diffusion of moralized content in social networks. Proceedings of the National Academy of Sciences, 114(28), 7313-7318.
+Primary URL: https://www.pnas.org/doi/10.1073/pnas.1618923114
+Secondary URL: https://www.van-bavel-lab.com/publications
+
+[605] Akerlof, G. A. (1970). The market for "lemons": Quality uncertainty and the market mechanism. The Quarterly Journal of Economics, 84(3), 488-500.
+Primary URL: https://www.sfu.ca/~wainwrig/Econ400/akerlof.pdf
+Secondary URL: https://www.gsb.stanford.edu/faculty-research/publications/information-market-lemons
+
+[607] Vosoughi, S. (2018). The spread of true and false news online. Science, 359(6380), 1146-1151.
+Primary URL: https://politics.media.mit.edu/papers/Vosoughi_Science.pdf
+Secondary URL: https://news.mit.edu/2018/study-twitter-false-news-travels-faster-true-stories-0308
+
+[608] Bakshy, E. (2015). Exposure to ideologically diverse news and opinion on Facebook. Science, 348(6239), 1130-1132.
+Primary URL: https://isps.yale.edu/sites/default/files/files/Exposure%20to%20Ideologically%20Diverse%20News%20and%20Opinion%20on%20Facebook.pdf
+Secondary URL: https://pdfs.semanticscholar.org/0fe7/0e569caa353e44d4278b1a430d2c0cb4b6a1.pdf
+
+[609] Marwick, A. E. (2011). I tweet honestly, I tweet passionately: Twitter users, context collapse, and the imagined audience. New Media & Society, 13(1), 114-133.
+Primary URL: https://www.researchgate.net/publication/235616529_I_Tweet_Honestly_I_Tweet_Passionately_Twitter_Users_Context_Collapse_and_the_Imagined_Audience
+Secondary URL: https://ferswriteshoe.wordpress.com/2011/07/12/article-review-twitter-users-context-collapse-and-the-imagined-audience/
+
+[610] Hirsch, F. (1976). Social limits to growth. Harvard University Press.
+Primary URL: https://archive.org/details/sociallimitstogr00fred
+Secondary URL: https://www.researchgate.net/profile/Andrew_Kashdan/publication/227358737_Assume_the_Positional_Comment_on_Robert_Frank/links/5e49fe2f92851c7f7f40f225/Assume-the-Positional-Comment-on-Robert-Frank.pdf
+
+[611] Veblen, T. (1899). The theory of the leisure class: An economic study of institutions. Macmillan.
+Primary URL: https://moglen.law.columbia.edu/LCS/theoryleisureclass.pdf
+Secondary URL: https://insights.som.yale.edu/insights/what-can-we-learn-from-trump
+
+[612] Katz, M. L. (1985). Network externalities, competition, and compatibility. The American Economic Review, 75(3), 424-440.
+Primary URL: https://idv.sinica.edu.tw/kongpin/teaching/io/KatzShapiro1.pdf
+Secondary URL: https://www.researchgate.net/publication/4723878_Network_Externalities_Competition_and_Compatibility
+
+[614] Hamilton, J. T. (2004). All the news that's fit to sell: How the market transforms information into news. Princeton University Press.
+Primary URL: https://dokumen.pub/download/all-the-news-thats-fit-to-sell-how-the-market-transforms-information-into-news-course-booknbsped-9781400841417.html
+Secondary URL: https://www.researchgate.net/scientific-contributions/SAMUEL-L-POPKIN-2002723547
+
+[615] Napoli, P. M. (2003). Audience economics: Media institutions and the audience marketplace. Columbia University Press.
+Primary URL: https://books.google.com/books/about/Audience_Economics.html?id=IX5W0Qq7uP0C
+Secondary URL: https://www.redalyc.org/pdf/971/97117399019.pdf
+
+[616] Entman, R. M. (2018). Framing in a fractured democracy: Impacts of digital technology on ideology, power and cascading network activation. Journal of Communication, 68(2), 298-308.
+Primary URL: https://www.researchgate.net/publication/324557909_Framing_in_a_Fractured_Democracy_Impacts_of_Digital_Technology_on_Ideology_Power_and_Cascading_Network_Activation
+Secondary URL: https://academic.oup.com/joc/article/68/2/298/4958978
+
+[617] Tromble, R. (2018). Thanks for (actually) responding! How citizen demand shapes politicians' interactive practices on Twitter. New Media & Society, 20(2), 676-697.
+Primary URL: https://journals.sagepub.com/doi/full/10.1177/1461444816669158
+Secondary URL: https://journals.sagepub.com/doi/full/10.1177/1461444816669160
+
+[618] Isaac, M. (2022). Elon Musk's Twitter takeover: How a year of chaos unfolded. The New York Times.
+Primary URL: https://www.nytimes.com/2022/10/28/technology/elon-musk-twitter-acquisition.html
+Secondary URL: https://en.wikipedia.org/wiki/Twitter_under_Elon_Musk
+
+[619] Haidt, J. (2019). The dark psychology of social networks. The Atlantic..................
+Primary URL: https://www.theatlantic.com/magazine/archive/2019/12/social-media-democracy/600763/
+Secondary URL: https://trinity.duke.edu/news/have-dangers-social-media-been-overstated-cites-work-chris-bail
+
+[621] Meta Platforms, Inc. (2024). Q4 2023 Quarterly Earnings Investor Presentation. Regional ARPU breakdown exposing the geographic concentration of extraction value..................
+Primary URL: https://investor.fb.com/investor-events/event-details/2024/Q4-2023-Earnings/default.aspx
+Secondary URL: https://investor.fb.com/investor-events/event-details/2024/Q4-2023-Earnings/default.aspx
+
+[622] Insider Intelligence/eMarketer. (2024). Time Spent with Facebook: US Adults' Daily Usage Trends. Usage analysis revealing Facebook's transformation from youth platform to middle-aged engagement machine..................
+Primary URL: https://www.insiderintelligence.com/content/time-spent-on-facebook-2024
+Secondary URL: https://blog.hootsuite.com/facebook-statistics/
+
+[623] Pew Research Center. (2023). Cable News Fact Sheet: Revenue and Economics. Analysis incorporating S&P Global Market Intelligence Kagan data..................
+Primary URL: https://www.pewresearch.org/journalism/fact-sheet/cable-news/Secondary
+Secondary URL: https://www.mediamatters.org/carriage-fees/new-report-examines-how-fox-corp-leverages-sports-and-entertainment-force-cable
+
+[624] Nielsen Media Research. (2024). Year-End 2023 Cable News Ratings Report. Viewership data showing both networks lost audience from 2022 peaks, suggesting fatigue that forces increasingly sensationalized content to prevent further attrition and maintain revenue per remaining viewer..................
+Primary URL: https://www.nielsen.com/news-center/2023/tops-of-2023-tv/
+Secondary URL: https://www.adweek.com/tvnewser/here-are-cable-news-nielsen-ratings-for-q3-2023/
