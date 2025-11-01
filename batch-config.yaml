@@ -1,0 +1,65 @@
+# Batch Processing Configuration for Reference Refinement Tool
+# Version: 1.0
+
+batch_processor:
+  # INPUT FILES
+  # NOTE: decisions.txt is now a symlink to the Dropbox Apps folder
+  # This ensures batch processor and iPad app always use the SAME file
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION
+  # Options: range | criteria | all_incomplete
+  selection_mode: "range"
+
+  # Option 1: Process by ID range
+  reference_range:
+    start: 300
+    end: 430  # Next 50 unfinalized after RID 249
+
+  # Maximum number of references to process (optional limit)
+  max_references: 50  # Process 50 references
+
+  # Option 2: Process by criteria (when selection_mode: "criteria")
+  criteria:
+    missing_primary_url: false  # Can have or not have primary URL
+    missing_secondary_url: false  # Can have or not have secondary URL
+    not_finalized: true  # MUST be unfinalized
+    has_queries: false  # Can have or not have queries
+
+  # QUERY GENERATION
+  # Options: simple (3 queries) | standard (8 queries)
+  query_mode: "standard"  # Using v14.x 8-query strategy
+
+  # AUTO-FINALIZATION
+  # v14.7: Disabled to allow manual review in iPad app
+  # Unfinalized refs appear at top of main window for easier review
+  auto_finalize: false  # User will finalize manually after review
+  finalize_criteria:
+    min_primary_score: 85      # Primary score threshold
+    min_secondary_score: 85    # Secondary score threshold
+    require_title_match: true  # Must have title match
+    require_author_match: false # Must have author match (optional)
+    max_warnings: 0            # Max acceptable warning flags
+
+  # RATE LIMITING & PERFORMANCE
+  rate_limiting:
+    delay_between_refs: 3000   # Milliseconds between each reference
+    delay_after_search: 1000   # Milliseconds after search before autorank
+    max_retries: 3             # Retry count for failed API calls
+    timeout: 30000             # Request timeout in milliseconds
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true              # Detailed console output
+    save_logs: true            # Save to log file
+    log_directory: "batch-logs"
+    include_api_responses: false  # Save full API responses (debug)
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true              # Save progress, allow resume
+    checkpoint_frequency: 5    # Save progress every N references
