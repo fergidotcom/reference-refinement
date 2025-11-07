@@ -1,0 +1,17 @@
+# Python dependencies for Caught in the Act Reference Converters
+
+# EPUB Generation
+ebooklib==0.20
+lxml>=4.9.0
+
+# QR Code Generation
+qrcode[pil]==8.2
+pillow>=10.0.0
+
+# Standard library dependencies (included with Python 3.8+)
+# - json
+# - pathlib
+# - datetime
+# - base64
+# - io
+# - typing
