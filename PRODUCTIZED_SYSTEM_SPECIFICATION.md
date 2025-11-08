@@ -1,11 +1,17 @@
 # PRODUCTIZED REFERENCE REFINEMENT SYSTEM
 ## Complete Implementation Specification for Claude Code Web
 
-**Version**: 2.0
+**Version**: 2.1
 **Branch**: productized-system
-**Training Manuscript**: raw_manuscript_training.docx (Caught in the Act)
+**Training Manuscripts**:
+- `source/raw_manuscript_training.docx` (Caught in the Act - 2.3 MB) ✅ **In Repository**
+- `source/authoritarian_ascent_usa.docx` (Authoritarian Ascent in USA - 497 MB) ⚠️ **Local Only** (GitHub 100MB limit)
+- `source/myth_male_menopause.docx` (The Myth of Male Menopause - 13 MB) ⚠️ **Local Only**
+- **Note**: See `source/README.md` for details on accessing large manuscripts
+**UI/UX Foundation**: Ferguson Family Archive project standards (mobile-first, accessible, performant)
 **Status**: Ready for Implementation
 **Created**: November 8, 2025
+**Updated**: November 8, 2025 - Added manuscripts, explicit UI/UX standards, large file handling
 
 ---
 
@@ -18,9 +24,26 @@ Transform manuscript-specific Reference Refinement system into universal AI-powe
 Replace rigid flag-based parsing with intelligent AI document understanding that comprehends content, context, and academic standards.
 
 ### Strategic Validation
-1. **Phase 1**: Test with "Caught in the Act" raw manuscript (raw_manuscript_training.docx)
-2. **Phase 2**: Apply to Ferguson's other books
-3. **Phase 3**: Productize for third-party authors
+**All three manuscripts MUST be supported from V1:**
+
+1. **"Caught in the Act"** (`raw_manuscript_training.docx` - 2.3 MB)
+   - Political performance and democratic accountability
+   - 288 references baseline (100% Primary, 93.4% Secondary coverage)
+   - Mixed citation formats, chapter-based RID scheme (100-199, 200-299, etc.)
+
+2. **"Authoritarian Ascent in the USA"** (`authoritarian_ascent_usa.docx` - 497 MB)
+   - Large manuscript with extensive references
+   - Tests system scalability and performance
+   - Validates handling of complex political science citations
+
+3. **"The Myth of Male Menopause"** (`myth_male_menopause.docx` - 13 MB)
+   - Medical/scientific manuscript
+   - Different citation patterns (likely medical/APA style)
+   - Tests cross-disciplinary citation handling
+
+**Validation Criteria**: System must successfully process all three manuscripts through complete workflow (normalization → refinement → publication) before V1 considered complete.
+
+**Phase 2**: Productize for third-party authors after three-manuscript validation
 
 ---
 
@@ -682,15 +705,45 @@ async function handleContextOverride(citationId, newContext) {
 
 ## 🎨 UI/UX REQUIREMENTS
 
-### Design System Source
-**Base on**: Ferguson Family Archive UI/UX patterns
+### ⭐ CRITICAL: Ferguson Family Archive Standards (MANDATORY)
 
-### Key Principles
+**This system MUST use the exact UI/UX standards, conventions, and tools implemented in the Ferguson Family Archive project.**
+
+**Complete Rebuild Required**: The new productized system will be completely rebuilt from scratch using Ferguson Family Archive mobile-first standards. DO NOT reuse existing Reference Refinement iPad app UI patterns.
+
+### Ferguson Family Archive UI/UX Foundation
+
+**Access the complete UI/UX specification**:
+- See `~/.claude/fergi-ui-ux-standards.md` for comprehensive design system
+- All Fergi projects inherit these standards automatically
+- Reference: `@~/.claude/global-infrastructure.md`
+
+**Core Ferguson Archive Patterns**:
 1. **Mobile First**: Design for phones, enhance for tablets/desktop
-2. **Touch Optimized**: Large touch targets (minimum 44px), swipe gestures
+2. **Touch Optimized**: Large touch targets (minimum 44px), swipe gestures, haptic feedback
 3. **Progressive Enhancement**: Works on basic devices, enhanced on capable
-4. **Consistent Patterns**: Follow Archive project conventions
-5. **Accessibility**: WCAG 2.1 AA compliance
+4. **Consistent Visual Language**: Follow Archive project color palette, typography, spacing
+5. **Accessibility**: WCAG 2.1 AA compliance minimum
+6. **Performance**: Lighthouse score >90 on mobile devices
+7. **Offline Capable**: Service workers for offline functionality
+8. **Responsive Grid**: CSS Grid and Flexbox for fluid layouts
+
+**Technology Stack from Ferguson Archive**:
+- **Styling**: Tailwind CSS (same configuration as Archive)
+- **Icons**: Same icon library as Archive project
+- **Fonts**: Same typography system as Archive
+- **Components**: Reusable component patterns from Archive
+- **State Management**: Same patterns as Archive (Context API or Zustand)
+- **Build Tools**: Same build configuration as Archive
+
+**Visual Consistency Requirements**:
+- Same color scheme and theme variables
+- Same button styles and interactive elements
+- Same form input designs and validation patterns
+- Same navigation patterns (bottom nav on mobile)
+- Same loading states and skeleton screens
+- Same toast/notification designs
+- Same modal and dialog patterns
 
 ### Critical Mobile Optimization
 - Bottom navigation bar (fixed)

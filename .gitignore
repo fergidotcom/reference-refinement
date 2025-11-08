@@ -72,3 +72,7 @@ ENV/
 !netlify.toml
 !package.json
 !tsconfig.json
+
+# Large manuscript files (>100MB)
+source/authoritarian_ascent_usa.docx
+source/myth_male_menopause.docx
