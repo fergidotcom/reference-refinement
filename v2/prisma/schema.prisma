@@ -1,0 +1,145 @@
+// Productized Reference Refinement System - Database Schema
+// Based on TECHNICAL_SPECIFICATION.md Section 2.2
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Manuscript {
+  id            String   @id @default(cuid())
+  title         String
+  authorName    String
+  uploadedAt    DateTime @default(now())
+  filePath      String
+  fileType      String   // 'docx' | 'pdf' | 'txt'
+  status        String   // 'uploaded' | 'analyzing' | 'refining' | 'complete'
+
+  // RID Scheme
+  ridSchemeType String   // 'sequential' | 'chapter_based' | 'custom'
+  ridSchemePattern String?
+  ridNextAvailable Int    @default(1)
+
+  // Relationships
+  citations     Citation[]
+  references    Reference[]
+  publications  Publication[]
+
+  @@index([status])
+}
+
+model Citation {
+  id                  String   @id @default(cuid())
+  manuscriptId        String
+  manuscript          Manuscript @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
+
+  rid                 Int
+  originalFormat      String   // e.g., "(Smith, 2020)" or "¹"
+
+  // Location
+  chapter             String?
+  section             String?
+  paragraphNum        Int
+  charPosition        Int
+
+  // Context
+  contextBefore       String
+  contextAfter        String
+  capturedContext     String
+  contextApproved     Boolean  @default(false)
+
+  // Validation
+  hasMatchingRef      Boolean  @default(false)
+  validationStatus    String   // 'valid' | 'orphaned' | 'missing_reference'
+
+  // Relationship
+  referenceId         String?
+  reference           Reference? @relation(fields: [referenceId], references: [id])
+
+  @@unique([manuscriptId, rid])
+  @@index([manuscriptId, validationStatus])
+}
+
+model Reference {
+  id                  String   @id @default(cuid())
+  manuscriptId        String
+  manuscript          Manuscript @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
+
+  rid                 Int
+
+  // Bibliographic Info (JSONB for flexibility)
+  bibliographic       Json     // { title, authors, publication, year, doi, isbn, etc. }
+
+  // Original URLs from manuscript
+  originalPrimaryUrl  String?
+  originalSecondaryUrl String?
+  originalOtherUrls   Json?    // Array of additional URLs
+
+  status              String   // 'incomplete' | 'ready' | 'refining' | 'finalized'
+  formatIssues        Json?    // Array of detected issues
+
+  // Relationships
+  citations           Citation[]
+  instances           ReferenceInstance[]
+
+  @@unique([manuscriptId, rid])
+  @@index([manuscriptId, status])
+}
+
+model ReferenceInstance {
+  id                  String   @id @default(cuid())
+  referenceId         String
+  reference           Reference @relation(fields: [referenceId], references: [id], onDelete: Cascade)
+
+  citationId          String
+
+  // Context-specific data
+  context             String
+  contextModified     Boolean  @default(false)
+  relevanceText       String?
+  searchQueries       Json?    // Array of query strings
+
+  // URLs
+  primaryUrl          String?
+  secondaryUrls       Json?    // Array of secondary URLs
+
+  status              String   // 'draft' | 'refined' | 'finalized'
+  lastModified        DateTime @default(now()) @updatedAt
+
+  // Relationships
+  urlCandidates       URLCandidate[]
+
+  @@index([referenceId, status])
+}
+
+model URLCandidate {
+  id                  String   @id @default(cuid())
+  instanceId          String
+  instance            ReferenceInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  url                 String
+
+  // Analysis (JSONB for flexibility)
+  analysis            Json     // { titleMatch, soft404, paywall, scores, etc. }
+
+  recommendation      String   // 'primary' | 'secondary' | 'reject'
+
+  @@index([instanceId, recommendation])
+}
+
+model Publication {
+  id                  String   @id @default(cuid())
+  manuscriptId        String
+  manuscript          Manuscript @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
+
+  format              String   // 'html' | 'epub' | 'print'
+  filePath            String
+  generatedAt         DateTime @default(now())
+  fileSize            Int
+
+  @@index([manuscriptId, format])
+}
