@@ -206,7 +206,8 @@ describe('FormatController Integration Tests', () => {
       const formats = parsed.map(ref => ref.format);
 
       const formatCounts = formats.reduce((acc, fmt) => {
-        acc[fmt] = (acc[fmt] || 0) + 1;
+        const key = fmt || 'Unknown';
+        acc[key] = (acc[key] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
 

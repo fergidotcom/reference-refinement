@@ -89,7 +89,7 @@ export function validateReference(data: BibliographicData): FormatValidationResu
 
   return {
     isValid,
-    format: data.format,
+    format: data.format || 'Unknown',
     errors,
     warnings,
     missingFields,

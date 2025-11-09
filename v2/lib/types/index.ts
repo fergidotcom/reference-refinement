@@ -139,12 +139,17 @@ export interface Author {
 }
 
 /**
- * Unified Reference interface (used by both Component 1 and Component 2)
- * Combines simple and detailed bibliographic data
+ * Unified Reference interface (used by all components)
+ * Combines parsed bibliographic data (C1-C3) with v1 decisions.txt format (C4-C5)
  */
 export interface Reference {
-  /** Reference ID (RID) */
+  // ===== Core Identity (both formats) =====
+  /** Reference ID - "rid" for C1-C3, "id" for C4-C5 */
   rid: string;
+  /** Reference ID (v1 format alias for rid) */
+  id?: string;
+
+  // ===== Bibliographic Data (parsed format - C1-C3) =====
   /** Author(s) - can be simple string or structured array */
   authors: string | Author[];
   /** Publication year */
@@ -163,21 +168,59 @@ export interface Reference {
   doi?: string;
   /** ISBN (optional) */
   isbn?: string;
-  /** Existing URL in the reference (optional) */
-  url?: string;
-  /** Primary URL if present */
-  primaryUrl?: string;
-  /** Secondary URL if present */
-  secondaryUrl?: string;
-  /** Tertiary URL if present */
-  tertiaryUrl?: string;
-  /** Detected format */
-  format?: CitationFormat;
+
+  // ===== Raw Text (both formats) =====
   /** Full raw text of the reference */
   rawText: string;
-  /** Relevance description (if present) */
+  /** Raw reference text (v1 format alias) */
+  text?: string;
+
+  // ===== URLs (both formats) =====
+  /** Single URL (simple format) */
+  url?: string;
+  /** Primary URL (parsed format) */
+  primaryUrl?: string;
+  /** Secondary URL (parsed format) */
+  secondaryUrl?: string;
+  /** Tertiary URL (parsed format) */
+  tertiaryUrl?: string;
+  /** URLs object (v1 format) */
+  urls?: {
+    primary?: string;
+    secondary?: string;
+    tertiary?: string;
+  };
+
+  // ===== Format and Relevance =====
+  /** Detected citation format */
+  format?: CitationFormat;
+  /** Relevance description */
   relevance?: string;
+
+  // ===== v1 Decisions.txt Format Fields (C4-C5) =====
+  /** Parsed bibliographic data (v1 format) */
+  parsed?: {
+    authors?: string;
+    year?: string;
+    title?: string;
+    publication?: string;
+    volume?: string;
+    issue?: string;
+    pages?: string;
+    doi?: string;
+    isbn?: string;
+  };
+  /** Search queries used to find URLs */
+  queries?: string[];
+  /** Reference flags (finalized, manual review, etc.) */
+  flags?: {
+    finalized?: boolean;
+    manual_review?: boolean;
+    batch_version?: string;
+    [key: string]: boolean | string | undefined;
+  };
   /** Additional metadata */
+  meta?: Record<string, any>;
   metadata?: {
     doi?: string;
     isbn?: string;
@@ -194,6 +237,8 @@ export interface Reference {
 export interface BibliographicData extends Omit<Reference, 'authors'> {
   /** List of authors */
   authors: Author[];
+  /** Full text of the reference (Component 3 expects this) */
+  fullText?: string;
 }
 
 /**

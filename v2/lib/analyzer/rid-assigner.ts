@@ -198,7 +198,10 @@ export class RIDAssigner {
       }
 
       // Match in authors
-      if (reference.authors.toLowerCase().includes(keywordLower)) {
+      const authorsStr = typeof reference.authors === 'string'
+        ? reference.authors
+        : reference.authors.map(a => `${a.firstName} ${a.lastName}`).join(' ');
+      if (authorsStr.toLowerCase().includes(keywordLower)) {
         score += 0.2;
         matches++;
       }
@@ -235,8 +238,11 @@ export class RIDAssigner {
       reference.title.toLowerCase().includes(k.toLowerCase())
     );
 
+    const authorsStr = typeof reference.authors === 'string'
+      ? reference.authors
+      : reference.authors.map(a => `${a.firstName} ${a.lastName}`).join(' ');
     const authorMatches = keywords.filter(k =>
-      reference.authors.toLowerCase().includes(k.toLowerCase())
+      authorsStr.toLowerCase().includes(k.toLowerCase())
     );
 
     const yearMatches = keywords.filter(k => reference.year === k);
