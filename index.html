@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v16.6</title>
+    <title>Reference Refinement v16.8</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1124,7 +1124,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v16.6</h1>
+            <h1>Reference Refinement v16.8</h1>
             <button onclick="app.showQuickNote()" class="secondary" style="margin-left: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
                 📝 Quick Note
             </button>
@@ -1164,7 +1164,7 @@
                     <label>Dropbox</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <button onclick="app.connectDropbox()" id="dropboxConnectBtn" class="secondary">
-                            Connect to Dropbox
+                            Test Dropbox Connection
                         </button>
                         <span id="dropboxStatus" style="font-size: 0.85rem; color: var(--text-secondary);">Not connected</span>
                     </div>
@@ -1515,35 +1515,19 @@
                 claudeRankTokensOut: 0
             },
 
-            // Dropbox integration
-            dropboxAppKey: 'q4ldgkwjmhxv6w2',
-            dropboxAccessToken: null,
-            dropboxRefreshToken: null,
-            dropboxTokenExpiry: null,
+            // Dropbox integration - Hardcoded access token (generated from Dropbox Developer Console)
+            // This is appropriate for personal single-user tools and eliminates OAuth complexity
+            DROPBOX_ACCESS_TOKEN: 'sl.u.AGGkWKZVh-x8DR4oGGXF3S2nqXwhKd_tkoWMcTkUSKubMZttam9eMVhFvKx09hTh6K6gcwWLiZBSsfGxdMP94iE9zL8ONiDXAS_ULpq8atKhg7x-o3sblyeUaOOPGtzoMF4DMCI4-JEPTxN1g9Dg9fxqKmd7nTyKcKma16TKZ0zcwcZHgCVS5L0mTssmYLKWNev09scrQyOQtpAdQcqrmZNkBG1a7FCas9oi_dRhxn9q35qOncY1ZtB_VsZLhG4Co5KE8Ujkp7i8fvQ8uHDae1iuHEzJoMZkCOOTOBqF8fVeI8vyLetZHF7As0zFo3SVbXiVD8MVa6HjsoDo9a2hnh6yCmJTo7DT0nb-hACxkOD-2wYDi00KaAsJTwhY4NH5XqI1T8zZmByg-zl3x_mEArVdwmwNTRYGYi0PFIRE09D7oRg_RyBBhR8HcPx8LhFbk6H3NIsez7tZCoN5D0eQVUr2_SEfOveSEiWt2K0viImUdRh5E1xY8ijSzD5U3vmvLtSqQm3nfJHjAvRIYEi7KtdA3TB7xs8Rlz_OtO0Hr-I8H8M7_QRfoLXpjDXNG7dIVa71NaqShw_0TlGMAhSvdKXXPRbWuTh4itQl-fzuDY-CqAwOXECxy73PbhCyyP3n-dvoHMiK7dCSgEpaFhQaqO4KaZ3nztTgxiLE7cK_z4QtFXK7va0dX35jucwtkM68RTkQeeZI8hIeI_0sXP9AtPnlHU5AhdDCgtXv6-pVzOhGIZecvBrusAVWT4KZtBIyGngUTJImUxp6EJBo3dmbB-QjbJHVyw2Sr7AVT1pOj4iCohmatbL9lzIAs1ZGKpQTfvoTln1SwSGd2Hwnj-oq1-g7WzhULkLJhDfT0SPT21ROeQfxD5LqOP2ee_N5MKDcB7XzhUsAAcaXhS9ofdVg4uNdjWlaJhRudMKs79VBdNhY29PfgWpIt0EC2C3g9M_0qJqJ6SAP-y34ttTmotFR5Gtvzreii5iHrdIMX-_io4LDFUKNfu3aHLgjSHf8M7ACHqIpiiphxZDZq88kIMedGdYplScI8gzH2DrN_roC5i_Pr83pyXblRRb06gXy3AgpHZbpRcMn2x9o-OzEgXupEiOGjJvmsof4T2x8pTyivlTntYrnIHS1dki9Ufw5kqeqFVm5E0fowzGQeGXJdUpmVe7zwxdcJkWT2bQ56t6fK_ooMC_89HVgeGGKnny0QuXCFeZD8vi_pqfkuZtVuoNy9F3TrqPMhpC8_nDem_OLafM2K7t-EVVxntDtJMZEFiI_d17IHzabOOhboDtJWRHFR1KAy8-zoP9gFGCYvXiYIKtYYaViM2QNQOK2F6DAcxEAKcs',
             dropboxClient: null,
 
             // Initialize
             async init() {
                 console.log('[INIT] Starting application initialization...');
 
-                // Check for OAuth callback
-                await this.handleDropboxOAuthCallback();
-
-                // Load Dropbox tokens
-                this.dropboxAccessToken = localStorage.getItem('rr_dropbox_token');
-                this.dropboxRefreshToken = localStorage.getItem('rr_dropbox_refresh_token');
-                const expiryStr = localStorage.getItem('rr_dropbox_token_expiry');
-                this.dropboxTokenExpiry = expiryStr ? parseInt(expiryStr) : null;
-
-                console.log('[INIT] Dropbox token:', this.dropboxAccessToken ? 'Found' : 'Not found');
-                console.log('[INIT] Refresh token:', this.dropboxRefreshToken ? 'Found' : 'Not found');
-
-                if (this.dropboxAccessToken) {
-                    // Check if token needs refresh
-                    await this.ensureValidDropboxToken();
-                    this.initializeDropbox(this.dropboxAccessToken);
-                    console.log('[INIT] Dropbox client initialized');
-                }
+                // Initialize Dropbox with hardcoded access token
+                console.log('[INIT] Initializing Dropbox with hardcoded access token');
+                this.initializeDropbox(this.DROPBOX_ACCESS_TOKEN);
+                console.log('[INIT] Dropbox client initialized');
 
                 // Load override log from localStorage
                 const savedLog = localStorage.getItem('rr_override_log');
@@ -4288,254 +4272,47 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}${costInfo}`;
 
             // Dropbox Integration
             async handleDropboxOAuthCallback() {
-                // Check for authorization code (PKCE Flow)
-                const urlParams = new URLSearchParams(window.location.search);
-                const code = urlParams.get('code');
-                const state = urlParams.get('state');
-                const error = urlParams.get('error');
-                const errorDescription = urlParams.get('error_description');
-
-                // Check if Dropbox returned an error
-                if (error) {
-                    console.error('[DROPBOX] OAuth error:', error, errorDescription);
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    this.showToast(`Dropbox OAuth error: ${error}${errorDescription ? ' - ' + errorDescription : ''}`, 'error');
-                    return;
-                }
-
-                if (code) {
-                    console.log('[DROPBOX] Authorization code received, exchanging for tokens...');
-
-                    // Retrieve the PKCE verifier from state parameter
-                    let codeVerifier = null;
-                    let source = 'none';
-
-                    if (state && state.startsWith('pkce:')) {
-                        // Extract verifier from state parameter
-                        codeVerifier = state.substring(5); // Remove "pkce:" prefix
-                        source = 'state parameter';
-                        console.log('[DROPBOX] PKCE verifier retrieved from state parameter');
-                    } else {
-                        // Fallback: try old storage methods (for backwards compatibility)
-                        console.warn('[DROPBOX] State parameter missing, trying storage fallback...');
-
-                        codeVerifier = this.getCookie('rr_pkce_verifier');
-                        if (codeVerifier) source = 'cookie';
-
-                        if (!codeVerifier) {
-                            codeVerifier = sessionStorage.getItem('rr_pkce_verifier');
-                            if (codeVerifier) source = 'sessionStorage';
-                        }
-
-                        if (!codeVerifier) {
-                            codeVerifier = localStorage.getItem('rr_pkce_verifier');
-                            if (codeVerifier) source = 'localStorage';
-                        }
-                    }
-
-                    if (!codeVerifier) {
-                        console.error('[DROPBOX] PKCE verifier not found in state parameter or storage');
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        this.showToast('OAuth error: PKCE verifier missing. Please try connecting again.', 'error');
-                        return;
-                    }
-
-                    console.log('[DROPBOX] PKCE verifier retrieved successfully from', source);
-
-                    try {
-                        // Exchange code for tokens via our Netlify Function
-                        const response = await this.apiRequest('/api/dropbox-oauth', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                code: code,
-                                code_verifier: codeVerifier
-                            })
-                        });
-
-                        if (response.access_token) {
-                            // Store tokens
-                            this.dropboxAccessToken = response.access_token;
-                            this.dropboxRefreshToken = response.refresh_token;
-                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
-
-                            localStorage.setItem('rr_dropbox_token', response.access_token);
-                            localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
-                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
-
-                            this.initializeDropbox(response.access_token);
-
-                            // Clean up URL (remove ?code= and ?state= parameters)
-                            window.history.replaceState({}, document.title, window.location.pathname);
-
-                            console.log('[DROPBOX] Successfully connected! Token expires in', response.expires_in, 'seconds');
-
-                            // Load fresh data from Dropbox after successful connection
-                            console.log('[DROPBOX] Loading fresh data from Dropbox after reconnection...');
-                            try {
-                                const content = await this.loadFromDropbox('/decisions.txt');
-                                if (content) {
-                                    console.log('[DROPBOX] Loaded decisions.txt from Dropbox, size:', content.length);
-
-                                    // Clear stale localStorage to prevent future conflicts
-                                    localStorage.removeItem('rr_decisions_backup');
-                                    localStorage.removeItem('rr_decisions_timestamp');
-                                    console.log('[DROPBOX] Cleared stale localStorage backup');
-
-                                    // Parse and render fresh data
-                                    this.parseDecisions(content);
-                                    this.applyFilters();
-
-                                    // Update localStorage with fresh data
-                                    localStorage.setItem('rr_decisions_backup', content);
-                                    localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
-
-                                    this.showToast('Connected to Dropbox and loaded latest data!', 'success');
-                                    console.log('[DROPBOX] Successfully loaded and displayed fresh data from Dropbox');
-                                } else {
-                                    console.log('[DROPBOX] No content in decisions.txt, showing connection success only');
-                                    this.showToast('Connected to Dropbox! Your tokens will auto-refresh.', 'success');
-                                }
-                            } catch (e) {
-                                console.error('[DROPBOX] Failed to load data after reconnection:', e);
-                                this.showToast('Connected to Dropbox but failed to load data. Try refreshing the page.', 'warning');
-                            }
-                        } else {
-                            throw new Error(response.error || 'Failed to exchange code for tokens');
-                        }
-                    } catch (error) {
-                        console.error('[DROPBOX] Token exchange failed:', error);
-
-                        // Clean up URL on error
-                        window.history.replaceState({}, document.title, window.location.pathname);
-
-                        this.showToast('Failed to connect to Dropbox: ' + error.message + '. Please try again.', 'error');
-                    }
-                }
+                // No OAuth callback handling needed with hardcoded access token
+                console.log('[DROPBOX] OAuth callback not needed (using hardcoded token)');
             },
 
             initializeDropbox(accessToken) {
-                this.dropboxAccessToken = accessToken;
                 this.dropboxClient = new Dropbox.Dropbox({ accessToken });
                 this.updateDropboxUI(true);
             },
 
             async connectDropbox() {
-                // Generate PKCE code verifier and challenge
-                const codeVerifier = this.generateCodeVerifier();
-                const codeChallenge = await this.generateCodeChallenge(codeVerifier);
-
-                console.log('[DROPBOX] Initiating PKCE OAuth flow with state parameter');
-
-                // Encode verifier in OAuth state parameter (survives Safari redirects)
-                const stateWithVerifier = `pkce:${codeVerifier}`;
-
-                // Use PKCE flow (required for public clients)
-                const redirectUri = 'https://rrv521-1760738877.netlify.app/rr_v60.html';
-                const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&token_access_type=offline&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${encodeURIComponent(stateWithVerifier)}`;
-
-                console.log('[DROPBOX] Redirecting to Dropbox for authorization');
-                window.location.href = authUrl;
+                // Test connection by loading decisions.txt
+                console.log('[DROPBOX] Testing connection by loading decisions.txt...');
+                try {
+                    const content = await this.loadFromDropbox('/decisions.txt');
+                    if (content) {
+                        console.log('[DROPBOX] Successfully loaded decisions.txt, size:', content.length);
+                        this.parseDecisions(content);
+                        this.applyFilters();
+                        localStorage.setItem('rr_decisions_backup', content);
+                        localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
+                        this.showToast('✅ Dropbox connected! Loaded decisions.txt', 'success');
+                    } else {
+                        this.showToast('⚠️ Dropbox connected but decisions.txt is empty', 'warning');
+                    }
+                } catch (error) {
+                    console.error('[DROPBOX] Connection test failed:', error);
+                    this.showToast('❌ Dropbox connection failed: ' + error.message, 'error');
+                }
             },
 
-            getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-                return null;
-            },
-
-            deleteCookie(name) {
-                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-            },
-
-            generateCodeVerifier() {
-                // Generate a random string for PKCE
-                const array = new Uint8Array(32);
-                crypto.getRandomValues(array);
-                return btoa(String.fromCharCode.apply(null, Array.from(array)))
-                    .replace(/\+/g, '-')
-                    .replace(/\//g, '_')
-                    .replace(/=/g, '');
-            },
-
-            async generateCodeChallenge(verifier) {
-                // Hash the verifier using SHA-256
-                const encoder = new TextEncoder();
-                const data = encoder.encode(verifier);
-                const hash = await crypto.subtle.digest('SHA-256', data);
-                return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(hash))))
-                    .replace(/\+/g, '-')
-                    .replace(/\//g, '_')
-                    .replace(/=/g, '');
-            },
 
             disconnectDropbox() {
-                this.dropboxAccessToken = null;
-                this.dropboxRefreshToken = null;
-                this.dropboxTokenExpiry = null;
-                this.dropboxClient = null;
-                localStorage.removeItem('rr_dropbox_token');
-                localStorage.removeItem('rr_dropbox_refresh_token');
-                localStorage.removeItem('rr_dropbox_token_expiry');
-                this.updateDropboxUI(false);
-                this.showToast('Disconnected from Dropbox', 'info');
+                // Can't actually disconnect with hardcoded token, but can refresh the connection
+                this.initializeDropbox(this.DROPBOX_ACCESS_TOKEN);
+                this.showToast('Dropbox connection refreshed', 'info');
             },
 
             async ensureValidDropboxToken() {
-                // Check if we need to refresh the token
-                // Refresh if token expires in less than 5 minutes
-                const fiveMinutes = 5 * 60 * 1000;
-
-                if (!this.dropboxTokenExpiry || !this.dropboxRefreshToken) {
-                    console.log('[DROPBOX] No expiry time or refresh token - skipping refresh');
-                    return;
-                }
-
-                const timeUntilExpiry = this.dropboxTokenExpiry - Date.now();
-
-                if (timeUntilExpiry < fiveMinutes) {
-                    console.log('[DROPBOX] Token expires soon, refreshing... (expires in', Math.floor(timeUntilExpiry / 1000), 'seconds)');
-
-                    try {
-                        const response = await this.apiRequest('/api/dropbox-oauth', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                grant_type: 'refresh_token',
-                                refresh_token: this.dropboxRefreshToken
-                            })
-                        });
-
-                        if (response.access_token) {
-                            // Update tokens
-                            this.dropboxAccessToken = response.access_token;
-                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
-
-                            // Update refresh token if a new one was provided
-                            if (response.refresh_token) {
-                                this.dropboxRefreshToken = response.refresh_token;
-                                localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
-                            }
-
-                            localStorage.setItem('rr_dropbox_token', response.access_token);
-                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
-
-                            // Update the Dropbox client with new token
-                            if (this.dropboxClient) {
-                                this.dropboxClient = new Dropbox.Dropbox({ accessToken: response.access_token });
-                            }
-
-                            console.log('[DROPBOX] Token refreshed successfully, new expiry in:', response.expires_in, 'seconds');
-                        } else {
-                            throw new Error(response.error || 'Failed to refresh token');
-                        }
-                    } catch (error) {
-                        console.error('[DROPBOX] Token refresh failed:', error);
-                        this.showToast('Dropbox token refresh failed. Please reconnect.', 'warning');
-                        // Don't clear tokens yet - let user reconnect manually
-                    }
-                } else {
-                    console.log('[DROPBOX] Token still valid for', Math.floor(timeUntilExpiry / 60000), 'minutes');
-                }
+                // No token refresh needed with hardcoded access token
+                // Generated access tokens don't expire
+                console.log('[DROPBOX] Using hardcoded access token (no refresh needed)');
             },
 
             updateDropboxUI(connected) {
