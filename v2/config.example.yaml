@@ -1,0 +1,147 @@
+# Reference Refinement v2 - Example Configuration
+#
+# Copy this file to config.yaml and fill in your API keys
+#
+# Environment variables can be referenced with ${VAR_NAME}
+
+# ============================================================================
+# API KEYS (REQUIRED)
+# ============================================================================
+
+# Google Custom Search API key
+# Get from: https://console.cloud.google.com/apis/credentials
+google_api_key: ${GOOGLE_API_KEY}
+
+# Google Custom Search Engine ID
+# Get from: https://programmablesearchengine.google.com/
+google_cse_id: ${GOOGLE_CSE_ID}
+
+# Anthropic API key for Claude
+# Get from: https://console.anthropic.com/
+anthropic_api_key: ${ANTHROPIC_API_KEY}
+
+# ============================================================================
+# SEARCH SETTINGS
+# ============================================================================
+
+search:
+  # Total queries per reference (primary + secondary)
+  queries_per_reference: 8
+
+  # Number of queries focused on finding the work itself
+  # (full-text PDFs, publisher pages, etc.)
+  primary_queries: 4
+
+  # Number of queries focused on finding reviews/analyses
+  # (scholarly reviews, book reviews, etc.)
+  secondary_queries: 4
+
+  # Number of results to fetch per query
+  results_per_query: 10
+
+# ============================================================================
+# REFINEMENT SETTINGS
+# ============================================================================
+
+refinement:
+  # Number of top candidates to validate for URL accessibility
+  # (prevents recommending broken links)
+  validate_top_n: 20
+
+  # Minimum score threshold for PRIMARY URLs (0-100)
+  # Primary = the work itself or publisher page
+  primary_threshold: 75
+
+  # Minimum score threshold for SECONDARY URLs (0-100)
+  # Secondary = reviews, analyses, or discussions of the work
+  secondary_threshold: 75
+
+  # Enable enhanced soft-404 detection
+  # (checks page content for error messages, not just HTTP status)
+  enhanced_soft_404: true
+
+# ============================================================================
+# RATE LIMITING
+# ============================================================================
+
+rate_limiting:
+  # Maximum Google searches per day (quota limit)
+  google_max_per_day: 100
+
+  # Maximum Google searches per second
+  google_max_per_second: 1
+
+  # Delay after each search (milliseconds)
+  # Helps avoid hitting rate limits
+  delay_after_search: 1000
+
+  # Delay after URL validation (milliseconds)
+  delay_after_validation: 200
+
+  # Request timeout (milliseconds)
+  timeout: 10000
+
+# ============================================================================
+# OUTPUT SETTINGS
+# ============================================================================
+
+output:
+  # Output format:
+  # - decisions: Working format with queries, relevance, flags
+  # - final: Clean format with just URLs (finalized refs only)
+  # - json: Structured JSON
+  # - markdown: Readable documentation
+  format: decisions
+
+  # Output file path
+  path: ./output/decisions.txt
+
+  # Batch version tag (appears in FLAGS[BATCH_v2.0])
+  batch_version: v2.0
+
+  # Auto-finalize references with high confidence scores
+  # If false, all references will need manual review
+  auto_finalize: false
+
+# ============================================================================
+# BATCH PROCESSING
+# ============================================================================
+
+batch:
+  # Selection mode:
+  # - all: Process all references
+  # - unfinalized: Process only unfinalized references
+  # - manual_review: Process only refs flagged for manual review
+  # - range: Process specific ID range
+  selection_mode: unfinalized
+
+  # Reference ID range (only used if selection_mode = range)
+  # reference_range:
+  #   start: 100
+  #   end: 200
+
+  # Maximum references to process (optional limit)
+  # max_references: 50
+
+  # Save progress to file (enables resume on failure)
+  save_progress: true
+
+  # Progress file path
+  progress_file: ./batch-progress.json
+
+  # Create backup before processing
+  create_backup: true
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+
+logging:
+  # Log level: debug | info | warn | error
+  level: info
+
+  # Save logs to file
+  save_logs: true
+
+  # Log directory
+  log_directory: ./logs
