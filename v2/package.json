@@ -1,13 +1,16 @@
 {
   "name": "reference-refinement-v2",
   "version": "2.0.0",
-  "description": "Productized Reference Refinement System",
+  "description": "Productized Reference Refinement System with Document Analyzer",
   "private": true,
+  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -32,5 +35,10 @@
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
   }
 }
