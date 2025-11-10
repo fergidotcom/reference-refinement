@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v16.8</title>
+    <title>Reference Refinement v17.0</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -372,6 +372,21 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        /* v17.0: Instance reference styling */
+        .instance-badge {
+            background: #9333ea;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .reference-card.instance-reference {
+            border-left: 4px solid #9333ea;
+            background: linear-gradient(to right, #faf5ff 0%, white 100%);
         }
 
         .reference-content h3 {
@@ -1124,7 +1139,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v16.8</h1>
+            <h1>Reference Refinement v17.0</h1>
             <button onclick="app.showQuickNote()" class="secondary" style="margin-left: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
                 📝 Quick Note
             </button>
@@ -1157,6 +1172,10 @@
                         <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
                             <input type="checkbox" id="showManualReviewToggle" onchange="app.applyFilters()" checked>
                             <span>Show Manual Review Needed</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                            <input type="checkbox" id="showInstancesToggle" onchange="app.applyFilters()" checked>
+                            <span>Show Instance References (<span id="statInstances">0</span>)</span>
                         </label>
                     </div>
                 </div>
@@ -1290,6 +1309,18 @@
 
                     <!-- Hidden relevance text field for backend use -->
                     <textarea id="editRelevanceText" style="display: none;"></textarea>
+
+                    <!-- v16.9: Note field -->
+                    <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
+                        <div class="form-group">
+                            <label class="form-label" style="margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>📝 Note</span>
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">(optional - for your reference)</span>
+                            </label>
+                            <textarea id="editNote" class="form-textarea" rows="2"
+                                placeholder="Add a personal note or comment about this reference..."></textarea>
+                        </div>
+                    </div>
 
                     <div class="modal-section" style="padding: 0.5rem 0.75rem; margin-bottom: 0.5rem;">
                         <!-- v14.3: Simple Queries Toggle -->
@@ -1515,19 +1546,35 @@
                 claudeRankTokensOut: 0
             },
 
-            // Dropbox integration - Hardcoded access token (generated from Dropbox Developer Console)
-            // This is appropriate for personal single-user tools and eliminates OAuth complexity
-            DROPBOX_ACCESS_TOKEN: 'sl.u.AGGkWKZVh-x8DR4oGGXF3S2nqXwhKd_tkoWMcTkUSKubMZttam9eMVhFvKx09hTh6K6gcwWLiZBSsfGxdMP94iE9zL8ONiDXAS_ULpq8atKhg7x-o3sblyeUaOOPGtzoMF4DMCI4-JEPTxN1g9Dg9fxqKmd7nTyKcKma16TKZ0zcwcZHgCVS5L0mTssmYLKWNev09scrQyOQtpAdQcqrmZNkBG1a7FCas9oi_dRhxn9q35qOncY1ZtB_VsZLhG4Co5KE8Ujkp7i8fvQ8uHDae1iuHEzJoMZkCOOTOBqF8fVeI8vyLetZHF7As0zFo3SVbXiVD8MVa6HjsoDo9a2hnh6yCmJTo7DT0nb-hACxkOD-2wYDi00KaAsJTwhY4NH5XqI1T8zZmByg-zl3x_mEArVdwmwNTRYGYi0PFIRE09D7oRg_RyBBhR8HcPx8LhFbk6H3NIsez7tZCoN5D0eQVUr2_SEfOveSEiWt2K0viImUdRh5E1xY8ijSzD5U3vmvLtSqQm3nfJHjAvRIYEi7KtdA3TB7xs8Rlz_OtO0Hr-I8H8M7_QRfoLXpjDXNG7dIVa71NaqShw_0TlGMAhSvdKXXPRbWuTh4itQl-fzuDY-CqAwOXECxy73PbhCyyP3n-dvoHMiK7dCSgEpaFhQaqO4KaZ3nztTgxiLE7cK_z4QtFXK7va0dX35jucwtkM68RTkQeeZI8hIeI_0sXP9AtPnlHU5AhdDCgtXv6-pVzOhGIZecvBrusAVWT4KZtBIyGngUTJImUxp6EJBo3dmbB-QjbJHVyw2Sr7AVT1pOj4iCohmatbL9lzIAs1ZGKpQTfvoTln1SwSGd2Hwnj-oq1-g7WzhULkLJhDfT0SPT21ROeQfxD5LqOP2ee_N5MKDcB7XzhUsAAcaXhS9ofdVg4uNdjWlaJhRudMKs79VBdNhY29PfgWpIt0EC2C3g9M_0qJqJ6SAP-y34ttTmotFR5Gtvzreii5iHrdIMX-_io4LDFUKNfu3aHLgjSHf8M7ACHqIpiiphxZDZq88kIMedGdYplScI8gzH2DrN_roC5i_Pr83pyXblRRb06gXy3AgpHZbpRcMn2x9o-OzEgXupEiOGjJvmsof4T2x8pTyivlTntYrnIHS1dki9Ufw5kqeqFVm5E0fowzGQeGXJdUpmVe7zwxdcJkWT2bQ56t6fK_ooMC_89HVgeGGKnny0QuXCFeZD8vi_pqfkuZtVuoNy9F3TrqPMhpC8_nDem_OLafM2K7t-EVVxntDtJMZEFiI_d17IHzabOOhboDtJWRHFR1KAy8-zoP9gFGCYvXiYIKtYYaViM2QNQOK2F6DAcxEAKcs',
+            // Dropbox integration - OAuth with PKCE and auto-refresh
+            dropboxAppKey: 'q4ldgkwjmhxv6w2',
+            dropboxAccessToken: null,
+            dropboxRefreshToken: null,
+            dropboxTokenExpiry: null,
             dropboxClient: null,
 
             // Initialize
             async init() {
                 console.log('[INIT] Starting application initialization...');
 
-                // Initialize Dropbox with hardcoded access token
-                console.log('[INIT] Initializing Dropbox with hardcoded access token');
-                this.initializeDropbox(this.DROPBOX_ACCESS_TOKEN);
-                console.log('[INIT] Dropbox client initialized');
+                // Check for OAuth callback
+                await this.handleDropboxOAuthCallback();
+
+                // Load Dropbox tokens
+                this.dropboxAccessToken = localStorage.getItem('rr_dropbox_token');
+                this.dropboxRefreshToken = localStorage.getItem('rr_dropbox_refresh_token');
+                const expiryStr = localStorage.getItem('rr_dropbox_token_expiry');
+                this.dropboxTokenExpiry = expiryStr ? parseInt(expiryStr) : null;
+
+                console.log('[INIT] Dropbox token:', this.dropboxAccessToken ? 'Found' : 'Not found');
+                console.log('[INIT] Refresh token:', this.dropboxRefreshToken ? 'Found' : 'Not found');
+
+                if (this.dropboxAccessToken) {
+                    // Check if token needs refresh
+                    await this.ensureValidDropboxToken();
+                    this.initializeDropbox(this.dropboxAccessToken);
+                    console.log('[INIT] Dropbox client initialized');
+                }
 
                 // Load override log from localStorage
                 const savedLog = localStorage.getItem('rr_override_log');
@@ -1703,21 +1750,26 @@
 
                     for (const line of lines) {
                         const trimmed = line.trim();
-                        if (trimmed.startsWith('[') && trimmed.match(/^\[\d+\]/)) {
-                            const idMatch = trimmed.match(/\[(\d+)\]/);
+                        if (trimmed.startsWith('[') && trimmed.match(/^\[[\dC\-\.]+\]/)) {
+                            // Match RID with optional instance number (e.g., [42] or [C1-042.1] or [42.1])
+                            const idMatch = trimmed.match(/\[([\dC\-\.]+)\]/);
                             if (idMatch) {
                                 const ref = {
                                     id: idMatch[1],
                                     text: trimmed,
                                     finalized: false,
                                     relevance_text: '',
+                                    note: '',
                                     urls: { primary: '', secondary: '', tertiary: '' },
                                     queries: [],
                                     searchResults: [],
                                     title: '', authors: '', year: '',
                                     container_title: '', publisher: '', publisher_place: '',
                                     volume: '', issue: '', pages: '', edition: '',
-                                    doi: '', isbn: '', needsManualReview: false
+                                    doi: '', isbn: '', needsManualReview: false,
+                                    isInstance: false,
+                                    parentRID: null,
+                                    instanceNumber: null
                                 };
 
                                 try {
@@ -1765,6 +1817,7 @@
                                 text: trimmed,
                                 finalized: false,
                                 relevance_text: '',
+                                note: '',
                                 urls: {
                                     primary: '',
                                     secondary: '',
@@ -1953,6 +2006,7 @@
                     const flags = flagsContent.split(/\s+/).map(f => f.trim()).filter(f => f);
                     ref.finalized = flags.includes('FINALIZED');
                     ref.needsManualReview = flags.includes('MANUAL_REVIEW');
+                    ref.isInstance = flags.includes('INSTANCE'); // v17.0: Instance flag
                     // v16.0: Extract BATCH version (e.g., BATCH_v16.0)
                     const batchFlag = flags.find(f => f.startsWith('BATCH_'));
                     ref.batchVersion = batchFlag ? batchFlag.replace('BATCH_', '') : null;
@@ -1960,6 +2014,7 @@
                     ref.finalized = false;
                     ref.needsManualReview = false;
                     ref.batchVersion = null;
+                    ref.isInstance = false;
                 }
 
                 // 5. Extract URLs - v15.1: Robust extraction without unescaping (file has plain URLs)
@@ -1977,6 +2032,23 @@
                 const tertiaryUrlMatch = text.match(/TERTIARY_URL\[(.*?)\](?:\s|$)/);
                 if (tertiaryUrlMatch) {
                     ref.urls.tertiary = tertiaryUrlMatch[1].trim();
+                }
+
+                // 5.5. Extract NOTE field (v16.9)
+                const noteMatch = text.match(/NOTE\[(.*?)\](?:\s|$)/);
+                if (noteMatch) {
+                    ref.note = noteMatch[1].trim();
+                }
+
+                // 5.6. Extract PARENT_RID and INSTANCE_NUMBER fields (v17.0)
+                const parentRIDMatch = text.match(/PARENT_RID\[(.*?)\](?:\s|$)/);
+                if (parentRIDMatch) {
+                    ref.parentRID = parentRIDMatch[1].trim();
+                }
+
+                const instanceNumMatch = text.match(/INSTANCE_NUMBER\[(.*?)\](?:\s|$)/);
+                if (instanceNumMatch) {
+                    ref.instanceNumber = parseInt(instanceNumMatch[1].trim()) || null;
                 }
 
                 // 6. Parse only RID, Authors, Year, Title - everything else is "Other"
@@ -2396,9 +2468,10 @@ Next 500 references: ~$${proj500}`;
 
             // Filtering and Display
             applyFilters() {
-                // Toggle-based filtering: Both filters work as show/hide toggles
+                // Toggle-based filtering: All filters work as show/hide toggles
                 const showFinalized = document.getElementById('showFinalizedToggle')?.checked || false;
                 const showManualReview = document.getElementById('showManualReviewToggle')?.checked !== false; // Default to true (checked)
+                const showInstances = document.getElementById('showInstancesToggle')?.checked !== false; // Default to true (checked)
 
                 this.filteredReferences = this.references.filter(ref => {
                     // Filter by finalized status
@@ -2407,14 +2480,31 @@ Next 500 references: ~$${proj500}`;
                     // Filter by manual review flag (if unchecked, hide refs needing review)
                     if (!showManualReview && ref.needsManualReview) return false;
 
+                    // Filter by instance flag (if unchecked, hide instance references)
+                    if (!showInstances && ref.isInstance) return false;
+
                     return true;
                 });
 
-                // Always sort by ID ascending
+                // Always sort by ID ascending (with instance numbering support)
                 this.filteredReferences.sort((a, b) => {
-                    const aId = parseInt(a.id) || 0;
-                    const bId = parseInt(b.id) || 0;
-                    return aId - bId;
+                    // Parse RID with instance support (e.g., "42" vs "42.1" vs "42.2")
+                    const parseRID = (id) => {
+                        const parts = id.split('.');
+                        return {
+                            parent: parseInt(parts[0]) || 0,
+                            instance: parts.length > 1 ? parseInt(parts[1]) || 0 : 0
+                        };
+                    };
+
+                    const aRID = parseRID(a.id);
+                    const bRID = parseRID(b.id);
+
+                    // Sort by parent ID first, then by instance number
+                    if (aRID.parent !== bRID.parent) {
+                        return aRID.parent - bRID.parent;
+                    }
+                    return aRID.instance - bRID.instance;
                 });
 
                 // Display
@@ -2435,7 +2525,7 @@ Next 500 references: ~$${proj500}`;
 
             createReferenceCard(ref) {
                 const card = document.createElement('div');
-                card.className = 'reference-card' + (ref.finalized ? ' finalized' : '');
+                card.className = 'reference-card' + (ref.finalized ? ' finalized' : '') + (ref.isInstance ? ' instance-reference' : '');
 
                 // Check if this reference has any overrides
                 const overrideCount = this.overrideLog.filter(o => o.rid === ref.id).length;
@@ -2456,6 +2546,7 @@ Next 500 references: ~$${proj500}`;
                     <div class="reference-header">
                         <span class="reference-id">#${ref.id}</span>
                         ${ref.finalized ? '<span class="finalized-badge">Finalized</span>' : ''}
+                        ${ref.isInstance ? `<span class="instance-badge" title="Instance of ${ref.parentRID}">📑 Instance${ref.parentRID ? ' of ' + ref.parentRID : ''}</span>` : ''}
                         ${ref.needsManualReview ? '<span class="override-badge" style="background: var(--warning-color);" title="Low AI scores - manual review recommended">⚠️ Review</span>' : ''}
                         ${overrideCount > 0 ? `<span class="override-badge" title="${overrideCount} AI override${overrideCount > 1 ? 's' : ''}">🔄 ${overrideCount}</span>` : ''}
                         ${ref.batchVersion ? `<span class="override-badge" style="background: #9b59b6;" title="Processed by batch ${ref.batchVersion}">🤖 ${ref.batchVersion}</span>` : ''}
@@ -2466,10 +2557,12 @@ Next 500 references: ~$${proj500}`;
                         ${ref.year ? `<span class="reference-year">${ref.year}</span>` : ''}
                         ${metaHtml}
                         ${ref.relevance_text ? `<div class="reference-relevance">${ref.relevance_text}</div>` : ''}
+                        ${ref.note ? `<div style="margin-top: 0.5rem; padding: 0.5rem; background: #fffbea; border-left: 3px solid #f39c12; border-radius: 4px; font-size: 0.85rem;"><strong>📝 Note:</strong> ${ref.note}</div>` : ''}
                     </div>
                     ${this.createUrlsSection(ref)}
                     <div class="reference-actions">
                         <button onclick="app.editReference('${ref.id}')">Edit</button>
+                        ${ref.isInstance && ref.parentRID ? `<button onclick="app.scrollToReference('${ref.parentRID}')" style="background: #9b59b6;">👁️ View Parent</button>` : ''}
                         ${!ref.finalized && ref.urls.primary ? `<button onclick="app.finalizeReference('${ref.id}')" style="background: var(--warning-color);">Finalize</button>` : ''}
                         ${!ref.finalized ? `<button onclick="app.toggleManualReview('${ref.id}')" style="background: ${ref.needsManualReview ? '#95a5a6' : 'var(--warning-color)'};" title="${ref.needsManualReview ? 'Clear Manual Review flag' : 'Mark for Manual Review'}">${ref.needsManualReview ? '✓ Manual Review' : 'Manual Review'}</button>` : ''}
                         <button onclick="app.selectReference('${ref.id}'); app.showQuickNote();" style="background: #9b59b6;">📝 Note</button>
@@ -2501,10 +2594,30 @@ Next 500 references: ~$${proj500}`;
 
                 const withUrls = this.references.filter(r => r.urls.primary || r.urls.secondary).length;
                 const finalized = this.references.filter(r => r.finalized).length;
+                const instances = this.references.filter(r => r.isInstance).length;
 
                 document.getElementById('statUrls').textContent = withUrls;
                 document.getElementById('statFinalized').textContent = finalized;
                 document.getElementById('statOverrides').textContent = this.overrideLog.length;
+                document.getElementById('statInstances').textContent = instances;
+            },
+
+            // v17.0: Navigate to parent reference from instance
+            scrollToReference(refId) {
+                // Find the reference card by ID
+                const cards = document.querySelectorAll('.reference-card');
+                for (const card of cards) {
+                    const idSpan = card.querySelector('.reference-id');
+                    if (idSpan && idSpan.textContent === `#${refId}`) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Highlight the card briefly
+                        card.style.boxShadow = '0 0 20px rgba(147, 51, 234, 0.6)';
+                        setTimeout(() => {
+                            card.style.boxShadow = '';
+                        }, 2000);
+                        break;
+                    }
+                }
             },
 
             // Tab Management
@@ -2558,6 +2671,7 @@ Next 500 references: ~$${proj500}`;
                 document.getElementById('editPrimaryUrl').value = ref.urls.primary || '';
                 document.getElementById('editSecondaryUrl').value = ref.urls.secondary || '';
                 document.getElementById('editRelevanceText').value = ref.relevance_text || '';
+                document.getElementById('editNote').value = ref.note || '';
                 document.getElementById('editQueries').value = ref.queries.join('\n');
 
                 // Update modal header with reference info
@@ -2627,6 +2741,7 @@ Next 500 references: ~$${proj500}`;
                 ref.urls.primary = document.getElementById('editPrimaryUrl').value;
                 ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
                 ref.relevance_text = document.getElementById('editRelevanceText').value;
+                ref.note = document.getElementById('editNote').value;
                 ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
 
                 // Rebuild text for display
@@ -2672,6 +2787,7 @@ Next 500 references: ~$${proj500}`;
                     ref.urls.primary = primaryUrl;
                     ref.urls.secondary = document.getElementById('editSecondaryUrl').value;
                     ref.relevance_text = document.getElementById('editRelevanceText').value;
+                    ref.note = document.getElementById('editNote').value;
                     ref.queries = document.getElementById('editQueries').value.split('\n').filter(q => q.trim());
 
                     // Rebuild text for display
@@ -2713,8 +2829,59 @@ Next 500 references: ~$${proj500}`;
                 // Auto-save to Dropbox if connected
                 this.saveDecisionsToDropbox();
 
-                // Update display but keep modal open (reference will disappear from view if "Show Finalized" is unchecked)
+                // Update display
                 this.applyFilters();
+
+                // v16.9: Auto-close modal and auto-advance to next unfinalized reference
+                // Only if finalized from Edit modal (not from quick finalize button in main window)
+                if (!refId) {
+                    // Close the modal
+                    this.closeModal();
+
+                    // Find next reference to edit
+                    const nextRef = this.findNextReference(ref.id);
+
+                    if (nextRef) {
+                        // Small delay to let modal close animation complete
+                        setTimeout(() => {
+                            this.editReference(nextRef.id);
+                        }, 100);
+                    } else {
+                        // No more references to edit
+                        const showFinalized = document.getElementById('showFinalizedToggle').checked;
+                        if (!showFinalized) {
+                            this.showToast('✅ All unfinalized references completed!', 'success');
+                        } else {
+                            this.showToast('✅ Reached end of references', 'success');
+                        }
+                    }
+                }
+            },
+
+            findNextReference(currentId) {
+                // v16.9: Find next reference to edit based on filter state
+                const showFinalized = document.getElementById('showFinalizedToggle').checked;
+
+                // Get current reference index in filtered list
+                const currentIndex = this.filteredReferences.findIndex(r => r.id === currentId);
+
+                if (currentIndex === -1) {
+                    // Current ref not in filtered list, return first filtered ref
+                    return this.filteredReferences.length > 0 ? this.filteredReferences[0] : null;
+                }
+
+                // Find next reference in filtered list
+                for (let i = currentIndex + 1; i < this.filteredReferences.length; i++) {
+                    const ref = this.filteredReferences[i];
+                    // If showing finalized, return next ref regardless
+                    // If not showing finalized, return next unfinalized ref
+                    if (showFinalized || !ref.finalized) {
+                        return ref;
+                    }
+                }
+
+                // No next reference found
+                return null;
             },
 
             toggleManualReview(refId) {
@@ -2803,6 +2970,11 @@ Next 500 references: ~$${proj500}`;
                 }
                 if (ref.urls.tertiary) {
                     entry += `TERTIARY_URL[${ref.urls.tertiary}] `;
+                }
+
+                // Add NOTE if present (v16.9)
+                if (ref.note) {
+                    entry += `NOTE[${ref.note}] `;
                 }
 
                 return entry.trim();
@@ -4272,47 +4444,254 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}${costInfo}`;
 
             // Dropbox Integration
             async handleDropboxOAuthCallback() {
-                // No OAuth callback handling needed with hardcoded access token
-                console.log('[DROPBOX] OAuth callback not needed (using hardcoded token)');
+                // Check for authorization code (PKCE Flow)
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const state = urlParams.get('state');
+                const error = urlParams.get('error');
+                const errorDescription = urlParams.get('error_description');
+
+                // Check if Dropbox returned an error
+                if (error) {
+                    console.error('[DROPBOX] OAuth error:', error, errorDescription);
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    this.showToast(`Dropbox OAuth error: ${error}${errorDescription ? ' - ' + errorDescription : ''}`, 'error');
+                    return;
+                }
+
+                if (code) {
+                    console.log('[DROPBOX] Authorization code received, exchanging for tokens...');
+
+                    // Retrieve the PKCE verifier from state parameter
+                    let codeVerifier = null;
+                    let source = 'none';
+
+                    if (state && state.startsWith('pkce:')) {
+                        // Extract verifier from state parameter
+                        codeVerifier = state.substring(5); // Remove "pkce:" prefix
+                        source = 'state parameter';
+                        console.log('[DROPBOX] PKCE verifier retrieved from state parameter');
+                    } else {
+                        // Fallback: try old storage methods (for backwards compatibility)
+                        console.warn('[DROPBOX] State parameter missing, trying storage fallback...');
+
+                        codeVerifier = this.getCookie('rr_pkce_verifier');
+                        if (codeVerifier) source = 'cookie';
+
+                        if (!codeVerifier) {
+                            codeVerifier = sessionStorage.getItem('rr_pkce_verifier');
+                            if (codeVerifier) source = 'sessionStorage';
+                        }
+
+                        if (!codeVerifier) {
+                            codeVerifier = localStorage.getItem('rr_pkce_verifier');
+                            if (codeVerifier) source = 'localStorage';
+                        }
+                    }
+
+                    if (!codeVerifier) {
+                        console.error('[DROPBOX] PKCE verifier not found in state parameter or storage');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        this.showToast('OAuth error: PKCE verifier missing. Please try connecting again.', 'error');
+                        return;
+                    }
+
+                    console.log('[DROPBOX] PKCE verifier retrieved successfully from', source);
+
+                    try {
+                        // Exchange code for tokens via our Netlify Function
+                        const response = await this.apiRequest('/api/dropbox-oauth', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                code: code,
+                                code_verifier: codeVerifier
+                            })
+                        });
+
+                        if (response.access_token) {
+                            // Store tokens
+                            this.dropboxAccessToken = response.access_token;
+                            this.dropboxRefreshToken = response.refresh_token;
+                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
+
+                            localStorage.setItem('rr_dropbox_token', response.access_token);
+                            localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
+                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
+
+                            this.initializeDropbox(response.access_token);
+
+                            // Clean up URL (remove ?code= and ?state= parameters)
+                            window.history.replaceState({}, document.title, window.location.pathname);
+
+                            console.log('[DROPBOX] Successfully connected! Token expires in', response.expires_in, 'seconds');
+
+                            // Load fresh data from Dropbox after successful connection
+                            console.log('[DROPBOX] Loading fresh data from Dropbox after reconnection...');
+                            try {
+                                const content = await this.loadFromDropbox('/decisions.txt');
+                                if (content) {
+                                    console.log('[DROPBOX] Loaded decisions.txt from Dropbox, size:', content.length);
+
+                                    // Clear stale localStorage to prevent future conflicts
+                                    localStorage.removeItem('rr_decisions_backup');
+                                    localStorage.removeItem('rr_decisions_timestamp');
+                                    console.log('[DROPBOX] Cleared stale localStorage backup');
+
+                                    // Parse and render fresh data
+                                    this.parseDecisions(content);
+                                    this.applyFilters();
+
+                                    // Update localStorage with fresh data
+                                    localStorage.setItem('rr_decisions_backup', content);
+                                    localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
+
+                                    this.showToast('Connected to Dropbox and loaded latest data!', 'success');
+                                    console.log('[DROPBOX] Successfully loaded and displayed fresh data from Dropbox');
+                                } else {
+                                    console.log('[DROPBOX] No content in decisions.txt, showing connection success only');
+                                    this.showToast('Connected to Dropbox! Your tokens will auto-refresh.', 'success');
+                                }
+                            } catch (e) {
+                                console.error('[DROPBOX] Failed to load data after reconnection:', e);
+                                this.showToast('Connected to Dropbox but failed to load data. Try refreshing the page.', 'warning');
+                            }
+                        } else {
+                            throw new Error(response.error || 'Failed to exchange code for tokens');
+                        }
+                    } catch (error) {
+                        console.error('[DROPBOX] Token exchange failed:', error);
+
+                        // Clean up URL on error
+                        window.history.replaceState({}, document.title, window.location.pathname);
+
+                        this.showToast('Failed to connect to Dropbox: ' + error.message + '. Please try again.', 'error');
+                    }
+                }
             },
 
             initializeDropbox(accessToken) {
+                this.dropboxAccessToken = accessToken;
                 this.dropboxClient = new Dropbox.Dropbox({ accessToken });
                 this.updateDropboxUI(true);
             },
 
             async connectDropbox() {
-                // Test connection by loading decisions.txt
-                console.log('[DROPBOX] Testing connection by loading decisions.txt...');
-                try {
-                    const content = await this.loadFromDropbox('/decisions.txt');
-                    if (content) {
-                        console.log('[DROPBOX] Successfully loaded decisions.txt, size:', content.length);
-                        this.parseDecisions(content);
-                        this.applyFilters();
-                        localStorage.setItem('rr_decisions_backup', content);
-                        localStorage.setItem('rr_decisions_timestamp', new Date().toISOString());
-                        this.showToast('✅ Dropbox connected! Loaded decisions.txt', 'success');
-                    } else {
-                        this.showToast('⚠️ Dropbox connected but decisions.txt is empty', 'warning');
-                    }
-                } catch (error) {
-                    console.error('[DROPBOX] Connection test failed:', error);
-                    this.showToast('❌ Dropbox connection failed: ' + error.message, 'error');
-                }
+                // Generate PKCE code verifier and challenge
+                const codeVerifier = this.generateCodeVerifier();
+                const codeChallenge = await this.generateCodeChallenge(codeVerifier);
+
+                console.log('[DROPBOX] Initiating PKCE OAuth flow with state parameter');
+
+                // Encode verifier in OAuth state parameter (survives Safari redirects)
+                const stateWithVerifier = `pkce:${codeVerifier}`;
+
+                // Use PKCE flow (required for public clients)
+                const redirectUri = 'https://rrv521-1760738877.netlify.app/';
+                const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&token_access_type=offline&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${encodeURIComponent(stateWithVerifier)}`;
+
+                console.log('[DROPBOX] Redirecting to Dropbox for authorization');
+                window.location.href = authUrl;
             },
 
+            getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            },
+
+            deleteCookie(name) {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            },
+
+            generateCodeVerifier() {
+                // Generate a random string for PKCE
+                const array = new Uint8Array(32);
+                crypto.getRandomValues(array);
+                return btoa(String.fromCharCode.apply(null, Array.from(array)))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            },
+
+            async generateCodeChallenge(verifier) {
+                // Hash the verifier using SHA-256
+                const encoder = new TextEncoder();
+                const data = encoder.encode(verifier);
+                const hash = await crypto.subtle.digest('SHA-256', data);
+                return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(hash))))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            },
 
             disconnectDropbox() {
-                // Can't actually disconnect with hardcoded token, but can refresh the connection
-                this.initializeDropbox(this.DROPBOX_ACCESS_TOKEN);
-                this.showToast('Dropbox connection refreshed', 'info');
+                this.dropboxAccessToken = null;
+                this.dropboxRefreshToken = null;
+                this.dropboxTokenExpiry = null;
+                this.dropboxClient = null;
+                localStorage.removeItem('rr_dropbox_token');
+                localStorage.removeItem('rr_dropbox_refresh_token');
+                localStorage.removeItem('rr_dropbox_token_expiry');
+                this.updateDropboxUI(false);
+                this.showToast('Disconnected from Dropbox', 'info');
             },
 
             async ensureValidDropboxToken() {
-                // No token refresh needed with hardcoded access token
-                // Generated access tokens don't expire
-                console.log('[DROPBOX] Using hardcoded access token (no refresh needed)');
+                // Check if we need to refresh the token
+                // Refresh if token expires in less than 5 minutes
+                const fiveMinutes = 5 * 60 * 1000;
+
+                if (!this.dropboxTokenExpiry || !this.dropboxRefreshToken) {
+                    console.log('[DROPBOX] No expiry time or refresh token - skipping refresh');
+                    return;
+                }
+
+                const timeUntilExpiry = this.dropboxTokenExpiry - Date.now();
+
+                if (timeUntilExpiry < fiveMinutes) {
+                    console.log('[DROPBOX] Token expires soon, refreshing... (expires in', Math.floor(timeUntilExpiry / 1000), 'seconds)');
+
+                    try {
+                        const response = await this.apiRequest('/api/dropbox-oauth', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                grant_type: 'refresh_token',
+                                refresh_token: this.dropboxRefreshToken
+                            })
+                        });
+
+                        if (response.access_token) {
+                            // Update tokens
+                            this.dropboxAccessToken = response.access_token;
+                            this.dropboxTokenExpiry = Date.now() + (response.expires_in * 1000);
+
+                            // Update refresh token if a new one was provided
+                            if (response.refresh_token) {
+                                this.dropboxRefreshToken = response.refresh_token;
+                                localStorage.setItem('rr_dropbox_refresh_token', response.refresh_token);
+                            }
+
+                            localStorage.setItem('rr_dropbox_token', response.access_token);
+                            localStorage.setItem('rr_dropbox_token_expiry', this.dropboxTokenExpiry.toString());
+
+                            // Update the Dropbox client with new token
+                            if (this.dropboxClient) {
+                                this.dropboxClient = new Dropbox.Dropbox({ accessToken: response.access_token });
+                            }
+
+                            console.log('[DROPBOX] Token refreshed successfully, new expiry in:', response.expires_in, 'seconds');
+                        } else {
+                            throw new Error(response.error || 'Failed to refresh token');
+                        }
+                    } catch (error) {
+                        console.error('[DROPBOX] Token refresh failed:', error);
+                        this.showToast('Dropbox token refresh failed. Please reconnect.', 'warning');
+                        // Don't clear tokens yet - let user reconnect manually
+                    }
+                } else {
+                    console.log('[DROPBOX] Token still valid for', Math.floor(timeUntilExpiry / 60000), 'minutes');
+                }
             },
 
             updateDropboxUI(connected) {
