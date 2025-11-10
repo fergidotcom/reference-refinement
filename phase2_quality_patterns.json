@@ -1,0 +1,837 @@
+{
+  "primaryAnalysis": {
+    "total": 288,
+    "withPrimary": 288,
+    "noPrimary": 0,
+    "domainTiers": {
+      "tier3_purchase": 3,
+      "tier4_other": 96,
+      "tier1_doi": 81,
+      "tier1_edu": 29,
+      "tier2_publisher": 56,
+      "tier1_gov": 18,
+      "tier1_jstor": 4,
+      "tier1_archive": 1
+    },
+    "contentTypes": {
+      "purchase_page": 3,
+      "html_page": 147,
+      "book_page": 48,
+      "doi_link": 81,
+      "pdf": 3,
+      "article_page": 6
+    },
+    "domains": {
+      "amazon.com": 3,
+      "us.sagepub.com": 1,
+      "penguinrandomhouse.com": 16,
+      "us.macmillan.com": 4,
+      "doi.org": 81,
+      "simonandschuster.com": 2,
+      "global.oup.com": 7,
+      "hup.harvard.edu": 5,
+      "press.uchicago.edu": 5,
+      "press.jhu.edu": 1,
+      "books.google.com": 1,
+      "hachettebookgroup.com": 2,
+      "amnesty.org": 1,
+      "cnbc.com": 1,
+      "hewlett.org": 1,
+      "selc.org": 1,
+      "ynharari.com": 1,
+      "news.mit.edu": 1,
+      "shorensteincenter.org": 2,
+      "annualreviews.org": 1,
+      "worldcat.org": 3,
+      "sunypress.edu": 1,
+      "en.wikipedia.org": 1,
+      "apmreports.org": 1,
+      "census.gov": 2,
+      "gutenberg.org": 2,
+      "wisdompubs.org": 1,
+      "jstor.org": 4,
+      "politybooks.com": 2,
+      "dareassociation.org": 1,
+      "mitpress.mit.edu": 2,
+      "cambridge.org": 1,
+      "publicaffairsbooks.com": 2,
+      "twitterandteargas.org": 2,
+      "versobooks.com": 1,
+      "papers.ssrn.com": 1,
+      "waituntil8th.org": 1,
+      "nature.com": 1,
+      "statista.com": 2,
+      "aeaweb.org": 1,
+      "pewresearch.org": 5,
+      "cbsnews.com": 1,
+      "congress.gov": 3,
+      "ohchr.org": 1,
+      "ide.mit.edu": 1,
+      "news.gallup.com": 1,
+      "iop.harvard.edu": 2,
+      "criterion.com": 1,
+      "guilford.com": 5,
+      "yalebooks.yale.edu": 2,
+      "wiley.com": 2,
+      "houghtonmifflinbooks.com": 1,
+      "beacon.org": 1,
+      "norton.com": 1,
+      "brenebrown.com": 1,
+      "ndbooks.com": 1,
+      "psycnet.apa.org": 1,
+      "archive.org": 1,
+      "pep-web.org": 2,
+      "upress.umn.edu": 1,
+      "wwnorton.com": 1,
+      "routledge.com": 5,
+      "polity.co.uk": 1,
+      "digitalcollections.library.cmu.edu": 1,
+      "investor.fb.com": 2,
+      "press.princeton.edu": 1,
+      "cup.columbia.edu": 1,
+      "nytimes.com": 4,
+      "theatlantic.com": 3,
+      "s21.q4cdn.com": 1,
+      "insiderintelligence.com": 1,
+      "nielsen.com": 2,
+      "bloomberg.com": 1,
+      "opensecrets.org": 4,
+      "fec.gov": 2,
+      "mrbenchmarks.com": 1,
+      "iab.com": 1,
+      "brennancenter.org": 2,
+      "datareportal.com": 1,
+      "simulmedia.com": 1,
+      "bloomsbury.com": 1,
+      "sup.org": 3,
+      "henryholt.com": 1,
+      "data.bls.gov": 1,
+      "epi.org": 1,
+      "bls.gov": 2,
+      "ssa.gov": 1,
+      "cdc.gov": 1,
+      "brookings.edu": 1,
+      "nber.org": 1,
+      "mckinsey.com": 1,
+      "shoshanazuboff.com": 1,
+      "paracletepress.com": 1,
+      "coloradoclimatecollaborative.org": 1,
+      "startribune.com": 1,
+      "oneworld-publications.com": 1,
+      "themindfulnessinitiative.org": 2,
+      "clergyproject.org": 1,
+      "knightfoundation.org": 1,
+      "livingroomconversations.org": 1,
+      "braverangels.org": 1,
+      "whatisessential.org": 2,
+      "connectedthebook.com": 1,
+      "press.umich.edu": 2,
+      "speaker.gov": 1,
+      "washingtonpost.com": 1,
+      "azcentral.com": 1,
+      "supremecourt.gov": 1,
+      "lehigh.edu": 1,
+      "press.georgetown.edu": 1,
+      "basicbooks.com": 1,
+      "history.house.gov": 1,
+      "uncpress.org": 1,
+      "infrastructurereportcard.org": 1,
+      "problemsolverscaucus.house.gov": 1,
+      "c-span.org": 1,
+      "facebook.com": 1,
+      "crsreports.congress.gov": 1,
+      "usgs.gov": 1,
+      "citizen.org": 1,
+      "osc.state.ny.us": 1,
+      "issueone.org": 1,
+      "blog.x.com": 1
+    },
+    "samples": [
+      {
+        "id": "1",
+        "bibInfo": "Ferguson, J. (2024). Authoritarian ascent in the USA: How we got here and what c",
+        "domain": "amazon.com",
+        "tier": "tier3_purchase",
+        "contentType": "purchase_page",
+        "url": "https://www.amazon.com/Authoritarian-Ascent-USA-Permanent-Supremacy/dp/B0FBRR1WYV/"
+      },
+      {
+        "id": "2",
+        "bibInfo": "Gergen, K. J. (1999). An Invitation to Social Construction. London: SAGE Publica",
+        "domain": "us.sagepub.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "url": "https://us.sagepub.com/en-us/nam/an-invitation-to-social-construction/book242961"
+      },
+      {
+        "id": "3",
+        "bibInfo": "Berger, P. L., & Luckmann, T. (1966). The Social Construction of Reality: A Trea",
+        "domain": "penguinrandomhouse.com",
+        "tier": "tier4_other",
+        "contentType": "book_page",
+        "url": "https://www.penguinrandomhouse.com/books/59656/the-social-construction-of-reality-by-peter-l-berger-and-thomas-luckmann/"
+      },
+      {
+        "id": "4",
+        "bibInfo": "Kahneman, D. (2011). Thinking, Fast and Slow. New York: Farrar, Straus and Girou",
+        "domain": "us.macmillan.com",
+        "tier": "tier4_other",
+        "contentType": "book_page",
+        "url": "https://us.macmillan.com/books/9780374533557"
+      },
+      {
+        "id": "5",
+        "bibInfo": "Tversky, A., & Kahneman, D. (1974). Judgment under uncertainty: Heuristics and b",
+        "domain": "doi.org",
+        "tier": "tier1_doi",
+        "contentType": "doi_link",
+        "url": "https://doi.org/10.1126/science.185.4157.1124"
+      },
+      {
+        "id": "6",
+        "bibInfo": "Searle, J. R. (1995). The Construction of Social Reality. New York: The Free Pre",
+        "domain": "simonandschuster.com",
+        "tier": "tier4_other",
+        "contentType": "book_page",
+        "url": "https://www.simonandschuster.com/books/The-Construction-of-Social-Reality/John-R-Searle/9780684831794"
+      },
+      {
+        "id": "7",
+        "bibInfo": "Searle, J. R. (2010). Making the Social World: The Structure of Human Civilizati",
+        "domain": "global.oup.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "url": "https://global.oup.com/academic/product/making-the-social-world-9780199576913"
+      },
+      {
+        "id": "8",
+        "bibInfo": "Hacking, I. (1999). The Social Construction of What? Cambridge, MA: Harvard Univ",
+        "domain": "hup.harvard.edu",
+        "tier": "tier1_edu",
+        "contentType": "book_page",
+        "url": "https://www.hup.harvard.edu/books/9780674004122"
+      },
+      {
+        "id": "100",
+        "bibInfo": "Zarefsky, D. (1990). Lincoln, Douglas, and Slavery: In the Crucible of Public De",
+        "domain": "press.uchicago.edu",
+        "tier": "tier1_edu",
+        "contentType": "book_page",
+        "url": "https://press.uchicago.edu/ucp/books/book/chicago/L/bo3774383.html"
+      },
+      {
+        "id": "101",
+        "bibInfo": "Craig, D. B. (2000). Fireside Politics: Radio and Political Culture in the Unite",
+        "domain": "press.jhu.edu",
+        "tier": "tier1_edu",
+        "contentType": "book_page",
+        "url": "https://www.press.jhu.edu/books/title/3428/fireside-politics"
+      },
+      {
+        "id": "102",
+        "bibInfo": "Kraus, S. (2000). Televised Presidential Debates and Public Policy (2nd ed.). Ro",
+        "domain": "books.google.com",
+        "tier": "tier4_other",
+        "contentType": "book_page",
+        "url": "https://books.google.com/books/about/Televised_Presidential_Debates_and_Publi.html?id=FdOQAgAAQBAJ"
+      },
+      {
+        "id": "103",
+        "bibInfo": "Cannon, L. (1991). President Reagan: The Role of a Lifetime. Simon & Schuster, N",
+        "domain": "hachettebookgroup.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "url": "https://www.hachettebookgroup.com/titles/lou-cannon/president-reagan/9781891620911/?lens=publicaffairs"
+      },
+      {
+        "id": "104",
+        "bibInfo": "Iyengar, S., & Kinder, D. R. (2010). News That Matters: Television and American ",
+        "domain": "press.uchicago.edu",
+        "tier": "tier1_edu",
+        "contentType": "book_page",
+        "url": "https://press.uchicago.edu/ucp/books/book/chicago/N/bo10579884.html"
+      },
+      {
+        "id": "105",
+        "bibInfo": "Abbate, J. (1999). Inventing the Internet. MIT Press, Cambridge, MA. ISBN: 978-0",
+        "domain": "amazon.com",
+        "tier": "tier3_purchase",
+        "contentType": "purchase_page",
+        "url": "https://www.amazon.com/Inventing-Internet-Inside-Technology-Abbate/dp/0262511150"
+      },
+      {
+        "id": "106",
+        "bibInfo": "Davis, R. (1999). The Web of Politics: The Internet's Impact on the American Pol",
+        "domain": "global.oup.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "url": "https://global.oup.com/academic/product/the-web-of-politics-9780195114850"
+      },
+      {
+        "id": "107",
+        "bibInfo": "Shirky, C. (2008). Here Comes Everybody: The Power of Organizing Without Organiz",
+        "domain": "penguinrandomhouse.com",
+        "tier": "tier4_other",
+        "contentType": "book_page",
+        "url": "https://www.penguinrandomhouse.com/books/300615/here-comes-everybody-by-clay-shirky/"
+      },
+      {
+        "id": "108",
+        "bibInfo": "Jenkins, H. (2006). Convergence Culture: Where Old and New Media Collide. New Yo",
+        "domain": "doi.org",
+        "tier": "tier1_doi",
+        "contentType": "doi_link",
+        "url": "https://doi.org/10.18574/nyu/9780814743683.001.0001"
+      },
+      {
+        "id": "109",
+        "bibInfo": "Amnesty International. (2022). The social atrocity: Meta and the right to remedy",
+        "domain": "amnesty.org",
+        "tier": "tier2_publisher",
+        "contentType": "html_page",
+        "url": "https://www.amnesty.org/en/documents/asa16/5933/2022/en/"
+      },
+      {
+        "id": "110",
+        "bibInfo": "CNBC. (2024, October 30). Microsoft CFO says OpenAI investment will cut into pro",
+        "domain": "cnbc.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "url": "https://www.cnbc.com/2024/10/30/microsoft-cfo-says-openai-investment-will-cut-into-profit-this-quarter.html"
+      },
+      {
+        "id": "111",
+        "bibInfo": "Tucker, J. A., et al. (2018). Social Media, Political Polarization, and Politica",
+        "domain": "hewlett.org",
+        "tier": "tier2_publisher",
+        "contentType": "html_page",
+        "url": "https://hewlett.org/library/social-media-political-polarization-political-disinformation-review-scientific-literature/"
+      }
+    ]
+  },
+  "secondaryAnalysis": {
+    "total": 288,
+    "withSecondary": 288,
+    "noSecondary": 0,
+    "domainTiers": {
+      "tier4_other": 100,
+      "tier1_edu": 49,
+      "tier1_jstor": 7,
+      "tier2_publisher": 89,
+      "tier1_gov": 34,
+      "tier1_archive": 8,
+      "tier1_doi": 1
+    },
+    "contentTypes": {
+      "html_page": 229,
+      "article_page": 21,
+      "pdf": 27,
+      "book_page": 9,
+      "purchase_page": 1,
+      "doi_link": 1
+    },
+    "domains": {
+      "open.spotify.com": 1,
+      "swarthmore.edu": 1,
+      "jstor.org": 7,
+      "nobelprize.org": 4,
+      "science.org": 2,
+      "plato.stanford.edu": 4,
+      "ndpr.nd.edu": 1,
+      "lrb.co.uk": 1,
+      "quod.lib.umich.edu": 2,
+      "nps.gov": 1,
+      "debates.org": 1,
+      "pbs.org": 4,
+      "adambrown.info": 1,
+      "akastrategy.com": 2,
+      "hyperrhiz.io": 1,
+      "amnestyusa.org": 1,
+      "fool.com": 1,
+      "naacp.org": 2,
+      "rsbakker.wordpress.com": 1,
+      "arxiv.org": 2,
+      "duo.uio.no": 1,
+      "ssoar.info": 1,
+      "books.google.com": 3,
+      "cambridge.org": 1,
+      "collaborate.princeton.edu": 2,
+      "archive.org": 8,
+      "pewresearch.org": 3,
+      "eh.net": 1,
+      "guides.loc.gov": 1,
+      "gutenberg.org": 1,
+      "accesstoinsight.org": 1,
+      "marxandphilosophy.org.uk": 1,
+      "en.wikipedia.org": 7,
+      "ppls.ed.ac.uk": 1,
+      "pages.ucsd.edu": 1,
+      "jaronlanier.com": 2,
+      "papers.ssrn.com": 2,
+      "ncbi.nlm.nih.gov": 11,
+      "news.harvard.edu": 2,
+      "eprints.lse.ac.uk": 1,
+      "twitterandteargas.org": 1,
+      "blogs.lse.ac.uk": 1,
+      "amstudugm.files.wordpress.com": 1,
+      "foucault.info": 1,
+      "culturalcognition.net": 2,
+      "waituntil8th.org": 1,
+      "pubmed.ncbi.nlm.nih.gov": 2,
+      "nature.com": 2,
+      "nber.org": 1,
+      "axios.com": 1,
+      "eff.org": 1,
+      "en.wal.unesco.org": 1,
+      "ted.com": 3,
+      "nlp.stanford.edu": 1,
+      "gking.harvard.edu": 1,
+      "sociology.duke.edu": 1,
+      "microsoft.com": 1,
+      "journalism.org": 4,
+      "media.mit.edu": 1,
+      "asc.upenn.edu": 1,
+      "hks.harvard.edu": 2,
+      "richarddawkins.net": 1,
+      "berkeleyinstitute.org": 1,
+      "psychology.yale.edu": 1,
+      "gallup.com": 1,
+      "harvard.edu": 1,
+      "imdb.com": 1,
+      "sites.socsci.uci.edu": 1,
+      "sanlab.psych.ucla.edu": 1,
+      "actmindfully.com.au": 1,
+      "langermindfulnessinstitute.com": 1,
+      "researchgate.net": 12,
+      "sas.upenn.edu": 2,
+      "s-f-walker.org.uk": 1,
+      "ushmm.org": 1,
+      "mindsightinstitute.com": 1,
+      "traumaresearchfoundation.org": 1,
+      "palousemindfulness.com": 1,
+      "www2.hawaii.edu": 1,
+      "web.mit.edu": 1,
+      "russell-j.com": 1,
+      "psychoanalysis.org.uk": 1,
+      "monoskop.org": 1,
+      "icpla.edu": 1,
+      "psychotherapy.net": 1,
+      "laingsociety.org": 1,
+      "pep-web.org": 1,
+      "freudians.org": 1,
+      "echelonfront.com": 1,
+      "simplypsychology.org": 1,
+      "semanticscholar.org": 3,
+      "repository.upenn.edu": 2,
+      "pacscenter.stanford.edu": 1,
+      "theoryculturesociety.org": 1,
+      "beyondintractability.org": 1,
+      "cmu.edu": 1,
+      "nytimes.com": 2,
+      "sciencedirect.com": 1,
+      "yalebooks.yale.edu": 1,
+      "van-bavel-lab.com": 1,
+      "investor.atmeta.com": 1,
+      "news.mit.edu": 1,
+      "solomonmg.github.io": 1,
+      "zephoria.org": 1,
+      "encyclopedia.com": 1,
+      "smartinsights.com": 1,
+      "tandfonline.com": 2,
+      "academic.oup.com": 1,
+      "journals.sagepub.com": 3,
+      "digiday.com": 2,
+      "investor.fb.com": 1,
+      "blog.hootsuite.com": 1,
+      "adweek.com": 2,
+      "brandfinance.com": 1,
+      "opensecrets.org": 5,
+      "mrbenchmarks.com": 2,
+      "iab.com": 1,
+      "brennancenter.org": 1,
+      "meltwater.com": 1,
+      "emarketer.com": 1,
+      "westminsterresearch.westminster.ac.uk": 1,
+      "npr.org": 1,
+      "fuchs.uti.at": 1,
+      "bls.gov": 3,
+      "worldpopulationreview.com": 1,
+      "files.epi.org": 1,
+      "data.bls.gov": 1,
+      "ssa.gov": 1,
+      "cdc.gov": 1,
+      "fec.gov": 4,
+      "mckinsey.com": 2,
+      "brookings.edu": 1,
+      "ed.stanford.edu": 1,
+      "scholars.duke.edu": 1,
+      "denverpost.com": 2,
+      "psych.ucsb.edu": 1,
+      "michiganross.umich.edu": 1,
+      "colorado.gov": 1,
+      "fairvote.org": 1,
+      "pepperdine.edu": 1,
+      "santafe.edu": 1,
+      "mindfulnessinschools.org": 1,
+      "garrisoninstitute.org": 1,
+      "clergyproject.org": 1,
+      "knightfoundation.org": 1,
+      "bpspsychub.onlinelibrary.wiley.com": 1,
+      "bridgealliance.us": 1,
+      "braverangels.org": 1,
+      "publicconversations.org": 1,
+      "bu.edu": 1,
+      "oxfordscholarship.com": 1,
+      "scn.ucla.edu": 1,
+      "apa.org": 3,
+      "scholar.harvard.edu": 1,
+      "onlinelibrary.wiley.com": 2,
+      "isi.edu": 1,
+      "pnas.org": 2,
+      "doi.org": 1,
+      "academia.edu": 1,
+      "jeantwenge.com": 1,
+      "jeffflake.com": 1,
+      "pmc.ncbi.nlm.nih.gov": 2,
+      "politico.com": 2,
+      "susandavid.com": 1,
+      "liberalarts.utexas.edu": 1,
+      "amash.house.gov": 1,
+      "sinema.senate.gov": 1,
+      "wesleyanmediaproject.org": 1,
+      "washingtonpost.com": 2,
+      "lbjlibrary.org": 1,
+      "justice.gov": 1,
+      "bipartisanpolicy.org": 1,
+      "nti.org": 1,
+      "c-span.org": 2,
+      "uapress.arizona.edu": 1,
+      "senate.gov": 1,
+      "eugeneandabigailmccarthy.org": 1,
+      "reaganlibrary.gov": 1,
+      "asce.org": 1,
+      "nolabels.org": 1,
+      "whitehouse.gov": 1,
+      "texastribune.org": 1,
+      "cheneyforwyoming.com": 1,
+      "everycrsreport.com": 1,
+      "factcheck.org": 1,
+      "osc.state.ny.us": 1,
+      "americanprogress.org": 1
+    },
+    "relationshipTypes": {
+      "other": 132,
+      "scholarly_discussion": 54,
+      "review": 8,
+      "organization": 82,
+      "archive": 8,
+      "news_media": 4
+    },
+    "samples": [
+      {
+        "id": "1",
+        "bibInfo": "Ferguson, J. (2024). Authoritarian ascent in the USA: How we got here and what c",
+        "domain": "open.spotify.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "relationType": "other",
+        "url": "https://open.spotify.com/show/1xu7CSq8gswjRgl1gr0lVF?si=1b5f4e8498324ad1"
+      },
+      {
+        "id": "2",
+        "bibInfo": "Gergen, K. J. (1999). An Invitation to Social Construction. London: SAGE Publica",
+        "domain": "swarthmore.edu",
+        "tier": "tier1_edu",
+        "contentType": "html_page",
+        "relationType": "scholarly_discussion",
+        "url": "https://www.swarthmore.edu/profile/kenneth-gergen"
+      },
+      {
+        "id": "3",
+        "bibInfo": "Berger, P. L., & Luckmann, T. (1966). The Social Construction of Reality: A Trea",
+        "domain": "jstor.org",
+        "tier": "tier1_jstor",
+        "contentType": "html_page",
+        "relationType": "review",
+        "url": "https://www.jstor.org/stable/323448"
+      },
+      {
+        "id": "4",
+        "bibInfo": "Kahneman, D. (2011). Thinking, Fast and Slow. New York: Farrar, Straus and Girou",
+        "domain": "nobelprize.org",
+        "tier": "tier2_publisher",
+        "contentType": "html_page",
+        "relationType": "organization",
+        "url": "https://www.nobelprize.org/prizes/economic-sciences/2002/kahneman/biographical/"
+      },
+      {
+        "id": "5",
+        "bibInfo": "Tversky, A., & Kahneman, D. (1974). Judgment under uncertainty: Heuristics and b",
+        "domain": "science.org",
+        "tier": "tier2_publisher",
+        "contentType": "html_page",
+        "relationType": "organization",
+        "url": "https://www.science.org/doi/abs/10.1126/science.185.4157.1124"
+      },
+      {
+        "id": "6",
+        "bibInfo": "Searle, J. R. (1995). The Construction of Social Reality. New York: The Free Pre",
+        "domain": "plato.stanford.edu",
+        "tier": "tier1_edu",
+        "contentType": "html_page",
+        "relationType": "scholarly_discussion",
+        "url": "https://plato.stanford.edu/entries/social-institutions/"
+      },
+      {
+        "id": "7",
+        "bibInfo": "Searle, J. R. (2010). Making the Social World: The Structure of Human Civilizati",
+        "domain": "ndpr.nd.edu",
+        "tier": "tier1_edu",
+        "contentType": "html_page",
+        "relationType": "scholarly_discussion",
+        "url": "https://ndpr.nd.edu/reviews/making-the-social-world-the-structure-of-human-civilization/"
+      },
+      {
+        "id": "8",
+        "bibInfo": "Hacking, I. (1999). The Social Construction of What? Cambridge, MA: Harvard Univ",
+        "domain": "lrb.co.uk",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "relationType": "other",
+        "url": "https://www.lrb.co.uk/the-paper/v21/n08/ian-hacking/are-you-a-social-constructionist"
+      },
+      {
+        "id": "100",
+        "bibInfo": "Zarefsky, D. (1990). Lincoln, Douglas, and Slavery: In the Crucible of Public De",
+        "domain": "quod.lib.umich.edu",
+        "tier": "tier1_edu",
+        "contentType": "html_page",
+        "relationType": "scholarly_discussion",
+        "url": "https://quod.lib.umich.edu/j/jala/2629860.0015.204/--public-sentiment-is-everything-lincolns-view-of-political?rgn=main;view=fulltext"
+      },
+      {
+        "id": "101",
+        "bibInfo": "Craig, D. B. (2000). Fireside Politics: Radio and Political Culture in the Unite",
+        "domain": "nps.gov",
+        "tier": "tier1_gov",
+        "contentType": "article_page",
+        "relationType": "other",
+        "url": "https://www.nps.gov/articles/fdr-s-fireside-chats.htm"
+      },
+      {
+        "id": "102",
+        "bibInfo": "Kraus, S. (2000). Televised Presidential Debates and Public Policy (2nd ed.). Ro",
+        "domain": "debates.org",
+        "tier": "tier2_publisher",
+        "contentType": "html_page",
+        "relationType": "organization",
+        "url": "https://www.debates.org/voter-education/debate-transcripts/september-26-1960-debate-transcript/"
+      },
+      {
+        "id": "103",
+        "bibInfo": "Cannon, L. (1991). President Reagan: The Role of a Lifetime. Simon & Schuster, N",
+        "domain": "pbs.org",
+        "tier": "tier2_publisher",
+        "contentType": "html_page",
+        "relationType": "organization",
+        "url": "https://www.pbs.org/wgbh/americanexperience/features/reagan-cannon-excerpt/"
+      },
+      {
+        "id": "104",
+        "bibInfo": "Iyengar, S., & Kinder, D. R. (2010). News That Matters: Television and American ",
+        "domain": "adambrown.info",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "relationType": "other",
+        "url": "https://adambrown.info/p/notes/iyengar_and_kinder_news_that_matters"
+      },
+      {
+        "id": "105",
+        "bibInfo": "Abbate, J. (1999). Inventing the Internet. MIT Press, Cambridge, MA. ISBN: 978-0",
+        "domain": "quod.lib.umich.edu",
+        "tier": "tier1_edu",
+        "contentType": "html_page",
+        "relationType": "scholarly_discussion",
+        "url": "https://quod.lib.umich.edu/j/jahc/3310410.0003.321/--inventing-the-internet-janet-abbate?rgn=main;view=fulltext"
+      },
+      {
+        "id": "106",
+        "bibInfo": "Davis, R. (1999). The Web of Politics: The Internet's Impact on the American Pol",
+        "domain": "akastrategy.com",
+        "tier": "tier4_other",
+        "contentType": "article_page",
+        "relationType": "other",
+        "url": "https://akastrategy.com/articles/here-comes-everybody-the-power-of-organizing-without-organizations/"
+      },
+      {
+        "id": "107",
+        "bibInfo": "Shirky, C. (2008). Here Comes Everybody: The Power of Organizing Without Organiz",
+        "domain": "akastrategy.com",
+        "tier": "tier4_other",
+        "contentType": "article_page",
+        "relationType": "other",
+        "url": "https://akastrategy.com/articles/here-comes-everybody-the-power-of-organizing-without-organizations/"
+      },
+      {
+        "id": "108",
+        "bibInfo": "Jenkins, H. (2006). Convergence Culture: Where Old and New Media Collide. New Yo",
+        "domain": "hyperrhiz.io",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "relationType": "other",
+        "url": "http://hyperrhiz.io/hyperrhiz05/reviews/henry-jenkins-convergence-culture.html"
+      },
+      {
+        "id": "109",
+        "bibInfo": "Amnesty International. (2022). The social atrocity: Meta and the right to remedy",
+        "domain": "amnestyusa.org",
+        "tier": "tier2_publisher",
+        "contentType": "pdf",
+        "relationType": "organization",
+        "url": "https://www.amnestyusa.org/wp-content/uploads/2022/09/Updated-Final-Report_The-Social-Atrocity-_0609202259.pdf"
+      },
+      {
+        "id": "110",
+        "bibInfo": "CNBC. (2024, October 30). Microsoft CFO says OpenAI investment will cut into pro",
+        "domain": "fool.com",
+        "tier": "tier4_other",
+        "contentType": "html_page",
+        "relationType": "other",
+        "url": "https://www.fool.com/investing/2024/11/10/microsoft-13-billion-openai-best-money-ever-spent/"
+      },
+      {
+        "id": "111",
+        "bibInfo": "Tucker, J. A., et al. (2018). Social Media, Political Polarization, and Politica",
+        "domain": "naacp.org",
+        "tier": "tier2_publisher",
+        "contentType": "article_page",
+        "relationType": "organization",
+        "url": "https://naacp.org/articles/elon-musks-xai-threatened-lawsuit-over-air-pollution-memphis-data-center-filed-behalf"
+      }
+    ]
+  },
+  "qualityFramework": {
+    "primary": {
+      "domain_tiers": {
+        "tier1_archive": {
+          "score": 90,
+          "description": "archive.org - Open access preservation"
+        },
+        "tier1_doi": {
+          "score": 95,
+          "description": "DOI links - Persistent identifiers"
+        },
+        "tier1_jstor": {
+          "score": 95,
+          "description": "JSTOR - Academic database"
+        },
+        "tier1_edu": {
+          "score": 85,
+          "description": ".edu domains - Educational institutions"
+        },
+        "tier1_gov": {
+          "score": 85,
+          "description": ".gov domains - Government sources"
+        },
+        "tier2_publisher": {
+          "score": 80,
+          "description": "Publishers and academic presses"
+        },
+        "tier3_purchase": {
+          "score": 60,
+          "description": "Amazon, Google Books - Purchase pages"
+        },
+        "tier4_other": {
+          "score": 50,
+          "description": "Other domains - Case by case"
+        }
+      },
+      "content_types": {
+        "doi_link": {
+          "bonus": 10,
+          "description": "Direct DOI - Highly stable"
+        },
+        "pdf": {
+          "bonus": 5,
+          "description": "PDF - Full text likely"
+        },
+        "article_page": {
+          "bonus": 5,
+          "description": "Article page - Content page"
+        },
+        "book_page": {
+          "bonus": 0,
+          "description": "Book page - May be info only"
+        },
+        "purchase_page": {
+          "penalty": -10,
+          "description": "Purchase page - Not full text"
+        }
+      }
+    },
+    "secondary": {
+      "relationship_types": {
+        "review": {
+          "score": 95,
+          "description": "Academic review - Critical analysis"
+        },
+        "scholarly_discussion": {
+          "score": 90,
+          "description": "Scholarly discussion - Academic context"
+        },
+        "reference": {
+          "score": 85,
+          "description": "Reference work - Authoritative overview"
+        },
+        "archive": {
+          "score": 80,
+          "description": "Archive - Preserved content"
+        },
+        "organization": {
+          "score": 75,
+          "description": "Organization - Institutional context"
+        },
+        "news_media": {
+          "score": 70,
+          "description": "News media - Public discussion"
+        },
+        "other": {
+          "score": 60,
+          "description": "Other - Evaluate individually"
+        }
+      }
+    }
+  },
+  "insights": {
+    "primary": {
+      "coverage": "100.0% of references have primary URLs",
+      "dominantTier": [
+        "tier4_other",
+        96
+      ],
+      "dominantContentType": [
+        "html_page",
+        147
+      ],
+      "topDomain": [
+        "doi.org",
+        81
+      ]
+    },
+    "secondary": {
+      "coverage": "100.0% of references have secondary URLs",
+      "dominantTier": [
+        "tier4_other",
+        100
+      ],
+      "dominantRelationType": [
+        "other",
+        132
+      ],
+      "topDomain": [
+        "researchgate.net",
+        12
+      ]
+    }
+  }
+}
