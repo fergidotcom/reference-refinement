@@ -8,7 +8,7 @@
  * which provides OAuth 2.0 authentication with PKCE support for all Fergi projects.
  */
 
-import { createNetlifyHandler } from '../../../../../.claude/lib/dropbox-integration/netlify-handler';
+import { createNetlifyHandler } from '../../lib/dropbox-integration/netlify-handler';
 
 const config = {
   appKey: 'q4ldgkwjmhxv6w2',
