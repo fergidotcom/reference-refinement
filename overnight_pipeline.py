@@ -36,10 +36,9 @@ import re
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from Production_Quality_Framework_Enhanced import (
+from deep_url_validation import (
     validate_url_deep,
     ValidationResult,
-    EnhancedURLQualityScorer
 )
 
 # ============================================================================
