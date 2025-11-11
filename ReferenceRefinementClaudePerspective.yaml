@@ -1,318 +1,284 @@
 project_name: "Reference Refinement"
-perspective_source: "claude_ai"
-timestamp: "2025-11-10T00:30:00-07:00"
+perspective_source: "mac_claude_code"
+for_web_session: "Claude Code Web Session (NOT Claude.ai)"
+timestamp: "2025-11-10T23:15:00Z"
 
-session_summary: |
-  Major architectural enhancement to Mac Web session specifications: Instance reference system
-  with RID versioning, universal expansion for multi-citation references, and iPad app filtering
-  capabilities. This design ensures all additional manuscript citations receive proper human
-  review while maintaining parent reference integrity.
+urgent_goal: |
+  COMPLETE ALL UNFINALIZED REFERENCES TONIGHT!
 
-work_completed:
-  strategic_architecture:
-    - "Designed RID versioning system: Parent (42) → Instances (42.1, 42.2, 42.3)"
-    - "Defined instance reference as always unfinalized (requires human review)"
-    - "Universal instance expansion: Both finalized AND unfinalized parents get instances"
-    - "Specified iPad app enhancement: New 'Instances' filter with parent linking"
-    
-  session_package_enhancements:
-    - "Updated MAC_CLAUDE_WEB_SESSION_PACKAGE.md with instance architecture"
-    - "Expanded Phase 3: Differential processing for parent vs instance creation"
-    - "Enhanced Phase 4: Universal instance expansion with RID versioning"
-    - "Added iPad App Enhancement section with detailed specifications"
-    - "Updated all deliverable formats to reflect parent-instance structure"
-  
-  documentation_updates:
-    - "Data structure framework: Parent reference + instance reference schemas"
-    - "Filter logic specifications for iPad app"
-    - "CSS styling for instance reference visual differentiation"
-    - "Quality validation rules for instance uniqueness"
-    - "Success metrics updated to reflect instance architecture"
+  Implement deep URL validation with ACTUAL CONTENT VERIFICATION, test with samples,
+  then reprocess ALL 139 unfinalized references to finish the "Caught In The Act"
+  reference list (288 total).
+
+  CRITICAL: Before assigning PRIMARY or SECONDARY URL, you MUST actually access the
+  site, fetch the content, and VERIFY you can see the target document (full text,
+  images, etc.). Use as many queries and AI analysis as needed to confirm accessibility.
+
+critical_lesson_learned: |
+  ❌ WRONG APPROACH (v16.9 - REVERTED on Mac):
+  - Penalized all jstor.org URLs based on domain alone
+  - Assumed "JSTOR domain = always paywalled"
+  - Reality: JSTOR hosts BOTH free AND paywalled content
+
+  ✅ CORRECT APPROACH (v17.0 - FOR WEB):
+  - Fetch URL and download first 50-100KB of content
+  - Detect access barriers in actual page content:
+    * Login walls: "Sign in to continue"
+    * Paywalls: "Subscribe to read", "$XX to access"
+    * Preview-only: "Limited preview", "5 pages shown"
+    * Soft 404s: "Page not found", "Document unavailable"
+  - Score based on ACCESSIBILITY not domain name
+  - Verify content matches expected reference
+
+user_directive: |
+  "If Web gets a good sense of reliability after working this out and validating
+  the new criteria at length, then have Web reprocess all of the outstanding
+  Unfinalized references. Maybe we can get the whole Caught In The Act reference
+  completed tonight!"
+
+web_session_roadmap:
+  total_time_estimate: "6-8 hours"
+  goal: "Complete ALL 288 references (currently 149 finalized, 139 unfinalized)"
+
+  phase_1_implementation:
+    duration: "2-3 hours"
+    tasks:
+      - "Implement validate_url_deep() with content fetching"
+      - "Add pattern detection (paywall/login/preview/soft-404)"
+      - "Test with RID 5 (known accessible vs login-required)"
+      - "Verify UCI PDF scores 90-100, Science.org scores 60-70"
+      - "Confirm no false positives (accessible marked as paywalled)"
+
+  phase_2_sample_testing:
+    duration: "1-2 hours"
+    sample_size: "25-50 references"
+    tasks:
+      - "Reprocess Sample 25 (RID 611-635)"
+      - "Validate 25 additional diverse references"
+      - "Measure accuracy: paywall detection, login detection"
+      - "Calculate false positive rate"
+      - "Generate reliability report"
+
+  phase_3_go_no_go_decision:
+    criteria_for_full_reprocess:
+      - "Paywall detection: >90% accurate"
+      - "Login detection: >90% accurate"
+      - "False positive rate: <5%"
+      - "Free sources score higher: 100% of cases"
+      - "Processing time: <2 seconds per URL"
+    if_criteria_met: "Proceed to Phase 4"
+    if_not_met: "Refine and retest"
+
+  phase_4_full_reprocess:
+    duration: "3-4 hours"
+    scope: "ALL 139 unfinalized references"
+    approach: "Batches of 25-30 refs with progress logging"
+    exclusion: "DO NOT touch 149 finalized references"
+    logging: "Document every change: before/after URLs, validation results, scores"
+    goal: "Complete 288/288 references tonight!"
 
 current_state:
-  status: "architecture_defined_implementation_ready"
-  
-  active_priorities:
-    - "Mac Web: Execute comprehensive manuscript analysis with instance expansion"
-    - "Mac Code: Implement iPad app v17.0 with instance filtering"
-    - "User: Review architectural decision for approval before implementation"
+  decisions_txt:
+    total_references: 288
+    finalized: 149
+    unfinalized: 139
+    sample_25: "RID 611-635 (unfinalized)"
 
-  key_architectural_decisions:
-    instance_reference_system:
-      decision: "Instance references always created as unfinalized, even from finalized parents"
-      rationale: |
-        Even when parent reference is perfect (finalized), each additional manuscript citation
-        occurs in different context and deserves separate human review to ensure secondary URL
-        and relevance text appropriately match that specific usage. Context-dependent quality
-        requires human judgment, not automatic inheritance from parent.
-      
-      benefits:
-        - "Quality control: Human validates context-specific selections"
-        - "Flexibility: Can finalize instances independently as reviewed"
-        - "Safety: No assumption that parent quality transfers to different contexts"
-        - "Workflow: Clear review queue of unfinalized instances in iPad app"
-    
-    rid_versioning_system:
-      decision: "Parent reference keeps original RID, instances get parent_rid.instance_number"
-      format: "C1-042 (parent) → C1-042.1, C1-042.2, C1-042.3 (instances)"
-      rationale: |
-        Clear parent-child relationship visible in RID itself. Preserves original reference
-        numbering while allowing unlimited instance expansion. Sortable, filterable, and
-        human-readable.
-      
-      implementation:
-        - "Parent reference: Existing RID unchanged"
-        - "Instance references: Append .1, .2, .3 to parent RID"
-        - "parent_rid field: Links instance back to parent"
-        - "instance_number field: Sequential numbering within parent"
-    
-    universal_instance_expansion:
-      decision: "ALL multi-citation references get instance expansion, regardless of finalized status"
-      scope: "Finalized parents AND unfinalized parents with 2+ manuscript citations"
-      rationale: |
-        Comprehensive representation of manuscript citation usage requires capturing all
-        occurrences. Finalized parent preserves proven quality. Unfinalized instances enable
-        context-specific review and improvement. No citation left unrepresented.
-      
-      workflow:
-        finalized_parents:
-          - "Parent reference: Preserved exactly (no changes)"
-          - "Instance references: Created as unfinalized for each additional citation"
-          - "Primary URL: Shared from parent (proven quality)"
-          - "Secondary URL: New context-specific selection (requires review)"
-          - "Relevance text: Instance-specific based on manuscript context"
-        
-        unfinalized_parents:
-          - "Parent reference: Enhanced with better URLs and relevance text"
-          - "Parent status: Remains unfinalized (needs review)"
-          - "Instance references: Created as unfinalized for additional citations"
-          - "All components: Apply discovered quality criteria"
-    
-    ipad_app_enhancement:
-      decision: "Add 'Instances' filter to enable focused review of instance references"
-      ui_components:
-        - "Filter checkbox: Show/Hide instances"
-        - "Instance badge: Visual indicator on reference cards"
-        - "Parent link: Navigation from instance to parent"
-        - "Counter: Display count of instance references"
-        - "Styling: Purple theme for instance references"
-      
-      rationale: |
-        User needs efficient workflow to review ~150-300 new instance references. Filtering
-        enables focused review sessions. Parent linking provides context. Visual differentiation
-        prevents confusion between parent and instance references.
-      
-      filter_combinations:
-        - "All references: Default view with everything"
-        - "Instances only: Focus on new instances needing review"
-        - "Unfinalized instances: Subset of instances requiring attention"
-        - "Hide instances: Traditional view of parent references only"
+  unfinalized_breakdown:
+    sample_25: "RID 611-635 (25 refs)"
+    early_refs: "RID 122, 203, 204 (3 refs)"
+    middle_batch: "RID 614-639 (26 refs)"
+    remaining: "~85 refs scattered throughout"
 
-awaiting_input:
-  from_user:
-    - question: "Approve instance reference architecture before Mac Web implementation?"
-      urgency: "HIGH"
-      context: "Architectural decision affects ~6-10 hours of Web analysis work"
-      decision_points:
-        - "Instance references always unfinalized (even from finalized parents)"
-        - "RID versioning format (42 → 42.1, 42.2)"
-        - "Universal expansion for all multi-citation references"
-        - "iPad app v17.0 enhancement with instance filtering"
-    
-    - question: "Provide 'Caught in the Act' manuscript to Mac Web for analysis?"
-      urgency: "HIGH"
-      blocks: "Mac Web cannot start Phase 1 citation mapping without manuscript"
-      format: "DOCX format without reference URLs preferred"
-  
-  from_mac_web:
-    - "Confirmation of architecture understanding before starting analysis"
-    - "Any clarifications on RID versioning or instance flag structure"
-    - "Manuscript file receipt and initial parsing results"
-  
-  from_mac_code:
-    - "Confirmation of iPad app enhancement scope"
-    - "Estimated implementation time for v17.0 updates"
-    - "Any questions about filter logic or UI specifications"
+  quality_target:
+    accessibility_rate: ">85%"
+    free_source_coverage: ">90%"
+    paywall_elimination: "Detect and avoid"
+    override_rate_target: "<5%"
 
-architecture_specifications:
-  data_structures:
-    parent_reference:
-      fields:
-        reference_id: "Original RID (e.g., 'C1-042')"
-        finalized: "bool - Preserved from original status"
-        primary_url: "str - Preserved or enhanced depending on parent status"
-        secondary_url: "str - Preserved or enhanced depending on parent status"
-        relevance_text: "str - Preserved or enhanced depending on parent status"
-        source: "'ORIGINAL' or 'WEB_ENHANCED'"
-        batch_version: "str - Original or 'v17.0_WEB_ENHANCED'"
-    
-    instance_reference:
-      fields:
-        reference_id: "str - RID with instance number (e.g., 'C1-042.1')"
-        parent_rid: "str - Link to parent (e.g., 'C1-042')"
-        instance_number: "int - Sequential within parent (1, 2, 3...)"
-        finalized: "bool - ALWAYS false (requires human review)"
-        is_instance: "bool - ALWAYS true (enables filtering)"
-        manuscript_context: "str - Full surrounding text (2-3 paragraphs)"
-        context_purpose: "str - evidence/background/critique/comparison"
-        primary_url: "str - Same as parent (shared source material)"
-        secondary_url: "str - UNIQUE (different from parent and other instances)"
-        relevance_text: "str - Instance-specific based on context"
-        source: "'WEB_CREATED'"
-        batch_version: "'v17.0'"
-  
-  validation_rules:
-    instance_uniqueness:
-      - "No duplicate secondary URLs within parent + all instances"
-      - "Each instance has unique context and relevance text"
-      - "All instances share parent's primary URL"
-      - "RID versioning properly formatted (parent.instance_number)"
-    
-    quality_criteria:
-      - "Instance secondary URLs meet finalized quality standards"
-      - "Instance relevance text reflects actual manuscript usage"
-      - "Instance context extracted accurately from manuscript"
-      - "All instances flagged correctly (finalized=false, is_instance=true)"
-  
-  ipad_app_implementation:
-    files_to_modify:
-      - "index.html - Main app file"
-    
-    code_sections:
-      filter_configuration: "Add instances: true to filters object"
-      apply_filters_function: "Add instance filter logic"
-      render_reference_card: "Add instance badge and parent link"
-      update_filter_counts: "Add instance counter"
-      css_styles: "Add .instance-reference and .instance-badge styles"
-    
-    version_update:
-      from: "v16.10"
-      to: "v17.0"
-      reason: "Major feature: Instance reference management"
+implementation_details:
+  validate_url_deep_function:
+    critical_requirement: |
+      YOU MUST ACTUALLY SEE THE TARGET DOCUMENT before assigning a URL.
+      Don't just check HTTP status - fetch enough content to verify you can
+      access the full text, images, or whatever the document type is.
+      Use AI to analyze the retrieved content and confirm it's the actual
+      reference, not a paywall page, preview, or different document.
 
-next_steps:
-  immediate_user_actions:
-    - "Review and approve instance reference architecture"
-    - "Provide 'Caught in the Act' manuscript to Mac Web"
-    - "Decide: Mac Web start immediately or await user testing feedback?"
-  
-  immediate_mac_web_actions:
-    - "Receive manuscript and decisions.txt"
-    - "Confirm architecture understanding"
-    - "Begin Phase 1: Citation instance mapping"
-    - "Proceed through 5-phase comprehensive analysis"
-    - "Deliver PERFECTED_decisions.txt with instances"
-  
-  immediate_mac_code_actions:
-    - "Implement iPad app v17.0 enhancement"
-    - "Add instance filtering and display features"
-    - "Test with sample instance references"
-    - "Deploy updated app to production"
-    - "Await PERFECTED_decisions.txt from Web for full testing"
-  
-  coordination_sequence:
-    1: "User approves architecture and provides manuscript"
-    2: "Mac Web executes comprehensive analysis (6-10 hours)"
-    3: "Mac Code implements iPad app enhancement (1-2 hours)"
-    4: "Web delivers PERFECTED_decisions.txt"
-    5: "Code tests iPad app with real instance references"
-    6: "User reviews instance references in enhanced iPad app"
-    7: "User finalizes instances individually as reviewed"
+    steps:
+      1: "Fetch URL with redirects (GET request, follow up to 5 hops)"
+      2: "Download first 50-100KB of content (MORE if needed to verify document)"
+      3: "Detect access barriers using pattern matching"
+      4: "Use AI to analyze content - can you ACTUALLY SEE the target document?"
+      5: "Verify content matches reference (title/author/year/content snippets)"
+      6: "If unclear, fetch MORE content or try additional queries"
+      7: "Return accessibility score (0-100) and detailed verification reason"
 
-expected_outcomes:
-  perfected_decisions_txt:
-    parent_references: "288 (preserved or enhanced)"
-    instance_references: "~150-300 new (estimate 1.5-2 citations per reference average)"
-    total_entries: "~450-600 references"
-    finalized_parents: "~230-250 (preserved from original)"
-    unfinalized_total: "~190-350 (enhanced parents + all instances)"
-    
-  ipad_app_v17:
-    new_features:
-      - "Instance reference filtering"
-      - "Visual differentiation (purple theme)"
-      - "Parent reference linking"
-      - "RID versioning display"
-      - "Instance counter"
-    
-    user_workflow:
-      - "Filter to show instances only"
-      - "Review instance context and URLs"
-      - "Navigate to parent reference for comparison"
-      - "Finalize instances individually"
-      - "Track progress via counter"
-  
-  production_framework:
-    automated_capabilities:
-      - "Citation instance mapping from manuscript"
-      - "Quality pattern extraction from finalized references"
-      - "Context-aware relevance text generation"
-      - "Context-matched secondary URL selection"
-      - "Instance reference creation with RID versioning"
-    
-    human_review_boundaries:
-      - "All instance references require finalization"
-      - "Context-specific secondary URL confirmation"
-      - "Relevance text accuracy validation"
-      - "Edge cases and judgment calls"
+    patterns_to_detect:
+      paywall:
+        - "subscribe to continue"
+        - "subscription required"
+        - "purchase this article"
+        - "$XX.XX to access"
+        - "you do not have access"
+        - "institutional subscription required"
 
-quality_assurance:
-  instance_creation_checklist:
-    - "✓ Parent reference preserved or enhanced appropriately"
-    - "✓ Instance RID formatted correctly (parent.instance_number)"
-    - "✓ Instance flagged as unfinalized (finalized=false)"
-    - "✓ Instance flagged as instance (is_instance=true)"
-    - "✓ Parent RID link included (parent_rid field)"
-    - "✓ Manuscript context extracted accurately"
-    - "✓ Context purpose identified correctly"
-    - "✓ Relevance text instance-specific (not copy of parent)"
-    - "✓ Primary URL matches parent exactly"
-    - "✓ Secondary URL unique (different from parent and other instances)"
-    - "✓ Secondary URL meets quality criteria"
-    - "✓ All metadata fields populated correctly"
-  
-  ipad_app_testing_checklist:
-    - "✓ Instance filter toggles correctly"
-    - "✓ Instance badge displays on cards"
-    - "✓ Instance counter shows accurate count"
-    - "✓ Parent link navigates correctly"
-    - "✓ RID versioning displays properly (42.1, 42.2)"
-    - "✓ Purple styling applied to instance cards"
-    - "✓ Filter combinations work correctly"
-    - "✓ All instances appear in unfinalized filter"
+      login:
+        - "sign in to continue"
+        - "log in to view"
+        - "login required"
+        - "authentication required"
+        - "access denied"
 
-risk_assessment:
-  instance_architecture:
-    risk: "LOW"
-    rationale: "Conservative approach - requires human review for all instances"
-    mitigation: "User validates each instance individually, no automatic finalization"
-  
-  mac_web_analysis:
-    risk: "MEDIUM"
-    rationale: "Complex 5-phase analysis, 6-10 hours work, 1250-1900 searches"
-    mitigation: "Detailed specifications, phased approach, quality validation at each phase"
-  
-  ipad_app_enhancement:
-    risk: "LOW"
-    rationale: "Straightforward UI enhancement, well-specified"
-    mitigation: "Testing checklist, incremental deployment"
+      preview:
+        - "preview only"
+        - "limited preview"
+        - "read a preview"
+        - "X pages shown"
+        - "continue reading with subscription"
 
-project_health:
-  momentum: "HIGH - Clear architecture, ready for implementation"
-  blockers: "User approval and manuscript provision (high priority, low effort)"
-  next_milestone: "PERFECTED_decisions.txt with instance references"
-  timeline: "2-3 weeks to complete analysis, enhancement, and user review of instances"
+      soft_404:
+        - "404 not found"
+        - "page not found"
+        - "document not available"
+        - "doi not found"
 
-coordination_notes:
-  - "Mac Web has comprehensive session package with all specifications"
-  - "Mac Code has detailed iPad app enhancement requirements"
-  - "Clear separation: Web creates instances, Code enables review workflow"
-  - "User approval gate before starting (architecture decision)"
-  - "Manuscript provision gate before Phase 1 (citation mapping)"
+    scoring_logic:
+      free_full_text: "90-100 (accessible, no barriers)"
+      free_borrow: "80-90 (archive.org 14-day borrow)"
+      institutional: "60-75 (requires university login)"
+      paywall: "45-60 (subscribe to access)"
+      login_required: "40-55 (must sign in)"
+      preview_only: "30-45 (limited pages)"
+      not_found: "0 (404, soft 404, wrong content)"
 
-documentation_status:
-  session_package: "✅ Complete - MAC_CLAUDE_WEB_SESSION_PACKAGE.md"
-  checkpoint: "✅ Complete - ReferenceRefinementClaudePerspective.yaml"
-  architecture_specs: "✅ Complete - Included in session package"
-  ipad_app_specs: "✅ Complete - Included in session package"
-  testing_procedures: "✅ Complete - Checklists in checkpoint"
+test_case_rid_5:
+  reference:
+    id: 5
+    title: "Judgment under uncertainty: Heuristics and biases"
+    authors: "Tversky, A."
+    year: 1974
+
+  test_urls:
+    uci_pdf:
+      url: "https://sites.socsci.uci.edu/~bskyrms/bio/readings/tversky_k_heuristics_biases.pdf"
+      expected_validation: "ACCESSIBLE (free PDF)"
+      expected_score: "90-100"
+      critical_note: "Domain LOOKS like JSTOR but is FREE - proves domain penalties wrong!"
+
+    science_org:
+      url: "https://www.science.org/doi/10.1126/science.185.4157.1124"
+      expected_validation: "LOGIN REQUIRED"
+      expected_score: "60-70"
+
+  validation_requirement: "UCI PDF MUST score higher than Science.org"
+
+processing_strategy:
+  batching:
+    batch_size: "25-30 references"
+    reason: "Progress logging, error recovery, incremental validation"
+
+  logging_per_reference:
+    - "RID and title"
+    - "Old PRIMARY/SECONDARY URLs (if any)"
+    - "New PRIMARY/SECONDARY URLs"
+    - "Validation results (accessible/paywall/login)"
+    - "Scores before/after"
+    - "Reason for change"
+
+  error_handling:
+    if_validation_fails: "Log error, skip reference, continue"
+    if_no_candidates: "Flag as MANUAL_REVIEW"
+    if_timeout: "Retry once, then skip"
+
+  progress_tracking:
+    every_25_refs: "Generate interim report"
+    every_50_refs: "Checkpoint to disk"
+    final: "Complete summary with statistics"
+
+deliverables:
+  implementation:
+    - "Production_Quality_Framework_Enhanced.py (with validate_url_deep)"
+    - "Validation helper functions"
+    - "Integration with ranking workflow"
+
+  reports:
+    - "SAMPLE_25_REPROCESS_REPORT_V17_0.md"
+    - "VALIDATION_SAMPLE_REPORT_V17_0.md (25-50 refs)"
+    - "RELIABILITY_ASSESSMENT_V17_0.md (go/no-go decision)"
+    - "FULL_REPROCESS_REPORT_V17_0.md (ALL 139 refs)"
+    - "DEEP_VALIDATION_IMPLEMENTATION_V17_0.md"
+    - "FOR_MAC_DEEP_VALIDATION_PROPAGATION.md"
+
+  final_decisions_txt:
+    - "Updated with ALL 288 references finalized"
+    - "Backup of previous version"
+    - "Change log documenting all modifications"
+
+success_criteria:
+  content_verification:
+    - "MUST actually fetch and view target document content"
+    - "AI analysis confirms document is accessible"
+    - "Can see full text, images, or document body (not just abstract/preview)"
+    - "Verify title/author/year match in actual retrieved content"
+    - "Use multiple queries/fetches if needed to confirm"
+
+  phase_2_testing:
+    - "Paywall detection: >90% accurate"
+    - "Login detection: >90% accurate"
+    - "False positives: <5%"
+    - "Free sources always score higher"
+    - "RID 5 test passes (UCI PDF > Science.org)"
+    - "CRITICAL: Verify you can actually SEE the documents in test cases"
+
+  phase_4_completion:
+    - "ALL 139 unfinalized references reprocessed"
+    - "288/288 references completed"
+    - "Accessibility rate: >85%"
+    - "Free source coverage: >90%"
+    - "Every URL verified by actually accessing the document"
+    - "Comprehensive documentation generated"
+
+  tonight_goal:
+    - "Caught In The Act references COMPLETE (288/288)"
+    - "Every URL verified accessible with actual content viewing"
+    - "Ready for final user review"
+    - "Mac propagation guide created"
+
+files_for_web_session:
+  primary_instructions:
+    - "FOR_WEB_DEEP_VALIDATION_SESSION.md (Complete implementation guide)"
+    - "DEEP_URL_VALIDATION_ARCHITECTURE.md (Technical architecture)"
+
+  data_files:
+    - "decisions.txt (149 finalized, 139 unfinalized)"
+    - "Production_Quality_Framework_Enhanced.py (needs deep validation)"
+
+  reference_docs:
+    - "V16_9_JSTOR_PAYWALL_FIX.md (What NOT to do)"
+    - "SESSION_SUMMARY_2025-11-10_JSTOR_FIX.md (Mac session summary)"
+
+critical_reminders:
+  - "This is Claude Code WEB session (NOT Claude.ai)"
+  - "MUST actually access and VIEW the target document before assigning URL"
+  - "Use as many queries and AI analysis as needed to verify accessibility"
+  - "Don't just check HTTP status - FETCH and ANALYZE actual content"
+  - "Can you see the full text? Images? Document body? Then it's accessible"
+  - "If you see 'Subscribe', 'Sign in', or only preview - NOT accessible"
+  - "Don't penalize by domain - validate by actual content viewing"
+  - "JSTOR can host free content (RID 5 UCI PDF proves it)"
+  - "Keep 149 finalized references intact - only reprocess 139 unfinalized"
+  - "Goal: Complete ALL 288 references tonight with VERIFIED accessible URLs!"
+
+timeline_estimate:
+  phase_1_implementation: "2-3 hours (critical foundation)"
+  phase_2_testing: "1-2 hours (validate reliability)"
+  phase_3_decision: "15 minutes (review metrics, decide)"
+  phase_4_full_reprocess: "3-4 hours (139 refs in batches)"
+  documentation: "30 minutes (reports and summaries)"
+  total: "6-8 hours (aggressive but achievable)"
+
+motivation: |
+  This is the final push to complete the Caught In The Act manuscript references!
+  With deep URL validation, we can ensure every reference is accessible and high-quality.
+  Let's finish all 288 references tonight!
