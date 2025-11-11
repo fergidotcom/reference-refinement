@@ -1,0 +1,58 @@
+# Batch Processing Configuration - v20.0 FULL RUN
+# Process all 139 unfinalized references with deep validation
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"  # Update production file
+
+  # REFERENCE SELECTION - All unfinalized references
+  selection_mode: "criteria"
+  max_references: 139  # Process all unfinalized
+
+  # Not used in criteria mode
+  reference_range:
+    start: 1
+    end: 999
+
+  # Select references that are NOT finalized
+  criteria:
+    missing_primary_url: false
+    missing_secondary_url: false
+    not_finalized: true            # ONLY select not finalized
+    has_queries: false
+
+  # QUERY GENERATION - Use standard mode (8 queries)
+  query_mode: "standard"  # 8 queries (6 primary + 2 secondary)
+
+  # AUTO-FINALIZATION - DISABLED (user reviews on iPad)
+  auto_finalize: false
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 75
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING - Conservative for 139 refs
+  rate_limiting:
+    delay_between_refs: 3000   # 3 seconds between refs
+    delay_after_search: 1000   # 1 second after search
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5  # Save every 5 references
