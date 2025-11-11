@@ -1,0 +1,710 @@
+================================================================================
+WEB SESSION v17.0 - FINALIZATION REPORT
+Generated: 2025-11-11 16:01:56
+================================================================================
+
+Total references finalized: 139
+
+PRIMARY URL Quality:
+  Excellent: 23 (16.5%)
+  Good: 24 (17.3%)
+  Uncertain: 86 (61.9%)
+  Problematic: 6 (4.3%)
+
+Missing SECONDARY URLs: 0
+
+================================================================================
+ALL PROCESSED REFERENCES
+================================================================================
+
+[122]
+  ℹ️  PRIMARY URL is Google Books - may be preview-only
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://books.google.com/books/about/Democratic_Eloquence.html?id=Frx5AAAAIAAJ
+  SECONDARY: https://www.jstor.org/stable/366361
+
+[203]
+  ℹ️  PRIMARY URL is Archive.org details page - may be borrow-only
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://archive.org/details/aimstructureofph0000duhe
+  SECONDARY: https://www.jstor.org/stable/20116795
+
+[204]
+  ⚠️  PRIMARY URL is on paywall domain - may need replacement
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.jstor.org/stable/409588
+  SECONDARY: https://plato.stanford.edu/entries/linguistics/whorfianism.html
+
+[611]
+  ✅ PRIMARY URL looks good (excellent)
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://archive.org/download/theoryofleisurec01vebl/theoryofleisurec01vebl.pdf
+  SECONDARY: https://www.jstor.org/stable/23722430
+
+[614]
+  ⚠️  PRIMARY URL is on paywall domain - may need replacement
+  PRIMARY: https://www.jstor.org/stable/j.ctt7smgs
+  SECONDARY: https://www.cjr.org/review/a_reading_list_for_future_journalists.php
+
+[615]
+  ⚠️  PRIMARY URL is on paywall domain - may need replacement
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.jstor.org/stable/10.7312/napo12652
+  SECONDARY: https://research.library.fordham.edu/cgi/viewcontent.cgi?article=1016&context=mcgannon_working_papers
+
+[616]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://wp.comminfo.rutgers.edu/maronczyk/wp-content/uploads/sites/178/2020/09/Wood-and-Aronczyk_ABS_pub.pdf
+  SECONDARY: https://www.hewlett.org/wp-content/uploads/2018/03/Social-Media-Political-Polarization-and-Political-Disinformation-Literature-Review.pdf
+
+[617]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://pmc.ncbi.nlm.nih.gov/articles/PMC8381804/
+  SECONDARY: https://www.cambridge.org/core/journals/american-political-science-review/article/gendered-perceptions-and-the-costs-of-political-toxicity-experimental-evidence-from-politicians-and-citizens-in-four-democracies/FC65DE66B890AF8D26BA6495431EA057
+
+[618]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.judiciary.senate.gov/imo/media/doc/2024-09-17_pm_-_testimony_-_harris.pdf
+  SECONDARY: https://harvardlawreview.org/wp-content/uploads/2018/04/1598-1670_Online.pdf
+
+[619]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.antioch.edu/wp-content/uploads/2019/12/APA-7-References-Examples-2020.pdf
+  SECONDARY: https://undergrad.aa.ufl.edu/media/undergradaaufledu/uf-quest/quest-course-materials/quest-1-syllabi/2248-Best-Q1.pdf
+
+[620]
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://doi.org/10.1007/s11846-024-00741-5
+  SECONDARY: https://law.stanford.edu/wp-content/uploads/2025/06/EU-Law-WP-118-Zhou.pdf
+
+[621]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://ago.vermont.gov/sites/ago/files/2023-12/Unsealed%20Complaint.pdf
+  SECONDARY: https://bclawreview.bc.edu/articles/3179/files/67c07a3c593e7.pdf
+
+[622]
+  PRIMARY: https://www.pewresearch.org/internet/2021/04/07/social-media-use-in-2021/
+  SECONDARY: https://www.pewresearch.org/internet/fact-sheet/social-media/
+
+[623]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://people.southwestern.edu/~bednarb/critical-media-theory/articles/gottfried.pdf
+  SECONDARY: https://sites.bu.edu/pardeeatlas/research-and-policy/back2school/how-the-american-media-landscape-is-polarizing-the-country/
+
+[624]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://misinforeview.hks.harvard.edu/article/misinformation-in-action-fake-news-exposure-is-linked-to-lower-trust-in-media-higher-trust-in-government-when-your-side-is-in-power/
+  SECONDARY: https://ijoc.org/index.php/ijoc/article/download/18856/4152
+
+[625]
+  ℹ️  PRIMARY URL is Archive.org details page - may be borrow-only
+  PRIMARY: https://archive.org/details/BLOOMBERG_20190319_210000_Bloomberg_Technology
+  SECONDARY: https://www.theguardian.com/technology/2024/oct/27/elon-musk-hopes-trump-victory-will-help-his-44bn-twitter-bet-pay-off
+
+[626]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://cor.gsfc.nasa.gov/Astro2020/26141.pdf
+  SECONDARY: https://escholarship.org/content/qt5cm9b82r/qt5cm9b82r.pdf
+
+[627]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://ilr.law.uiowa.edu/sites/ilr.law.uiowa.edu/files/2023-02/ILR-103-1-Yablon.pdf
+  SECONDARY: https://csdp.princeton.edu/document/1044
+
+[628]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://pmc.ncbi.nlm.nih.gov/articles/PMC10265372/
+  SECONDARY: https://greaterpublic.org/resources/membership/webinar-mr-benchmarks-for-public-media-2024/
+
+[629]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://pep.gmu.edu/wp-content/uploads/sites/28/2023/05/Li-Jiang_GDPR_updated-paper_2023.pdf
+  SECONDARY: https://csl.fiu.edu/wp-content/uploads/2023/05/advertising_IoT.pdf
+
+[630]
+  PRIMARY: https://www.cambridge.org/core/journals/legal-studies/article/political-advertising-revisited-digital-campaigning-and-protecting-democratic-discourse/591F2EECBE0AD202D7556815DEDEA62D
+  SECONDARY: https://policyreview.info/articles/analysis/political-micro-targeting-manchurian-candidate-or-just-dark-horse
+
+[631]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://files.eric.ed.gov/fulltext/ED672789.pdf
+  SECONDARY: https://www.hks.harvard.edu/sites/default/files/Final_AWP_260_0.pdf
+
+[632]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.americanprogress.org/article/increasing-voter-participation-america/
+  SECONDARY: https://scholar.law.colorado.edu/cgi/viewcontent.cgi?article=2597&context=faculty-articles
+
+[633]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://scholar.archive.org/work/aatnsp4f4rgrbcf37bmua7jatq/access/wayback/https://www.sciendo.com/pdf/10.2478/nor-2021-0018
+  SECONDARY: https://www.academia.edu/522337/Harries_G_and_Wahl_Jorgensen_K_2007_The_culture_of_arts_journalists_Elitists_saviors_or_manic_depressives_Journalism_8_6_619_639
+
+[634]
+  ⚠️  PRIMARY URL is on paywall domain - may need replacement
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.jstor.org/stable/j.ctt5vkx84
+  SECONDARY: https://review.law.stanford.edu/wp-content/uploads/sites/3/2016/08/64-SLRO-70_0.pdf
+
+[635]
+  ✅ PRIMARY URL looks good (excellent)
+  PRIMARY: https://fuchsc.net/wp-content/uploads/CF_value.pdf
+  SECONDARY: https://marxandphilosophy.org.uk/reviews/8061_digital-labour-and-karl-marx-review-by-vladimir-rizov/
+
+[636]
+  ℹ️  PRIMARY URL is Archive.org details page - may be borrow-only
+  PRIMARY: https://archive.org/details/tosaveeverything0000moro
+  SECONDARY: https://www.nytimes.com/2013/05/19/books/review/to-save-everything-click-here-by-evgeny-morozov.html
+
+[637]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://law.unimelb.edu.au/__data/assets/pdf_file/0008/3290381/Couldry-and-Mejias-Preface-and-Ch-1.pdf
+  SECONDARY: https://eprints.lse.ac.uk/103447/1/impactofsocialsciences_2019_12_01_book_review_the_costs_of_connection.pdf
+
+[638]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://raley.english.ucsb.edu/wp-content/Engl800/Pasquale-blackbox.pdf
+  SECONDARY: https://www.researchgate.net/publication/346332114_Revisiting_the_Black_Box_Society_by_rethinking_the_political_economy_of_big_data
+
+[639]
+  ℹ️  PRIMARY URL is Archive.org details page - may be borrow-only
+  PRIMARY: https://archive.org/details/CSPAN2_20180714_214500_Jaron_Lanier_Ten_Arguments_for_Deleting_Your_Social_Media_Accounts_Right...
+  SECONDARY: https://www.nytimes.com/2018/06/13/books/review/jaron-lanier-ten-arguments-for-deleting-your-social-media-accounts-right-now.html
+
+[640]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.bls.gov/news.release/archives/metro_03212025.htm
+  SECONDARY: https://www.bls.gov/iag/tgs/iag31-33.htm
+
+[641]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.census.gov/quickfacts/youngstowncityohio
+  SECONDARY: https://worldpopulationreview.com/us-cities/youngstown-oh-population
+
+[642]
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.epi.org/publication/manufacturing-footprint/
+  SECONDARY: https://files.epi.org/pdf/179191.pdf
+
+[643]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.in2013dollars.com/
+  SECONDARY: https://data.bls.gov/cgi-bin/cpicalc.pl
+
+[644]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.ssa.gov/oact/STATS/dibStat.html
+  SECONDARY: https://www.ssa.gov/oact/STATS/dibStat.html
+
+[645]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.cdc.gov/nchs/data/databriefs/db457.pdf
+  SECONDARY: https://www.researchgate.net/publication/379770634_Association_between_pro-suicide_website_searches_through_Google_and_suicide_death_in_the_United_States_from_2010-2021_Preprint/fulltext/67019d41869f1104c6cc600c/Association-between-pro-suicide-website-searches-through-Google-and-suicide-death-in-the-United-States-from-2010-2021-Preprint.pdf?origin=scientificContributions
+
+[646]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.brookings.edu/articles/where-jobs-disappeared-america-moved-right/Secondary
+  SECONDARY: https://www.nber.org/papers/w23139
+
+[647]
+  PRIMARY: https://www.pewresearch.org/journalism/2021/05/07/alternative-news-sources/
+  SECONDARY: https://www.journalism.org/2021/05/07/methodology-alternative-news-sources/
+
+[648]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.fec.gov/data/browse-data/?tab=geography
+  SECONDARY: https://www.fec.gov/data/receipts/individual-contributions/
+
+[649]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.nber.org/system/files/working_papers/w28358/w28358.pdf
+  SECONDARY: https://eprints.lse.ac.uk/112034/1/europpblog_2021_08_15_book_review_deaths_of_despair_and_the_future_of.pdf
+
+[650]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://static1.squarespace.com/static/5c4e01265ffd2087e37a51c7/t/5c51d7d67ba7fc7060463b06/1548867543483/What+the+future+of+work+will+mean+for+jobs%2C+skills%2C+and+wages_+Jobs+lost%2C+jobs+gained+_+McKinsey+%26+Company.pdf
+  SECONDARY: https://www.dicomstandard.org/docs/librariesprovider2/dicomdocuments/wp-cotent/uploads/2018/10/day1_s4_artificial_intelligence_l-sim_.pdf?sfvrsn=c126248e_4
+
+[651]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://we.riseup.net/assets/533560/Zuboff%2C+Shoshana.The+Age+of+Surveillance+Capitalism.2019.pdf
+  SECONDARY: https://antipodeonline.org/wp-content/uploads/2019/10/Book-review_Whitehead-on-Zuboff.pdf
+
+[652]
+  ℹ️  PRIMARY URL is Archive.org details page - may be borrow-only
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://archive.org/details/filterbubblewhat0000pari
+  SECONDARY: https://journals.uic.edu/ojs/index.php/fm/article/view/4100/3268
+
+[653]
+  ✅ PRIMARY URL looks good (excellent)
+  PRIMARY: https://press.uchicago.edu/dam/ucp/books/pdf/course_intro/978-0-226-52454-2_course_intro.pdf
+  SECONDARY: https://academic.oup.com/poq/article-abstract/83/2/475/5513886
+
+[700]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.annualreviews.org/content/journals/10.1146/annurev-psych-010213-115137
+  SECONDARY: https://ed.stanford.edu/faculty/gcohen
+
+[701]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://dukespace.lib.duke.edu/bitstreams/c55d87f1-2f28-408d-9f2c-efbc4da85990/download
+  SECONDARY: https://scholars.duke.edu/person/mark.leary
+
+[702]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1016/j.envsci.2018.06.007
+  SECONDARY: https://www.ncbi.nlm.nih.gov/pubmed/33282011
+
+[703]
+  ℹ️  PRIMARY URL is Archive.org details page - may be borrow-only
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://archive.org/details/hownottospeakofg0000pete
+  SECONDARY: https://www.academia.edu/87471000/Negative_Theology_A_Short_Introduction
+
+[704]
+  PRIMARY: https://www.coloradoclimatecollaborative.org/impact-report-2023
+  SECONDARY: https://www.denverpost.com/2023/04/15/colorado-climate-collaborative-bridging-divides/
+
+[705]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1177/0098628321990615
+  SECONDARY: https://www.psych.ucsb.edu/graduate/paradigm-pluralism
+
+[706]
+  ✅ PRIMARY URL looks good (excellent)
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: http://edl.emi.gov.et/jspui/bitstream/123456789/159/1/Diagnosing%20and%20Changing%20Organizational%20Culture%20Based%20on%20the%20Competing%20Values%20Framework%20%28%20PDFDrive%20%29.pdf
+  SECONDARY: https://onlinelibrary.wiley.com/doi/10.1111/j.1744-6570.2006.00052_5.x
+
+[707]
+  ⚠️  PRIMARY URL is on paywall domain - may need replacement
+  PRIMARY: https://www.tandfonline.com/doi/full/10.1080/10584609.2018.1561563
+  SECONDARY: https://journals.sagepub.com/doi/full/10.1080/10584609.2018.1561563
+
+[708]
+  PRIMARY: https://www.startribune.com/incumbent-jacob-frey-declared-winner-in-minneapolis-mayoral-race/600112652
+  SECONDARY: https://www.pbs.org/newshour/politics/jacob-frey-wins-2nd-term-as-minneapolis-mayor-after-bitter-race
+
+[709]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.theatlantic.com/politics/archive/2022/11/jared-polis-colorado-governor-pragmatic-progressive/
+  SECONDARY: https://www.colorado.gov/governor/news/jared-polis-pragmatic-governance
+
+[710]
+  ⚠️  PRIMARY URL is on paywall domain - may need replacement
+  PRIMARY: https://onlinelibrary.wiley.com/doi/10.1111/ssqu.12651
+  SECONDARY: https://www.fairvote.org/research_rcvbenefits
+
+[711]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://www.researchgate.net/publication/283544944_The_Development_and_Validation_of_the_Comprehensive_Intellectual_Humility_Scale
+  SECONDARY: https://psy.usz.edu.pl/wp-content/uploads/Pokora_Intelektualna.pdf
+
+[712]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.perlego.com/book/950415/simply-complexity-a-clear-guide-to-complexity-theory-pdf
+  SECONDARY: https://www.santafe.edu/research/results/books/simply-complexity
+
+[713]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://mindfulnessinschools.org/wp-content/uploads/2017/09/Mindfulness-APPG-Report_Mindful-Nation-UK_Oct2015-1.pdf
+  SECONDARY: https://www.researchgate.net/publication/322521306_Mindfulness_under_neoliberal_governmentality_critiquing_the_operation_of_biopower_in_corporate_mindfulness_and_constructing_queer_alternatives
+
+[714]
+  PRIMARY: https://www.themindfulnessinitiative.org
+  SECONDARY: https://www.garrisoninstitute.org/social-change/mindfulness-and-politics/
+
+[715]
+  ✅ PRIMARY URL looks good (excellent)
+  PRIMARY: https://cognitionandculture.net/wp-content/uploads/Preachers-who-are-not-Believers.pdf
+  SECONDARY: https://www.clergyproject.org/research
+
+[716]
+  PRIMARY: https://www.clergyproject.org/aboutSecondary
+  SECONDARY: https://www.patheos.com/blogs/friendlyatheist/clergy-project-milestone
+
+[717]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.bls.gov/oes/current/oes212011.htm
+  SECONDARY: https://www.bls.gov/ooh/community-and-social-service/religious-workers.htm
+
+[718]
+  PRIMARY: https://www.pewresearch.org/politics/2020/09/14/americans-views-of-government-low-trust-but-some-positive-performance-ratings/
+  SECONDARY: https://www.pewresearch.org/politics/datasets/
+
+[719]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://iop.harvard.edu/youth-poll/spring-2023-poll
+  SECONDARY: https://www.hks.harvard.edu/centers/iop/about/newsletter-press-release/spring-2023-harvard-youth-poll
+
+[720]
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://knightfoundation.org/reports/young-americans-and-news/
+  SECONDARY: https://knightfoundation.org/wp-content/uploads/2023/02/American-Views-2022-Pt-2-Trust-Media-and-Democracy.pdf
+
+[721]
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://doi.org/10.1111/bjso.12254
+  SECONDARY: https://bpspsychub.onlinelibrary.wiley.com/journal/20448309
+
+[722]
+  PRIMARY: https://www.livingroomconversations.org/impact-report
+  SECONDARY: https://www.bridgealliance.us/living_room_conversations
+
+[723]
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://braverangels.org/what-we-do/research/
+  SECONDARY: https://braverangels.org/wp-content/uploads/2022/01/BA-2020-2021-Report-1.pdf
+
+[724]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.31219/osf.io/3x7z8
+  SECONDARY: https://www.researchgate.net/publication/351466420_Can_Americans_Depolarize_Assessing_the_Effects_of_Reciprocal_Group_Reflection_on_Partisan_Polarization
+
+[725]
+  PRIMARY: https://www.whatisessential.org/about/history
+  SECONDARY: https://www.publicconversations.org/legacy
+
+[726]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.whatisessential.org/resources/talking-with-enemy
+  SECONDARY: https://www.bu.edu/wcp/Papers/Poli/PoliFowl.htm
+
+[727]
+  PRIMARY: https://doi.org/10.1177/0261927X17706960
+  SECONDARY: https://journals.sagepub.com/doi/full/10.1177/0261927X17706960
+
+[728]
+  PRIMARY: https://global.oup.com/academic/product/how-organizations-develop-activists-9780199336760
+  SECONDARY: https://www.oxfordscholarship.com/view/10.1093/acprof:oso/9780199336760.001.0001/
+
+[729]
+  PRIMARY: https://doi.org/10.1037/0003-066X.34.10.906
+  SECONDARY: https://www.semanticscholar.org/paper/Metacognition-and-Cognitive-Monitoring:-A-New-Area-Flavell/ee652f0f63ed5b0cfe0af4cb4ea76b2ecf790c8d
+
+[730]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.3102/00346543067001088
+  SECONDARY: https://www.researchgate.net/publication/228436803_The_Development_of_Epistemological_Theories_Beliefs_About_Knowledge_and_Knowing_and_Their_Relation_to_Learning
+
+[731]
+  PRIMARY: https://doi.org/10.1037/0033-2909.108.3.480
+  SECONDARY: https://www.semanticscholar.org/paper/The-case-for-motivated-reasoning.-Kunda/329a0178e56350cf27b41e4cde9c8e278854ec32
+
+[732]
+  ✅ SECONDARY URL looks good (excellent)
+  PRIMARY: https://doi.org/10.1126/science.1089134
+  SECONDARY: https://www.scn.ucla.edu/pdf/Eisenberger(2003).pdf
+
+[733]
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://doi.org/10.1007/s12115-020-00506-2Secondary
+  SECONDARY: https://link.springer.com/journal/12115
+
+[734]
+  PRIMARY: https://doi.org/10.1037/0022-3514.90.5.751
+  SECONDARY: https://www.apa.org/pubs/journals/psp
+
+[735]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1080/10781910701839767
+  SECONDARY: https://scholar.harvard.edu/hckelman/publications
+
+[736]
+  PRIMARY: https://doi.org/10.1037/0033-295X.103.2.263
+  SECONDARY: https://www.apa.org/pubs/journals/rev
+
+[737]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1111/j.1467-8721.2009.01649.xSecondary
+  SECONDARY: https://www.kellogg.northwestern.edu/faculty/galinsky/
+
+[738]
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://doi.org/10.1002/ejsp.2420180303
+  SECONDARY: https://onlinelibrary.wiley.com/journal/10990992
+
+[739]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.connectedthebook.com/
+  SECONDARY: https://www.researchgate.net/publication/258568206_Nickolas_A_Christakis_and_James_H_Fowler_2009_Connected_The_Surprising_Power_of_our_Social_Networks_and_How_they_Shape_our_Lives_Little_Brown_New_York_NY_353_pages
+
+[740]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1371/journal.pone.0147617
+  SECONDARY: https://www.isi.edu/people/lerman/
+
+[741]
+  PRIMARY: https://doi.org/10.1073/pnas.1418188112
+  SECONDARY: https://www.pnas.org/doi/10.1073/pnas.1418188112
+
+[742]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.press.umich.edu/226731/threes_a_crowd
+  SECONDARY: https://doi.org/10.3998/mpub.226731
+
+[743]
+  PRIMARY: https://www.opensecrets.org/elections-overview/cost-of-election
+  SECONDARY: https://www.opensecrets.org/news/reports/
+
+[744]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1073/pnas.1618923114
+  SECONDARY: https://www.researchgate.net/publication/317947723_Emotion_shapes_the_diffusion_of_moralized_content_in_social_networks
+
+[745]
+  PRIMARY: https://www.nielsen.com/insights/2023/state-of-cable-news/
+  SECONDARY: https://www.journalism.org/fact-sheet/cable-news/
+
+[746]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1111/j.2044-8309.1994.tb01008.x
+  SECONDARY: https://www.academia.edu/24513053/The_Role_of_Stereotyping_in_System_Justification_and_the_Production_of_False_Consciousness
+
+[747]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://press.uchicago.edu/ucp/books/book/chicago/P/bo3684255.html
+  SECONDARY: https://archive.org/details/persecutionandtheartofwritstraussleo
+
+[748]
+  PRIMARY: https://doi.org/10.1016/j.pmedr.2018.10.003
+  SECONDARY: https://www.jeantwenge.com/research/
+
+[749]
+  PRIMARY: https://doi.org/10.1017/bpp.2016.2
+  SECONDARY: https://www.culturalcognition.net/kahan/
+
+[750]
+  PRIMARY: https://www.sup.org/books/title/?id=3850
+  SECONDARY: https://archive.org/details/theoryofcognitiv0000fest
+
+[751]
+  PRIMARY: https://www.worldcat.org/title/social-psychology-of-intergroup-relations/oclc/4194174Secondary
+  SECONDARY: https://www.scribd.com/document/414283115/Tajfel-Turner-1979-An-Integrative-Theory-of-Intergroup-Conflict-pdf
+
+[752]
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://doi.org/10.1111/j.1540-5907.2006.00214.x
+  SECONDARY: https://www.jstor.org/stable/3694247
+
+[800]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.congress.gov/congressional-record/2017/10/24/senate-section
+  SECONDARY: https://www.jeffflake.com/conscience-of-a-conservative-speech/
+
+[801]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.3389/fendo.2023.1085950
+  SECONDARY: https://pmc.ncbi.nlm.nih.gov/articles/PMC10025564/
+
+[802]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.sup.org/books/title/?id=3850
+  SECONDARY: https://plato.stanford.edu/entries/cognitive-dissonance/
+
+[803]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1016/j.cpr.2009.07.003Secondary
+  SECONDARY: https://www.ptsd.va.gov/professional/treat/cooccurring/moral_injury.asp
+
+[804]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.speaker.gov/press-release/speaker-ryan-s-announcement
+  SECONDARY: https://www.politico.com/story/2018/04/11/paul-ryan-retirement-decision-515077
+
+[805]
+  PRIMARY: https://www.penguinrandomhouse.com/books/317498/emotional-agility-by-susan-david/
+  SECONDARY: https://www.susandavid.com/emotional-agility
+
+[806]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1093/oxfordhb/9780195342819.013.0018
+  SECONDARY: https://liberalarts.utexas.edu/psychology/faculty/pennebak
+
+[807]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.washingtonpost.com/opinions/justin-amash-our-politics-is-in-a-partisan-death-spiral-thats-why-im-leaving-the-gop/2019/07/04/
+  SECONDARY: https://amash.house.gov/press-releases
+
+[808]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.azcentral.com/story/opinion/op-ed/kyrsten-sinema/2022/12/09/why-im-changing-my-party-affiliation-independent/10857183002/
+  SECONDARY: https://www.sinema.senate.gov/
+
+[809]
+  PRIMARY: https://www.opensecrets.org/news/reports/congressional-retirement-trends
+  SECONDARY: https://www.opensecrets.org/elections-overview/retirement-analysis
+
+[810]
+  PRIMARY: https://doi.org/10.1017/CBO9781139032490Secondary
+  SECONDARY: https://www.cambridge.org/core/books/rationalizing-voter/9781139032490
+
+[816]
+  ✅ PRIMARY URL looks good (excellent)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.supremecourt.gov/opinions/09pdf/08-205.pdf
+  SECONDARY: https://www.fec.gov/legal-resources/court-cases/citizens-united-v-fec/
+
+[817]
+  PRIMARY: https://www.opensecrets.org/dark-money/basics
+  SECONDARY: https://www.opensecrets.org/news/reports/dark-money/
+
+[818]
+  PRIMARY: https://www.routledge.com/Political-Advertising-in-the-United-States/book/9780367199234
+  SECONDARY: https://www.wesleyanmediaproject.org/
+
+[819]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.press.umich.edu/7150644/campaign_finance_and_political_polarizationSecondary
+  SECONDARY: https://doi.org/10.3998/mpub.7150644
+
+[820]
+  PRIMARY: https://www.simonandschuster.com/books/The-Final-Days/Bob-Woodward/9780743274005
+  SECONDARY: https://www.washingtonpost.com/politics/the-final-days-watergate/
+
+[821]
+  PRIMARY: https://www.penguinrandomhouse.com/books/200071/the-passage-of-power-by-robert-a-caro/
+  SECONDARY: https://www.lbjlibrary.org/exhibits/civil-rights-act-1964
+
+[822]
+  ✅ PRIMARY URL looks good (good)
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.lehigh.edu/~ineng/lup/books/rising.html
+  SECONDARY: https://www.justice.gov/enrd/history/muskie-chafee-award
+
+[823]
+  PRIMARY: https://www.nytimes.com/books/first/b/baker-margin.html
+  SECONDARY: https://bipartisanpolicy.org/person/howard-baker/
+
+[824]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://press.georgetown.edu/book/georgetown/challenges-leadership-defense-policy
+  SECONDARY: https://www.nti.org/about/people/sam-nunn/
+
+[825]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.basicbooks.com/titles/thomas-e-mann/its-even-worse-than-it-looks/9780465074006/Secondary
+  SECONDARY: https://www.brookings.edu/articles/its-even-worse-than-it-looks/
+
+[826]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://history.house.gov/Historical-Highlights/1951-2000/The-first-television-broadcast-of-House-proceedings/
+  SECONDARY: https://www.c-span.org/about/history/
+
+[827]
+  PRIMARY: https://www.theatlantic.com/magazine/archive/2018/11/newt-gingrich-says-youre-welcome/570832/
+  SECONDARY: https://www.pbs.org/wgbh/pages/frontline/newt/
+
+[828]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.nytimes.com/1988/05/22/books/too-funny-to-be-president.html
+  SECONDARY: https://www.uapress.arizona.edu/books/bid1547.htm
+
+[829]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.penguinrandomhouse.com/books/arrogance-of-power/
+  SECONDARY: https://www.senate.gov/senators/FeaturedBios/Featured_Bio_Fulbright.htm
+
+[830]
+  PRIMARY: https://www.nytimes.com/1969/01/12/archives/the-year-of-the-people-by-eugene-j-mccarthy.html
+  SECONDARY: https://www.eugeneandabigailmccarthy.org/
+
+[831]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.penguinrandomhouse.com/books/man-of-the-house/
+  SECONDARY: https://www.reaganlibrary.gov/archives/speech/remarks-presenting-congressional-gold-medal-thomas-p-oneill-jr
+
+[832]
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://uncpress.org/book/9780807896006/
+  SECONDARY: https://www.jstor.org/stable/10.5149/9780807896006_matthews
+
+[833]
+  PRIMARY: https://infrastructurereportcard.org/
+  SECONDARY: https://www.asce.org/advocacy/infrastructure/
+
+[834]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://problemsolverscaucus.house.gov/
+  SECONDARY: https://www.nolabels.org/problem-solvers-caucus/
+
+[835]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://www.c-span.org/video/?452394-1/
+  SECONDARY: https://www.whitehouse.gov/briefing-room/speeches-remarks/
+
+[836]
+  PRIMARY: https://www.facebook.com/watch/live/?v=10154996330950877
+  SECONDARY: https://www.texastribune.org/2017/03/31/beto-orourke-will-hurd-road-trip/
+
+[837]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.congress.gov/congressional-record/2021/05/12/
+  SECONDARY: https://cheneyforwyoming.com/
+
+[838]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://crsreports.congress.gov/product/pdf/R/R40113
+  SECONDARY: https://www.everycrsreport.com/reports/R40113.html
+
+[839]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://doi.org/10.1038/s41562-019-0549-y
+  SECONDARY: https://pmc.ncbi.nlm.nih.gov/articles/PMC12185346/
+
+[840]
+  ✅ PRIMARY URL looks good (good)
+  PRIMARY: https://www.usgs.gov/news/national-news-release/usgs-louisianas-rate-coastal-wetland-loss-continues-slow
+  SECONDARY: https://www.factcheck.org/2017/03/land-loss-in-louisiana/
+
+[841]
+  PRIMARY: https://www.citizen.org/article/fossil-favors/
+  SECONDARY: https://www.opensecrets.org/members-of-congress/steve-scalise/summary?cid=N00009660
+
+[842]
+  PRIMARY: https://www.osc.state.ny.us/reports/securities-industry-new-york-city
+  SECONDARY: https://www.osc.state.ny.us/press/releases/2023/10/dinapoli-wall-street-profits
+
+[843]
+  ✅ SECONDARY URL looks good (good)
+  PRIMARY: https://issueone.org/articles/the-118th-congress-fundraising-treadmill/
+  SECONDARY: https://www.fec.gov/updates/statistical-summary-of-21-month-campaign-activity-of-the-2023-2024-election-cycle/
+
+[844]
+  PRIMARY: https://www.brennancenter.org/our-work/research-reports/small-donor-public-financing-explained
+  SECONDARY: https://www.americanprogress.org/article/small-donor-antidote-big-donor-politics/
+
+[845]
+  PRIMARY: https://blog.x.com/en_us/topics/company/2021/rml-politicalcontent
+  SECONDARY: https://www.pnas.org/doi/10.1073/pnas.2025334119
+
+[846]
+  ⚠️  SECONDARY URL is on paywall domain
+  PRIMARY: https://doi.org/10.1080/10584609.2010.542360
+  SECONDARY: https://www.tandfonline.com/doi/abs/10.1080/10584609.2010.542360
+
