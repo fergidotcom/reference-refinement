@@ -127,7 +127,8 @@ async def fetch_with_redirects(url: str, max_redirects: int = 5, max_bytes: int 
                 url,
                 allow_redirects=True,
                 max_redirects=max_redirects,
-                timeout=aiohttp.ClientTimeout(total=10)
+                timeout=aiohttp.ClientTimeout(total=10),
+                ssl=False  # Disable SSL verification to avoid certificate errors
             ) as response:
                 status = response.status
                 headers = dict(response.headers)
