@@ -5,9 +5,7 @@
 node_modules/
 
 # Database and outputs (large files, generate locally)
-outputs/experiments.db
-outputs/checkpoints/
-outputs/results/
+outputs/
 
 # IDE
 .vscode/
