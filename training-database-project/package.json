@@ -2,9 +2,9 @@
   "name": "training-database-project",
   "version": "1.0.0",
   "description": "Context-aware reference training database with rich semantic relevance text",
-  "type": "module",
   "main": "index.js",
   "scripts": {
+    "auto-collect": "node harvesting/auto-collect.js",
     "harvest": "node harvesting/document-collector.js && node harvesting/citation-extractor.js && node harvesting/context-analyzer.js && node harvesting/relevance-generator.js",
     "collect": "node harvesting/document-collector.js",
     "extract": "node harvesting/citation-extractor.js",
@@ -24,7 +24,8 @@
   "author": "Fergi",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.0"
+    "@anthropic-ai/sdk": "^0.32.0",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {},
   "engines": {
