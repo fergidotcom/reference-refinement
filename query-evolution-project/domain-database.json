@@ -1,0 +1,537 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2025-11-11",
+    "description": "Domain intelligence database - accessibility, authority, and domain-specific strategies",
+    "entry_count": 75,
+    "will_expand_to": "500+ domains during experiment run"
+  },
+  "domains": {
+    "arxiv.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "preprint",
+      "boost": 25,
+      "notes": "Physics, CS, math preprints - always free full-text PDFs"
+    },
+    "ssrn.com": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "preprint",
+      "boost": 25,
+      "notes": "Social science preprints - registration required but free"
+    },
+    "biorxiv.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "preprint",
+      "boost": 25,
+      "notes": "Biology preprints - free full-text"
+    },
+    "osf.io": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "research_data",
+      "boost": 25,
+      "notes": "Open Science Framework - datasets and preprints"
+    },
+    "census.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "government_data",
+      "boost": 35,
+      "notes": "US Census Bureau - authoritative demographic data"
+    },
+    "bls.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "government_data",
+      "boost": 35,
+      "notes": "Bureau of Labor Statistics - employment/wage data"
+    },
+    "fec.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "government_data",
+      "boost": 35,
+      "notes": "Federal Election Commission - campaign finance data"
+    },
+    "nih.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "medical",
+      "boost": 35,
+      "notes": "National Institutes of Health - medical research"
+    },
+    "cdc.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "medical",
+      "boost": 35,
+      "notes": "Centers for Disease Control - public health data"
+    },
+    "ncbi.nlm.nih.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "medical",
+      "boost": 35,
+      "notes": "PubMed Central - free full-text medical articles"
+    },
+    "loc.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "archive",
+      "boost": 30,
+      "notes": "Library of Congress - historical documents"
+    },
+    "archives.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "government",
+      "boost": 35,
+      "notes": "National Archives - government documents"
+    },
+    "gpo.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "government",
+      "boost": 35,
+      "notes": "Government Printing Office - federal publications"
+    },
+    "scholar.google.com": {
+      "accessibility": "mixed",
+      "authority": "high",
+      "content_type": "academic_search",
+      "boost": 20,
+      "notes": "Google Scholar - aggregator, links to various sources"
+    },
+    "jstor.org": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Academic journal archive - hard paywall"
+    },
+    "sciencedirect.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Elsevier journals - hard paywall"
+    },
+    "springer.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Springer journals - paywall"
+    },
+    "wiley.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Wiley journals - paywall"
+    },
+    "tandfonline.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Taylor & Francis journals - paywall"
+    },
+    "sagepub.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 25,
+      "notes": "SAGE journals - some open access"
+    },
+    "cambridge.org": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Cambridge University Press - paywall"
+    },
+    "oxfordacademic.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Oxford University Press - paywall"
+    },
+    "press.uchicago.edu": {
+      "accessibility": "mixed",
+      "authority": "highest",
+      "content_type": "academic_publisher",
+      "boost": 15,
+      "penalty": 20,
+      "notes": "University of Chicago Press - some preview"
+    },
+    "mitpress.mit.edu": {
+      "accessibility": "mixed",
+      "authority": "highest",
+      "content_type": "academic_publisher",
+      "boost": 15,
+      "penalty": 20,
+      "notes": "MIT Press - some open access"
+    },
+    "archive.org": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "archive",
+      "boost": 20,
+      "notes": "Internet Archive - free access, quality varies"
+    },
+    "web.archive.org": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "archive",
+      "boost": 20,
+      "notes": "Wayback Machine - archived snapshots"
+    },
+    "researchgate.net": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "academic_social",
+      "boost": 15,
+      "notes": "Academic social network - authors share papers"
+    },
+    "academia.edu": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "academic_social",
+      "boost": 15,
+      "notes": "Academic social network - paper sharing"
+    },
+    "nytimes.com": {
+      "accessibility": "paywall",
+      "authority": "high",
+      "content_type": "news",
+      "boost": 5,
+      "penalty": 25,
+      "notes": "New York Times - metered paywall"
+    },
+    "washingtonpost.com": {
+      "accessibility": "paywall",
+      "authority": "high",
+      "content_type": "news",
+      "boost": 5,
+      "penalty": 25,
+      "notes": "Washington Post - metered paywall"
+    },
+    "wsj.com": {
+      "accessibility": "paywall",
+      "authority": "high",
+      "content_type": "news",
+      "boost": 5,
+      "penalty": 30,
+      "notes": "Wall Street Journal - hard paywall"
+    },
+    "economist.com": {
+      "accessibility": "paywall",
+      "authority": "high",
+      "content_type": "news",
+      "boost": 5,
+      "penalty": 30,
+      "notes": "The Economist - hard paywall"
+    },
+    "ft.com": {
+      "accessibility": "paywall",
+      "authority": "high",
+      "content_type": "news",
+      "boost": 5,
+      "penalty": 30,
+      "notes": "Financial Times - hard paywall"
+    },
+    "brookings.edu": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "think_tank",
+      "boost": 25,
+      "notes": "Brookings Institution - free research"
+    },
+    "rand.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "think_tank",
+      "boost": 25,
+      "notes": "RAND Corporation - free research reports"
+    },
+    "aei.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "think_tank",
+      "boost": 25,
+      "notes": "American Enterprise Institute - free research"
+    },
+    "pewresearch.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "think_tank",
+      "boost": 30,
+      "notes": "Pew Research Center - excellent free data"
+    },
+    "nber.org": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "economic_research",
+      "boost": 30,
+      "notes": "National Bureau of Economic Research - working papers"
+    },
+    "imf.org": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "economic_data",
+      "boost": 35,
+      "notes": "International Monetary Fund - free reports"
+    },
+    "worldbank.org": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "economic_data",
+      "boost": 35,
+      "notes": "World Bank - free development data"
+    },
+    "oecd.org": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "economic_data",
+      "boost": 35,
+      "notes": "OECD - free international data"
+    },
+    "un.org": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "international",
+      "boost": 35,
+      "notes": "United Nations - free reports and data"
+    },
+    "who.int": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "medical",
+      "boost": 35,
+      "notes": "World Health Organization - free health data"
+    },
+    "c-span.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "video_transcript",
+      "boost": 25,
+      "notes": "C-SPAN - congressional proceedings and transcripts"
+    },
+    "congress.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "government",
+      "boost": 35,
+      "notes": "Library of Congress - congressional documents"
+    },
+    "supremecourt.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "legal",
+      "boost": 35,
+      "notes": "US Supreme Court - opinions and transcripts"
+    },
+    "justia.com": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "legal",
+      "boost": 25,
+      "notes": "Legal database - free case law"
+    },
+    "law.cornell.edu": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "legal",
+      "boost": 30,
+      "notes": "Cornell Legal Information Institute - free legal resources"
+    },
+    "doi.org": {
+      "accessibility": "redirect",
+      "authority": "highest",
+      "content_type": "doi_resolver",
+      "boost": 0,
+      "notes": "DOI resolver - redirects to publisher (may be paywalled)"
+    },
+    "nature.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Nature - prestigious but hard paywall"
+    },
+    "science.org": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Science - prestigious but hard paywall"
+    },
+    "cell.com": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 10,
+      "penalty": 30,
+      "notes": "Cell - biomedical research, hard paywall"
+    },
+    "pnas.org": {
+      "accessibility": "mixed",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 20,
+      "penalty": 15,
+      "notes": "PNAS - some articles freely available after 6 months"
+    },
+    "plos.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "academic_journal",
+      "boost": 30,
+      "notes": "PLOS - open access journals"
+    },
+    "frontiersin.org": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "academic_journal",
+      "boost": 28,
+      "notes": "Frontiers - open access journals"
+    },
+    "mdpi.com": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "academic_journal",
+      "boost": 28,
+      "notes": "MDPI - open access journals"
+    },
+    "biomedcentral.com": {
+      "accessibility": "free",
+      "authority": "high",
+      "content_type": "academic_journal",
+      "boost": 28,
+      "notes": "BioMed Central - open access"
+    },
+    "elifesciences.org": {
+      "accessibility": "free",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 30,
+      "notes": "eLife - open access, highly selective"
+    },
+    "annualreviews.org": {
+      "accessibility": "paywall",
+      "authority": "highest",
+      "content_type": "academic_journal",
+      "boost": 15,
+      "penalty": 25,
+      "notes": "Annual Reviews - comprehensive reviews, paywall"
+    },
+    "amazon.com": {
+      "accessibility": "commercial",
+      "authority": "medium",
+      "content_type": "book_sales",
+      "boost": 5,
+      "penalty": 10,
+      "notes": "Amazon - book sales pages, limited preview"
+    },
+    "google.com/books": {
+      "accessibility": "preview",
+      "authority": "medium",
+      "content_type": "book_preview",
+      "boost": 10,
+      "penalty": 5,
+      "notes": "Google Books - limited preview, sometimes full text"
+    },
+    "hathitrust.org": {
+      "accessibility": "mixed",
+      "authority": "high",
+      "content_type": "digital_library",
+      "boost": 25,
+      "notes": "HathiTrust - academic digital library, public domain books free"
+    },
+    "gutenberg.org": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "ebooks",
+      "boost": 20,
+      "notes": "Project Gutenberg - public domain books"
+    },
+    "youtube.com": {
+      "accessibility": "free",
+      "authority": "low",
+      "content_type": "video",
+      "boost": 10,
+      "notes": "YouTube - videos, quality varies widely"
+    },
+    "vimeo.com": {
+      "accessibility": "free",
+      "authority": "low",
+      "content_type": "video",
+      "boost": 10,
+      "notes": "Vimeo - videos, quality varies"
+    },
+    "ted.com": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "video",
+      "boost": 15,
+      "notes": "TED Talks - curated talks"
+    },
+    "wikipedia.org": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "encyclopedia",
+      "boost": 10,
+      "penalty": 5,
+      "notes": "Wikipedia - useful for finding citations, not primary source"
+    },
+    "wikimedia.org": {
+      "accessibility": "free",
+      "authority": "medium",
+      "content_type": "media",
+      "boost": 15,
+      "notes": "Wikimedia Commons - free media files"
+    }
+  },
+  "domain_patterns": {
+    "*.gov": {
+      "accessibility": "free",
+      "authority": "highest",
+      "boost": 35,
+      "notes": "US government domains - highly authoritative and free"
+    },
+    "*.edu": {
+      "accessibility": "mixed",
+      "authority": "high",
+      "boost": 20,
+      "notes": "Educational institutions - quality varies"
+    },
+    "*.ac.uk": {
+      "accessibility": "mixed",
+      "authority": "high",
+      "boost": 20,
+      "notes": "UK academic institutions"
+    },
+    "*.org": {
+      "accessibility": "varies",
+      "authority": "medium",
+      "boost": 10,
+      "notes": "Organizations - evaluate case by case"
+    }
+  },
+  "notes": "This database will expand to 500+ domains during the experiment run as new domains are encountered."
+}

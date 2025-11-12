@@ -1,0 +1,29 @@
+# Environment variables (contains API keys)
+.env
+
+# Node modules
+node_modules/
+
+# Database and outputs (large files, generate locally)
+outputs/experiments.db
+outputs/checkpoints/
+outputs/results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp

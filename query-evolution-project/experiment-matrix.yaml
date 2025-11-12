@@ -1,0 +1,382 @@
+# Query Evolution Project - Experiment Matrix
+# Defines which experiments to run and how to allocate budget
+
+meta:
+  version: "1.0"
+  created: "2025-11-11"
+  execution_mode: "adaptive"
+  description: "Start with defined experiments, adapt based on early results"
+  adapted_scope: "Compare new strategies against current v20.1 URLs to find improvements"
+
+# ============================================================================
+# BUDGET & COST MANAGEMENT
+# ============================================================================
+
+budget:
+  available: 900
+  target_spend: 630
+  reserve: 270
+  stop_if_under: 50
+
+cost_per_experiment:
+  query_generation: 0.05    # Claude API call to generate query
+  search: 0.02              # Google Custom Search API
+  ranking: 0.10             # Claude API call to rank results
+  validation: 0.03          # URL validation (HEAD + content check)
+  total_avg: 0.20           # Average per experiment
+
+# ============================================================================
+# EXPERIMENT TIERS
+# ============================================================================
+
+tiers:
+
+  # --------------------------------------------------------------------------
+  # Tier 1: MANUAL_REVIEW References (Highest Priority)
+  # --------------------------------------------------------------------------
+
+  tier_1_manual_review:
+    priority: 1
+    description: "References flagged for manual review - most challenging"
+
+    selection:
+      filter: "FLAGS contains MANUAL_REVIEW"
+      source: "inputs/manual-review-refs.json"
+      expected_count: 30
+      actual_count: 30   # Confirmed by extraction
+
+    experiments_per_ref:
+      query_strategies: 8
+      ranking_algorithms: 5
+      validation_mode: "deep"
+      total_combinations: 40
+
+    total_experiments: 1200   # 30 refs × 40 combos
+    estimated_cost: 240        # $0.20 × 1,200
+    estimated_time_hours: 3.0
+
+    strategies_to_test:
+      - "unquoted_full_title"           # Baseline (current v20.1)
+      - "title_keywords_5_terms"        # Claude-powered keyword extraction
+      - "government_site_specific"      # Government data strategy
+      - "free_pdf_search"               # Free access priority
+      - "institutional_repository"      # University repositories
+      - "preprint_arxiv"                # Preprint servers
+      - "author_website"                # Personal websites
+      - "archive_org_search"            # Internet Archive
+
+    success_criteria:
+      improvement_threshold: 0.30      # 30% better quality score
+      target: "Find strategies that work for difficult refs"
+      comparison_baseline: "current_v20"
+
+  # --------------------------------------------------------------------------
+  # Tier 2: Edge Cases (Long Titles, Complex References)
+  # --------------------------------------------------------------------------
+
+  tier_2_edge_cases:
+    priority: 2
+    description: "References with long titles, multiple authors, or special formats"
+
+    selection:
+      filter: "title_length > 80 OR complex structure"
+      source: "inputs/all-reference-sets.json → edgeCases"
+      expected_count: 61
+      sample_size: 40    # Sample 40 of the 61 edge cases
+
+    experiments_per_ref:
+      query_strategies: 6
+      ranking_algorithms: 5
+      validation_mode: "deep"
+      total_combinations: 30
+
+    total_experiments: 1200   # 40 refs × 30 combos
+    estimated_cost: 240        # $0.20 × 1,200
+    estimated_time_hours: 3.0
+
+    strategies_to_test:
+      - "unquoted_full_title"        # Baseline
+      - "title_first_60_chars"       # Truncated title
+      - "title_keywords_5_terms"     # Keyword extraction
+      - "title_core_phrase"          # Core phrase extraction
+      - "plus_best_2_from_tier_1"    # Adaptive: add top 2 from Tier 1
+
+    success_criteria:
+      improvement_threshold: 0.20
+      target: "Handle edge cases better than v20.1"
+      comparison_baseline: "current_v20"
+
+  # --------------------------------------------------------------------------
+  # Tier 3: Random Validation Sample
+  # --------------------------------------------------------------------------
+
+  tier_3_validation:
+    priority: 3
+    description: "Random sample to validate improvements don't hurt good refs"
+
+    selection:
+      filter: "RANDOM selection from all references"
+      expected_count: 30
+      sampling_strategy: "stratified"   # Ensure diverse reference types
+
+    experiments_per_ref:
+      query_strategies: 2
+      ranking_algorithms: 5
+      validation_mode: "standard"
+      total_combinations: 10
+
+    total_experiments: 300    # 30 refs × 10 combos
+    estimated_cost: 60         # $0.20 × 300
+    estimated_time_hours: 0.75
+
+    strategies_to_test:
+      - "unquoted_full_title"              # Current baseline
+      - "best_strategy_from_tier_1"        # Winner from Tier 1
+
+    success_criteria:
+      no_regression: true
+      target: "Ensure improvements don't hurt already-good refs"
+      comparison_baseline: "current_v20"
+
+  # --------------------------------------------------------------------------
+  # Tier 4: Adaptive Deep Dive (Budget Permitting)
+  # --------------------------------------------------------------------------
+
+  tier_4_adaptive:
+    priority: 4
+    description: "Adaptive allocation based on early results"
+    conditional: "Run only if budget remaining > $200"
+
+    selection:
+      filter: "Dynamic - based on Tier 1-2 analysis"
+      expected_count: 20
+      selection_strategy: |
+        - If certain reference types show major improvements: test more of that type
+        - If specific domains perform poorly: test alternative strategies
+        - If paywall issues dominate: focus on free alternative strategies
+
+    experiments_per_ref:
+      query_strategies: "adaptive (5-10)"
+      ranking_algorithms: "adaptive (3-5)"
+      validation_mode: "full_content"
+      total_combinations: "variable (15-30)"
+
+    total_experiments: "300-600"   # Variable
+    estimated_cost: "60-120"        # Variable
+    estimated_time_hours: "0.75-1.5"
+
+    strategies_to_test:
+      - "top_3_performers_from_tiers_1_2"
+      - "specialized_strategies_for_problem_types"
+
+    success_criteria:
+      maximize_learning: true
+      target: "Deep understanding of winning strategies"
+
+# ============================================================================
+# ADAPTIVE STRATEGY
+# ============================================================================
+
+adaptive_strategy:
+
+  checkpoint_interval: 100
+  description: "Analyze and adapt after every 100 experiments"
+
+  actions_at_checkpoint:
+    - "Identify top 5 performing strategies"
+    - "Identify bottom 5 performing strategies"
+    - "Calculate improvement rates by reference type"
+    - "Identify domain-specific patterns"
+    - "Reallocate remaining budget to top performers"
+    - "Skip bottom performers in remaining tiers"
+    - "Update cost/benefit projections"
+
+  budget_management:
+    check_at_each_checkpoint: true
+    stop_conditions:
+      - "Budget remaining < $50"
+      - "All Tier 1 complete + Tier 2 complete + budget < $200"
+      - "Clear winning strategies identified + budget < $300"
+
+  learning_adjustments:
+    if_winning_strategy_found:
+      action: "Increase testing on similar strategies"
+      budget_shift: "+30% allocation to winner cluster"
+
+    if_no_improvements_found:
+      action: "Try more diverse strategies"
+      budget_shift: "Explore untested strategies"
+
+    if_budget_running_low:
+      action: "Focus only on Tier 1 completion"
+      skip_tiers: [3, 4]
+
+    if_domain_patterns_emerge:
+      action: "Build domain intelligence database"
+      priority: "Document domain-specific findings"
+
+# ============================================================================
+# COMPARISON FRAMEWORK
+# ============================================================================
+
+comparison_framework:
+  description: "How to compare new URLs against current v20.1 URLs"
+
+  metrics:
+    accessibility_score:
+      free_source: 100
+      free_with_registration: 80
+      paywall_with_preview: 40
+      hard_paywall: 0
+
+    authority_score:
+      gov_domain: 100
+      edu_domain: 90
+      peer_reviewed_journal: 85
+      academic_publisher: 75
+      news_organization: 60
+      academic_social_network: 50
+      unknown: 25
+
+    content_quality_score:
+      full_text_pdf: 100
+      full_text_html: 90
+      abstract_only: 40
+      table_of_contents: 30
+      landing_page: 20
+      soft_404: 0
+
+    title_match_score:
+      exact_match: 100
+      high_similarity: 80
+      medium_similarity: 60
+      low_similarity: 30
+      no_match: 0
+
+  composite_score:
+    formula: "(accessibility × 0.35) + (authority × 0.25) + (content × 0.25) + (match × 0.15)"
+    threshold_for_improvement: 20  # New URL must score 20+ points higher
+
+  decision_rules:
+    new_url_wins_if:
+      - "composite_score_improvement >= 20"
+      - "AND new_url_validated = true"
+      - "AND (accessibility_improvement >= 30 OR content_improvement >= 30)"
+
+    current_v20_wins_if:
+      - "composite_score_improvement < 20"
+      - "OR new_url_failed_validation = true"
+
+    tie_goes_to:
+      rationale: "current_v20 (proven to work)"
+
+# ============================================================================
+# SUCCESS METRICS
+# ============================================================================
+
+success_metrics:
+
+  primary_goals:
+    - metric: "Improve MANUAL_REVIEW success rate"
+      baseline: "0% (all flagged for manual review)"
+      target: "30%+ find URLs scoring 80+"
+      measurement: "Count refs where new strategy finds quality URLs"
+
+    - metric: "Identify optimal ranking weights"
+      baseline: "current_v20 weights"
+      target: "Identify if different weights perform better"
+      measurement: "Compare ranking algorithm performance"
+
+    - metric: "Build domain intelligence database"
+      baseline: "~50 known domains"
+      target: "500+ domains with metadata"
+      measurement: "Count unique domains + accessibility/authority tags"
+
+    - metric: "Project overall success rate improvement"
+      baseline: "88% (current v20.1 performance)"
+      target: "93%+ projected"
+      measurement: "Extrapolate from sample improvements"
+
+  secondary_goals:
+    - "Understand query generation patterns"
+    - "Classify reference types automatically"
+    - "Document edge case handling strategies"
+    - "Create v21.0 implementation roadmap"
+
+  minimum_viable_outcome:
+    experiments_completed: 1500
+    tiers_completed: ["tier_1", "tier_2"]
+    findings: "Actionable improvements for at least 2 reference categories"
+    cost: "≤ $900"
+
+# ============================================================================
+# EXECUTION SEQUENCE
+# ============================================================================
+
+execution_sequence:
+
+  phase_1_tier_1:
+    experiments: 1200
+    time: "3 hours"
+    checkpoints: [100, 200, 500, 800, 1000, 1200]
+    output: "Tier 1 analysis → top 5 strategies identified"
+
+  phase_2_adapt:
+    action: "Analyze Tier 1 results"
+    time: "15 minutes"
+    output: "Strategy rankings, domain patterns, adapted plan for Tier 2"
+
+  phase_3_tier_2:
+    experiments: 1200
+    time: "3 hours"
+    checkpoints: [100, 200, 500, 800, 1000, 1200]
+    output: "Tier 2 analysis → edge case strategies"
+
+  phase_4_validation:
+    experiments: 300
+    time: "45 minutes"
+    checkpoints: [150, 300]
+    output: "Validation complete → no regression confirmed"
+
+  phase_5_adaptive:
+    experiments: "0-600 (budget dependent)"
+    time: "0-1.5 hours"
+    output: "Deep dive results → comprehensive domain intelligence"
+
+  phase_6_analysis:
+    action: "Generate comprehensive reports"
+    time: "30 minutes"
+    output: "Executive summary + detailed analysis + v21.0 spec"
+
+total_estimated_time: "6-8 hours"
+total_estimated_experiments: "2,700-3,300"
+total_estimated_cost: "$540-660"
+
+# ============================================================================
+# NOTES FOR CLAUDE CODE WEB
+# ============================================================================
+
+implementation_notes: |
+
+  **Execution Priority:**
+  1. Tier 1 is CRITICAL - these are the hardest references
+  2. Tier 2 is IMPORTANT - edge cases need special handling
+  3. Tier 3 is VALIDATION - ensure no regression
+  4. Tier 4 is OPTIONAL - run only if budget and time allow
+
+  **Budget Discipline:**
+  - Track spend in real-time
+  - Checkpoint every 100 experiments
+  - Stop if approaching $900
+  - Prioritize learning over completion
+
+  **Quality Over Quantity:**
+  - Better to deeply understand 2,000 experiments
+  - Than superficially run 3,500 experiments
+  - Focus on actionable insights for v21.0
+
+  **Adaptive Learning:**
+  - Don't be rigid about the plan
+  - If clear winners emerge early, pivot
+  - If certain strategies consistently fail, skip them
+  - Let the data guide the execution

@@ -1,0 +1,438 @@
+# Query Evolution Project - Strategies Catalog
+# Complete catalog of query generation and ranking strategies to test
+
+meta:
+  version: "1.0"
+  created: "2025-11-11"
+  purpose: "Test 3,150+ query/ranking combinations to discover optimal URL discovery algorithms"
+  adapted_goal: "Compare new strategies against current v20.1 URLs to find improvements"
+
+# ============================================================================
+# QUERY GENERATION STRATEGIES (30+)
+# ============================================================================
+
+query_strategies:
+
+  # -----------------------------------------------------------------------
+  # Category 1: Title Variations (10 strategies)
+  # -----------------------------------------------------------------------
+
+  - id: "unquoted_full_title"
+    category: "title_variation"
+    template: "{title} {author}"
+    cost_multiplier: 1.0
+    description: "Current v20.1 approach - no quotes on title"
+    baseline: true
+
+  - id: "quoted_full_title"
+    category: "title_variation"
+    template: '"{title}" {author}'
+    cost_multiplier: 1.0
+    description: "Quoted title for exact match"
+
+  - id: "title_first_60_chars"
+    category: "title_variation"
+    template: "{title[:60]} {author}"
+    cost_multiplier: 1.0
+    description: "Abbreviated for long titles"
+    applicable_to: ["title_length > 80"]
+
+  - id: "title_keywords_5_terms"
+    category: "title_variation"
+    template: "{extract_keywords(title, 5)} {author}"
+    cost_multiplier: 1.2
+    description: "Extract 5 most distinctive keywords from title"
+    requires_claude: true
+
+  - id: "title_no_subtitle"
+    category: "title_variation"
+    template: "{title.split(':')[0]} {author}"
+    cost_multiplier: 1.0
+    description: "Remove subtitle after colon"
+    applicable_to: ["has_subtitle"]
+
+  - id: "title_core_phrase"
+    category: "title_variation"
+    template: "{most_distinctive_phrase(title)} {author}"
+    cost_multiplier: 1.2
+    description: "Most distinctive 3-5 word phrase"
+    requires_claude: true
+
+  - id: "title_first_10_words"
+    category: "title_variation"
+    template: "{first_10_words(title)} {author}"
+    cost_multiplier: 1.0
+    description: "First 10 words only"
+    applicable_to: ["title_length > 60"]
+
+  - id: "title_unique_terms"
+    category: "title_variation"
+    template: "{unique_terms(title)} {author}"
+    cost_multiplier: 1.0
+    description: "Remove common words, keep unique terms"
+
+  - id: "title_proper_nouns"
+    category: "title_variation"
+    template: "{extract_proper_nouns(title)} {author}"
+    cost_multiplier: 1.1
+    description: "Extract proper nouns and distinctive terms"
+    requires_claude: true
+
+  - id: "title_acronyms"
+    category: "title_variation"
+    template: "{title} {extract_acronyms(title)} {author}"
+    cost_multiplier: 1.0
+    description: "Include acronym expansions"
+    applicable_to: ["has_acronyms"]
+
+  # -----------------------------------------------------------------------
+  # Category 2: Context Additions (8 strategies)
+  # -----------------------------------------------------------------------
+
+  - id: "title_author_year"
+    category: "context_addition"
+    template: "{title} {author} {year}"
+    cost_multiplier: 1.0
+    description: "Add publication year"
+
+  - id: "title_author_institution"
+    category: "context_addition"
+    template: "{title} {author} {institution}"
+    cost_multiplier: 1.1
+    description: "Use institution instead of/with author"
+    applicable_to: ["has_institution"]
+
+  - id: "title_journal"
+    category: "context_addition"
+    template: "{title} {journal_name}"
+    cost_multiplier: 1.0
+    description: "Include journal name"
+    applicable_to: ["journal_article"]
+
+  - id: "title_publisher"
+    category: "context_addition"
+    template: "{title} {publisher}"
+    cost_multiplier: 1.0
+    description: "Include publisher name"
+    applicable_to: ["academic_book"]
+
+  - id: "title_conference"
+    category: "context_addition"
+    template: "{title} {conference_name} {year}"
+    cost_multiplier: 1.0
+    description: "Include conference name"
+    applicable_to: ["conference_paper"]
+
+  - id: "doi_search"
+    category: "context_addition"
+    template: "DOI {doi}"
+    cost_multiplier: 0.8
+    description: "Direct DOI search"
+    applicable_to: ["has_doi"]
+
+  - id: "isbn_search"
+    category: "context_addition"
+    template: "ISBN {isbn} {title}"
+    cost_multiplier: 0.8
+    description: "Direct ISBN search"
+    applicable_to: ["has_isbn"]
+
+  - id: "citation_format"
+    category: "context_addition"
+    template: '"{author}" "{year}" "{title}" "{journal}"'
+    cost_multiplier: 1.0
+    description: "Full citation format with quotes"
+
+  # -----------------------------------------------------------------------
+  # Category 3: Special Strategies (12 strategies)
+  # -----------------------------------------------------------------------
+
+  - id: "government_site_specific"
+    category: "special_strategy"
+    template: "site:{domain} {data_type} {time_period} {geography}"
+    cost_multiplier: 1.0
+    description: "Specialized for government databases"
+    applicable_to: ["government_report", "government_data"]
+    examples:
+      - "site:bls.gov clergy wages 2023"
+      - "site:fec.gov disbursements Massachusetts 2020"
+      - "site:census.gov population data 2020"
+
+  - id: "free_pdf_search"
+    category: "special_strategy"
+    template: "{title} {author} PDF free download"
+    cost_multiplier: 1.0
+    description: "Explicitly search for free versions"
+
+  - id: "institutional_repository"
+    category: "special_strategy"
+    template: "{title} {author} institutional repository"
+    cost_multiplier: 1.0
+    description: "Find university-hosted versions"
+
+  - id: "preprint_arxiv"
+    category: "special_strategy"
+    template: "{title} {author} preprint arxiv"
+    cost_multiplier: 1.0
+    description: "Search preprint servers"
+    applicable_to: ["journal_article", "computer_science", "physics"]
+
+  - id: "preprint_ssrn"
+    category: "special_strategy"
+    template: "{title} {author} SSRN working paper"
+    cost_multiplier: 1.0
+    description: "Search social science preprint server"
+    applicable_to: ["economics", "finance", "social_science"]
+
+  - id: "author_website"
+    category: "special_strategy"
+    template: "{author} {title} personal website"
+    cost_multiplier: 1.0
+    description: "Authors often host PDFs on personal sites"
+
+  - id: "google_scholar"
+    category: "special_strategy"
+    template: "site:scholar.google.com {title} {author}"
+    cost_multiplier: 0.9
+    description: "Search via Google Scholar"
+
+  - id: "researchgate_academia"
+    category: "special_strategy"
+    template: "(site:researchgate.net OR site:academia.edu) {title} {author}"
+    cost_multiplier: 1.0
+    description: "Search academic social networks"
+
+  - id: "speech_transcript"
+    category: "special_strategy"
+    template: "{speaker} {quote_fragment} transcript"
+    cost_multiplier: 1.0
+    description: "Search for speech transcripts"
+    applicable_to: ["speech", "quote"]
+
+  - id: "video_transcript"
+    category: "special_strategy"
+    template: "site:c-span.org {speaker} {date} transcript"
+    cost_multiplier: 1.0
+    description: "Search C-SPAN video archive"
+    applicable_to: ["speech", "congressional_hearing"]
+
+  - id: "archive_org_search"
+    category: "special_strategy"
+    template: "site:archive.org {title} {author}"
+    cost_multiplier: 1.0
+    description: "Search Internet Archive for dead links or old versions"
+
+  - id: "legal_database"
+    category: "special_strategy"
+    template: "(site:justia.com OR site:law.cornell.edu) {case_name} {year}"
+    cost_multiplier: 1.0
+    description: "Search legal databases"
+    applicable_to: ["legal_case", "court_decision"]
+
+# ============================================================================
+# RANKING ALGORITHMS (5 approaches)
+# ============================================================================
+
+ranking_algorithms:
+
+  - id: "current_v20"
+    description: "Current production algorithm (v20.1)"
+    baseline: true
+    weights:
+      full_text: 40
+      format: 20
+      authority: 20
+      match: 10
+      access: 10
+    scoring:
+      full_text_threshold: 0.7
+      pdf_bonus: 15
+      paywall_penalty: 30
+      domain_authority_boost: 10
+
+  - id: "accessibility_first"
+    description: "Prioritize free, accessible sources over authority"
+    weights:
+      accessibility: 50
+      full_text: 25
+      authority: 15
+      match: 10
+    scoring:
+      free_bonus: 30
+      paywall_penalty: 50
+      pdf_bonus: 20
+      domain_authority_boost: 5
+    rationale: "Test if free access matters more than prestige"
+
+  - id: "title_match_heavy"
+    description: "Prioritize close title matches over other factors"
+    weights:
+      title_similarity: 40
+      full_text: 25
+      accessibility: 20
+      authority: 15
+    scoring:
+      exact_match_bonus: 30
+      partial_match_bonus: 15
+      paywall_penalty: 20
+      pdf_bonus: 10
+    rationale: "Test if precise title matching improves quality"
+
+  - id: "domain_authority"
+    description: "Trust established sources (journals, .gov, .edu)"
+    weights:
+      domain_reputation: 40
+      accessibility: 25
+      full_text: 20
+      match: 15
+    scoring:
+      gov_bonus: 35
+      edu_bonus: 30
+      journal_bonus: 25
+      paywall_penalty: 15
+    rationale: "Test if authoritative sources are best even with paywalls"
+
+  - id: "balanced_v21"
+    description: "Proposed optimal balance for v21.0"
+    weights:
+      accessibility: 35
+      domain_authority: 25
+      title_match: 20
+      full_text: 20
+    scoring:
+      free_bonus: 25
+      gov_edu_bonus: 20
+      exact_match_bonus: 20
+      paywall_penalty: 35
+    rationale: "Hypothesized ideal weights based on v20.1 learnings"
+
+# ============================================================================
+# VALIDATION MODES (3 levels)
+# ============================================================================
+
+validation_modes:
+
+  - id: "standard"
+    description: "Standard validation (v20.1 level)"
+    checks:
+      - "http_status"
+      - "content_type"
+      - "soft_404"
+    time_ms: 800
+    cost_multiplier: 1.0
+
+  - id: "deep"
+    description: "Deep validation with paywall detection"
+    checks:
+      - "http_status"
+      - "content_type"
+      - "soft_404"
+      - "paywall"
+      - "login_required"
+    time_ms: 1200
+    cost_multiplier: 1.3
+
+  - id: "full_content"
+    description: "Full content analysis with quality scoring"
+    checks:
+      - "http_status"
+      - "content_type"
+      - "soft_404"
+      - "paywall"
+      - "login_required"
+      - "quality_score"
+      - "citation_format_detection"
+    time_ms: 2000
+    cost_multiplier: 1.6
+
+# ============================================================================
+# DOMAIN INTELLIGENCE PATTERNS
+# ============================================================================
+
+domain_patterns:
+
+  # Preprint servers (free, boost)
+  preprint_servers:
+    domains: ["arxiv.org", "ssrn.com", "osf.io", "biorxiv.org"]
+    accessibility: "free"
+    authority: "high"
+    boost: 25
+
+  # Government sources (free, highest authority)
+  government:
+    domains: ["*.gov", "census.gov", "bls.gov", "fec.gov", "nih.gov"]
+    accessibility: "free"
+    authority: "highest"
+    boost: 35
+
+  # Academic institutions (mixed access)
+  academic:
+    domains: ["*.edu", "scholar.google.com"]
+    accessibility: "mixed"
+    authority: "high"
+    boost: 20
+
+  # Paywall publishers (high authority, poor access)
+  paywalled_publishers:
+    domains: ["jstor.org", "sciencedirect.com", "springer.com", "wiley.com"]
+    accessibility: "paywall"
+    authority: "high"
+    boost: 10
+    penalty: 30
+
+  # News organizations (mixed)
+  news:
+    domains: ["nytimes.com", "washingtonpost.com", "economist.com"]
+    accessibility: "paywall"
+    authority: "medium"
+    boost: 5
+    penalty: 25
+
+  # Academic social networks (free, mixed quality)
+  academic_social:
+    domains: ["researchgate.net", "academia.edu"]
+    accessibility: "free"
+    authority: "medium"
+    boost: 15
+
+  # Internet Archive (free, varies)
+  archive:
+    domains: ["archive.org", "web.archive.org"]
+    accessibility: "free"
+    authority: "varies"
+    boost: 10
+
+# ============================================================================
+# EXPERIMENT EXECUTION NOTES
+# ============================================================================
+
+execution_notes: |
+
+  **Budget Management:**
+  - Target spend: $630 (conservative)
+  - Maximum spend: $900 (available)
+  - Cost per experiment: ~$0.20 (query gen + search + ranking + validation)
+  - Checkpoint every 50 experiments
+  - Adaptive allocation based on early results
+
+  **Quality Comparison:**
+  For each reference, compare:
+  1. Current v20.1 URLs (baseline)
+  2. New strategy-discovered URLs
+  3. Accessibility (free vs paywall)
+  4. Authority (domain reputation)
+  5. Content quality (full-text vs abstract)
+
+  **Success Metrics:**
+  - Find URLs with 20%+ higher quality scores
+  - Increase accessibility rate (free sources)
+  - Reduce paywall penalties
+  - Build domain intelligence database (500+ domains)
+  - Project v21.0 improvement: 88% → 93%+ success rate
+
+  **Adaptive Strategy:**
+  After 100 experiments:
+  - Identify top 5 performing strategies
+  - Identify bottom 5 strategies
+  - Reallocate budget to winners
+  - Skip losers in remaining tiers

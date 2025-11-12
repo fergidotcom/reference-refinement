@@ -1,0 +1,34 @@
+{
+  "name": "query-evolution-project",
+  "version": "1.0.0",
+  "description": "Query Evolution Project - Test 3,000+ query/ranking combinations to discover optimal URL discovery algorithms",
+  "type": "module",
+  "main": "experiment-runner.js",
+  "scripts": {
+    "start": "node experiment-runner.js",
+    "extract": "node extract-references.js",
+    "analyze": "node analysis-framework.js",
+    "test": "echo \"No tests configured yet\""
+  },
+  "keywords": [
+    "reference-refinement",
+    "query-optimization",
+    "url-discovery",
+    "ai-research"
+  ],
+  "author": "Fergi (Query Evolution Research)",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^9.2.2",
+    "js-yaml": "^4.1.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fergidotcom/reference-refinement.git"
+  }
+}
