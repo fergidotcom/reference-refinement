@@ -1,0 +1,82 @@
+{
+  "timestamp": "2025-11-12T18:50:05.322Z",
+  "strategy": {
+    "academic_papers": {
+      "arxiv": {
+        "disciplines": [
+          "physics",
+          "cs",
+          "math",
+          "biology",
+          "economics"
+        ],
+        "papers_per_discipline": 4,
+        "total": 20
+      },
+      "pubmed_central": {
+        "disciplines": [
+          "medicine",
+          "public_health",
+          "psychology"
+        ],
+        "papers_per_discipline": 5,
+        "total": 15
+      },
+      "google_scholar": {
+        "disciplines": [
+          "social_sciences",
+          "humanities"
+        ],
+        "papers_per_discipline": 5,
+        "total": 10
+      }
+    },
+    "government_reports": {
+      "federal": {
+        "agencies": [
+          "BLS",
+          "Census",
+          "FEC",
+          "NIH",
+          "EPA"
+        ],
+        "reports_per_agency": 3,
+        "total": 15
+      },
+      "international": {
+        "organizations": [
+          "WHO",
+          "World_Bank",
+          "OECD",
+          "UN"
+        ],
+        "reports_per_org": 3,
+        "total": 12
+      }
+    },
+    "news_articles": {
+      "major_newspapers": {
+        "sources": [
+          "NYTimes",
+          "WSJ",
+          "WaPo"
+        ],
+        "articles_per_source": 5,
+        "total": 15
+      },
+      "international": {
+        "sources": [
+          "BBC",
+          "Reuters",
+          "Guardian"
+        ],
+        "articles_per_source": 3,
+        "total": 9
+      }
+    }
+  },
+  "collected": [],
+  "errors": [],
+  "completed": "2025-11-12T18:50:05.332Z",
+  "collected_count": 0
+}
