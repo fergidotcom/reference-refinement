@@ -1,0 +1,383 @@
+# Training Database Collection Strategy
+#
+# Defines source categories, targets, and collection methods
+# for harvesting 300 diverse academic references with rich context
+
+source_categories:
+
+  # Academic Papers: 90 references
+  academic_papers:
+    total_target: 90
+
+    arxiv:
+      disciplines:
+        - physics
+        - cs
+        - math
+        - biology
+        - economics
+      papers_per_discipline: 4
+      total: 20
+      access_method: "arXiv API or direct download"
+      url_pattern: "https://arxiv.org/abs/{id}"
+      selection_criteria:
+        - "Review articles or survey papers (cite 50+ sources)"
+        - "Recent publications (2020-2025)"
+        - "Open access PDFs available"
+        - "Clear bibliography sections"
+
+    pubmed_central:
+      disciplines:
+        - medicine
+        - public_health
+        - psychology
+      papers_per_discipline: 5
+      total: 15
+      access_method: "PubMed Central API or PMC open access subset"
+      url_pattern: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{id}/"
+      selection_criteria:
+        - "Meta-analyses or systematic reviews (rich bibliographies)"
+        - "Open access full-text available"
+        - "Structured reference lists"
+
+    google_scholar:
+      disciplines:
+        - social_sciences
+        - humanities
+      papers_per_discipline: 5
+      total: 10
+      access_method: "Manual search and download"
+      selection_criteria:
+        - "Highly-cited papers (500+ citations)"
+        - "Available as PDF or open access"
+        - "Comprehensive reference sections"
+
+    stem_journals:
+      sources:
+        - "Nature"
+        - "Science"
+        - "Cell"
+        - "PNAS"
+      papers_per_source: 5
+      total: 20
+      selection_criteria:
+        - "Review articles or perspectives"
+        - "Open access or accessible via institution"
+        - "Interdisciplinary topics preferred"
+
+    social_sciences:
+      sources:
+        - "American Sociological Review"
+        - "American Political Science Review"
+        - "Journal of Economic Perspectives"
+      papers_per_source: 5
+      total: 15
+      selection_criteria:
+        - "Theoretical or empirical review articles"
+        - "Extensive bibliographies (30+ references)"
+
+    humanities:
+      sources:
+        - "Literature review articles"
+        - "Historical analyses"
+        - "Philosophical surveys"
+      total: 10
+      selection_criteria:
+        - "Synthetic or comparative studies"
+        - "Rich in citations across time periods"
+
+  # Government & Data: 60 references
+  government_data:
+    total_target: 60
+
+    federal_agencies:
+      agencies:
+        - name: "Bureau of Labor Statistics"
+          abbr: "BLS"
+          reports: 3
+          url: "https://www.bls.gov"
+          report_types: ["Employment reports", "Labor statistics", "Economic indicators"]
+
+        - name: "U.S. Census Bureau"
+          abbr: "Census"
+          reports: 3
+          url: "https://www.census.gov"
+          report_types: ["Demographic reports", "American Community Survey", "Economic Census"]
+
+        - name: "Federal Election Commission"
+          abbr: "FEC"
+          reports: 3
+          url: "https://www.fec.gov"
+          report_types: ["Campaign finance reports", "Election statistics"]
+
+        - name: "National Institutes of Health"
+          abbr: "NIH"
+          reports: 3
+          url: "https://www.nih.gov"
+          report_types: ["Research reports", "Health statistics", "Policy briefs"]
+
+        - name: "Environmental Protection Agency"
+          abbr: "EPA"
+          reports: 3
+          url: "https://www.epa.gov"
+          report_types: ["Environmental assessments", "Regulatory reports"]
+
+        - name: "Congressional Research Service"
+          abbr: "CRS"
+          reports: 5
+          url: "https://crsreports.congress.gov"
+          report_types: ["Policy analyses", "Issue briefs"]
+
+        - name: "Government Accountability Office"
+          abbr: "GAO"
+          reports: 5
+          url: "https://www.gao.gov"
+          report_types: ["Audit reports", "Policy evaluations"]
+
+      total: 25
+      selection_criteria:
+        - "Reports with extensive references to academic literature"
+        - "Policy analyses citing multiple sources"
+        - "PDF format with extractable text"
+
+    international_organizations:
+      organizations:
+        - name: "World Health Organization"
+          abbr: "WHO"
+          reports: 5
+          url: "https://www.who.int"
+          report_types: ["Health reports", "Policy briefs", "Technical documents"]
+
+        - name: "World Bank"
+          abbr: "WB"
+          reports: 5
+          url: "https://www.worldbank.org"
+          report_types: ["Development reports", "Research papers", "Data reports"]
+
+        - name: "Organisation for Economic Co-operation and Development"
+          abbr: "OECD"
+          reports: 5
+          url: "https://www.oecd.org"
+          report_types: ["Economic surveys", "Policy studies"]
+
+        - name: "United Nations"
+          abbr: "UN"
+          reports: 5
+          url: "https://www.un.org"
+          report_types: ["Development reports", "Human rights reports"]
+
+      total: 20
+      selection_criteria:
+        - "Research-oriented reports with academic citations"
+        - "Available in English"
+        - "PDF format preferred"
+
+    state_local:
+      sources:
+        - "State government research bureaus"
+        - "City planning departments"
+        - "Local policy institutes"
+      total: 10
+      selection_criteria:
+        - "Reports citing academic research"
+        - "Data-driven policy analyses"
+
+    historical_archives:
+      sources:
+        - "Presidential libraries"
+        - "National Archives"
+        - "Historical societies"
+      total: 5
+      selection_criteria:
+        - "Digitized documents with references"
+        - "Historical research papers"
+
+  # News & Media: 60 references
+  news_media:
+    total_target: 60
+
+    major_newspapers:
+      sources:
+        - name: "The New York Times"
+          abbr: "NYT"
+          articles: 7
+          url: "https://www.nytimes.com"
+          article_types: ["Investigative reports", "Long-form journalism", "Sunday Review pieces"]
+
+        - name: "The Wall Street Journal"
+          abbr: "WSJ"
+          articles: 7
+          url: "https://www.wsj.com"
+          article_types: ["Economic analyses", "Business investigations", "Review section"]
+
+        - name: "The Washington Post"
+          abbr: "WaPo"
+          articles: 6
+          url: "https://www.washingtonpost.com"
+          article_types: ["Political investigations", "Data journalism", "Outlook section"]
+
+      total: 20
+      selection_criteria:
+        - "Articles with inline citations or references"
+        - "Long-form investigative journalism (2000+ words)"
+        - "Includes links to source materials"
+
+    international_media:
+      sources:
+        - name: "BBC"
+          articles: 5
+          url: "https://www.bbc.com"
+
+        - name: "Reuters"
+          articles: 5
+          url: "https://www.reuters.com"
+
+        - name: "The Guardian"
+          articles: 5
+          url: "https://www.theguardian.com"
+
+      total: 15
+      selection_criteria:
+        - "In-depth features with source citations"
+        - "Explainer articles referencing studies"
+
+    political_speeches:
+      sources:
+        - "Presidential speeches"
+        - "Congressional testimony"
+        - "Press conference transcripts"
+      total: 15
+      selection_criteria:
+        - "Speeches citing specific sources"
+        - "Policy addresses with referenced data"
+
+    opinion_analysis:
+      sources:
+        - name: "The Atlantic"
+          articles: 5
+
+        - name: "The New Yorker"
+          articles: 5
+
+      total: 10
+      selection_criteria:
+        - "Essays with extensive footnotes"
+        - "Long-form cultural criticism with references"
+
+  # Edge Cases: 90 references
+  edge_cases:
+    total_target: 90
+
+    long_titles:
+      description: "References with complex punctuation and long titles"
+      total: 25
+      examples:
+        - "Titles with colons, semicolons, and em-dashes"
+        - "Titles exceeding 150 characters"
+        - "Multi-part titles with subtitles"
+        - "Titles with special characters or formatting"
+
+    non_english:
+      description: "Non-English references with translations"
+      total: 20
+      languages:
+        - "French"
+        - "German"
+        - "Spanish"
+        - "Italian"
+        - "Japanese"
+      selection_criteria:
+        - "Titles in original language with English translation"
+        - "Mix of Latin and non-Latin scripts"
+        - "Diacritical marks and special characters"
+
+    multiple_authors:
+      description: "References with institutional or multiple authors"
+      total: 15
+      examples:
+        - "More than 10 authors (et al. usage)"
+        - "Corporate or institutional authors"
+        - "Working groups or committees as authors"
+        - "Anonymous or pseudonymous works"
+
+    historical_documents:
+      description: "Historical references requiring archives or special collections"
+      total: 15
+      examples:
+        - "Pre-1900 publications"
+        - "Rare books and manuscripts"
+        - "Historical newspapers and periodicals"
+        - "Government documents from distant past"
+
+    dead_links:
+      description: "References to ephemeral or no-longer-available content"
+      total: 15
+      examples:
+        - "Broken DOIs or moved URLs"
+        - "Defunct websites or organizations"
+        - "Retracted papers"
+        - "Gray literature with limited availability"
+
+# Collection Method Guidelines
+
+collection_methods:
+  academic:
+    preferred: "API access where available (arXiv, PubMed Central)"
+    fallback: "Manual download from institutional access or open repositories"
+    tools:
+      - "arXiv bulk download"
+      - "PubMed E-utilities API"
+      - "Google Scholar manual search"
+
+  government:
+    method: "Direct download from agency websites"
+    notes: "Most government documents are public domain"
+
+  news:
+    method: "Archive access or web scraping (respect robots.txt)"
+    notes: "May require subscription or library access"
+    alternatives: "Use Internet Archive for historical articles"
+
+# Citation Target Distribution
+
+citation_targets:
+  total_source_documents: 100
+  average_citations_per_document: 3-5
+  target_total_citations: 300
+
+  distribution:
+    academic_sources: 90      # 30%
+    government_data: 60       # 20%
+    news_media: 60            # 20%
+    edge_cases: 90            # 30%
+
+# Quality Criteria
+
+quality_criteria:
+  reference_completeness:
+    - "Complete author information"
+    - "Valid year (1900-2025)"
+    - "Non-empty title"
+    - "Publication venue identified"
+    - "No obvious parsing errors"
+
+  context_richness:
+    - "Citation findable in source document"
+    - "Surrounding context available (500+ words)"
+    - "Clear citation purpose"
+    - "Identifiable argumentative role"
+
+  diversity:
+    - "Multiple disciplines represented"
+    - "Mix of recent and historical references"
+    - "Various publication types (journal, book, report, news)"
+    - "Geographic diversity in sources"
+
+# Success Metrics
+
+success_metrics:
+  - "300 unique, high-quality references collected"
+  - "Rich contextual relevance text (200 words each)"
+  - "Comprehensive coverage of reference types"
+  - "All edge cases represented"
+  - "Ready for v21.0 algorithm optimization testing"

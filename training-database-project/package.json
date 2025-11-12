@@ -1,0 +1,42 @@
+{
+  "name": "training-database-project",
+  "version": "1.0.0",
+  "description": "Context-aware reference training database with rich semantic relevance text",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "harvest": "node harvesting/document-collector.js && node harvesting/citation-extractor.js && node harvesting/context-analyzer.js && node harvesting/relevance-generator.js",
+    "collect": "node harvesting/document-collector.js",
+    "extract": "node harvesting/citation-extractor.js",
+    "analyze": "node harvesting/context-analyzer.js",
+    "generate": "node harvesting/relevance-generator.js",
+    "estimate": "node harvesting/relevance-generator.js --estimate 300",
+    "validate": "bash -c 'echo \"Reference count:\" && grep -c \"^\\[\" outputs/TrainingDecisions.txt && echo \"Relevance count:\" && grep -c \"^Relevance:\" outputs/TrainingDecisions.txt && echo \"Training flag count:\" && grep -c \"FLAGS\\[TRAINING\\]\" outputs/TrainingDecisions.txt'"
+  },
+  "keywords": [
+    "training-database",
+    "reference-refinement",
+    "context-aware",
+    "academic-references",
+    "claude-api",
+    "relevance-generation"
+  ],
+  "author": "Fergi",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fergidotcom/reference-refinement.git",
+    "directory": "training-database-project"
+  },
+  "bugs": {
+    "url": "https://github.com/fergidotcom/reference-refinement/issues"
+  },
+  "homepage": "https://github.com/fergidotcom/reference-refinement/tree/training-database/training-database-project#readme"
+}
