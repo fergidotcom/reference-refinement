@@ -13,6 +13,7 @@
 import fs from 'fs/promises';
 import Database from 'better-sqlite3';
 import yaml from 'js-yaml';
+import fetch from 'node-fetch';
 
 // ============================================================================
 // CONFIGURATION
@@ -297,52 +298,287 @@ class ExperimentExecutor {
   }
 
   async generateQuery(reference, strategyId) {
-    // TODO: Implement query generation based on strategy template
-    // For now, return simple query
     const strategy = this.strategies.query_strategies.find(s => s.id === strategyId);
 
-    if (strategy.requires_claude) {
-      // Use Claude API for intelligent query generation
-      // Call CONFIG.API_ENDPOINTS.queryGen
-      return `${reference.title} ${reference.author}`;
-    } else {
-      // Use template
+    if (!strategy) {
+      console.warn(`Strategy ${strategyId} not found, using default`);
       return `${reference.title} ${reference.author}`;
     }
+
+    // If strategy requires Claude (keyword extraction, etc.)
+    if (strategy.requires_claude) {
+      try {
+        const prompt = `Given this reference, generate a search query following this strategy: "${strategy.description}"
+
+Reference:
+Title: ${reference.title}
+Author: ${reference.author || 'Unknown'}
+Year: ${reference.year || 'Unknown'}
+${reference.journal ? `Journal: ${reference.journal}` : ''}
+${reference.publisher ? `Publisher: ${reference.publisher}` : ''}
+
+Strategy: ${strategy.id}
+Instructions: ${strategy.template}
+
+Generate only the search query, nothing else. Be concise (max 80 chars).`;
+
+        const response = await fetch(CONFIG.API_ENDPOINTS.queryGen, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, model: 'claude-sonnet-4-20250514' })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          console.warn(`Query generation failed: ${data.error}`);
+          return `${reference.title} ${reference.author}`;
+        }
+
+        return data.result.trim();
+      } catch (error) {
+        console.error(`Query generation error: ${error.message}`);
+        return `${reference.title} ${reference.author}`;
+      }
+    }
+
+    // Use template-based generation
+    let query = strategy.template;
+
+    // Replace template variables
+    query = query.replace('{title}', reference.title || '');
+    query = query.replace('{author}', reference.author || '');
+    query = query.replace('{year}', reference.year || '');
+    query = query.replace('{journal_name}', reference.journal || '');
+    query = query.replace('{publisher}', reference.publisher || '');
+
+    // Handle truncation patterns
+    if (query.includes('{title[:60]}')) {
+      const shortTitle = (reference.title || '').substring(0, 60);
+      query = query.replace('{title[:60]}', shortTitle);
+    }
+
+    // Handle subtitle removal
+    if (query.includes("{title.split(':')[0]}")) {
+      const mainTitle = (reference.title || '').split(':')[0];
+      query = query.replace("{title.split(':')[0]}", mainTitle);
+    }
+
+    // Clean up extra spaces
+    query = query.replace(/\s+/g, ' ').trim();
+
+    return query;
   }
 
   async searchUrls(query) {
-    // TODO: Call Google Custom Search API via CONFIG.API_ENDPOINTS.search
-    // For now, return empty array
-    return [];
+    try {
+      const response = await fetch(CONFIG.API_ENDPOINTS.search, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.warn(`Search failed: ${data.error}`);
+        return [];
+      }
+
+      return data.results || [];
+    } catch (error) {
+      console.error(`Search error: ${error.message}`);
+      return [];
+    }
   }
 
   async rankUrls(urls, rankingId, reference) {
-    // TODO: Implement ranking based on algorithm weights
-    // Call CONFIG.API_ENDPOINTS.ranking
-    return urls;
+    if (!urls || urls.length === 0) {
+      return [];
+    }
+
+    try {
+      // Prepare candidates for ranking
+      const candidates = urls.map(url => ({
+        title: url.title,
+        url: url.url,
+        snippet: url.snippet || '',
+        displayUrl: url.displayUrl || ''
+      }));
+
+      // Call ranking endpoint
+      const response = await fetch(CONFIG.API_ENDPOINTS.ranking, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reference: {
+            title: reference.title,
+            authors: reference.author,
+            year: reference.year,
+            other: reference.journal || reference.publisher || '',
+            relevance: reference.relevance || ''
+          },
+          candidates,
+          model: 'claude-sonnet-4-20250514'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.warn(`Ranking failed: ${data.error}`);
+        return urls;
+      }
+
+      // Merge rankings with original URLs
+      const rankedUrls = data.rankings.map(ranking => {
+        const originalUrl = urls[ranking.index];
+        return {
+          ...originalUrl,
+          primary_score: ranking.primary_score,
+          secondary_score: ranking.secondary_score,
+          combined_score: ranking.combined_score,
+          title_match: ranking.title_match,
+          author_match: ranking.author_match,
+          recommended_as: ranking.recommended_as
+        };
+      });
+
+      // Sort by combined score (or primary score for primary candidates)
+      rankedUrls.sort((a, b) => (b.primary_score || 0) - (a.primary_score || 0));
+
+      return rankedUrls;
+    } catch (error) {
+      console.error(`Ranking error: ${error.message}`);
+      return urls;
+    }
   }
 
   async scoreUrl(url) {
     if (!url) return 0;
 
-    // TODO: Implement comprehensive URL scoring
-    // Check: accessibility, authority, content quality, title match
-    // Use domain database for boost/penalty values
-
-    let score = 50; // Base score
-
-    // Extract domain
-    const domain = new URL(url).hostname.replace('www.', '');
-
-    // Check domain database
-    const domainInfo = this.domains.domains[domain];
-    if (domainInfo) {
-      if (domainInfo.boost) score += domainInfo.boost;
-      if (domainInfo.penalty) score -= domainInfo.penalty;
+    // If url is a string, convert to object
+    if (typeof url === 'string') {
+      url = { url: url };
     }
 
-    return Math.max(0, Math.min(100, score));
+    try {
+      // Extract domain
+      const urlObj = new URL(url.url);
+      const domain = urlObj.hostname.replace('www.', '');
+      const path = urlObj.pathname.toLowerCase();
+
+      // Component scores (0-100)
+      let accessibilityScore = 50;
+      let authorityScore = 50;
+      let contentScore = 50;
+      let titleMatchScore = 50;
+
+      // 1. ACCESSIBILITY SCORE
+      const domainInfo = this.domains.domains[domain];
+      if (domainInfo) {
+        if (domainInfo.accessibility === 'free') {
+          accessibilityScore = 100;
+        } else if (domainInfo.accessibility === 'free_with_registration') {
+          accessibilityScore = 80;
+        } else if (domainInfo.accessibility === 'paywall_with_preview') {
+          accessibilityScore = 40;
+        } else if (domainInfo.accessibility === 'hard_paywall') {
+          accessibilityScore = 0;
+        }
+      } else {
+        // Heuristics for unknown domains
+        if (domain.endsWith('.gov') || domain.endsWith('.edu')) {
+          accessibilityScore = 90;
+        } else if (domain.includes('arxiv') || domain.includes('ssrn') || domain.includes('archive.org')) {
+          accessibilityScore = 100;
+        } else if (path.includes('/pdf') || path.endsWith('.pdf')) {
+          accessibilityScore = 75;
+        }
+      }
+
+      // 2. AUTHORITY SCORE
+      if (domainInfo) {
+        if (domainInfo.authority === 'highest') {
+          authorityScore = 100;
+        } else if (domainInfo.authority === 'high') {
+          authorityScore = 90;
+        } else if (domainInfo.authority === 'medium') {
+          authorityScore = 70;
+        } else if (domainInfo.authority === 'low') {
+          authorityScore = 40;
+        }
+      } else {
+        // Heuristics for authority
+        if (domain.endsWith('.gov')) {
+          authorityScore = 100;
+        } else if (domain.endsWith('.edu')) {
+          authorityScore = 90;
+        } else if (domain.includes('scholar.google') || domain.includes('doi.org')) {
+          authorityScore = 85;
+        } else if (domain.includes('researchgate') || domain.includes('academia.edu')) {
+          authorityScore = 70;
+        } else {
+          authorityScore = 50;
+        }
+      }
+
+      // 3. CONTENT QUALITY SCORE
+      // Use signals from ranking if available
+      if (url.primary_score !== undefined) {
+        contentScore = url.primary_score;
+      } else {
+        // Heuristics based on URL
+        if (path.endsWith('.pdf')) {
+          contentScore = 100;
+        } else if (path.includes('/abstract') || path.includes('/summary')) {
+          contentScore = 40;
+        } else if (path.includes('/toc') || path.includes('/contents')) {
+          contentScore = 30;
+        } else if (path.includes('/buy') || path.includes('/product')) {
+          contentScore = 20;
+        } else {
+          contentScore = 60; // Assume full HTML
+        }
+      }
+
+      // 4. TITLE MATCH SCORE
+      if (url.title_match) {
+        if (url.title_match === 'exact') {
+          titleMatchScore = 100;
+        } else if (url.title_match === 'high' || url.title_match === 'partial') {
+          titleMatchScore = 70;
+        } else if (url.title_match === 'medium') {
+          titleMatchScore = 50;
+        } else if (url.title_match === 'low') {
+          titleMatchScore = 30;
+        } else {
+          titleMatchScore = 0;
+        }
+      }
+
+      // Apply domain boosts/penalties from database
+      let boost = 0;
+      if (domainInfo) {
+        if (domainInfo.boost) boost += domainInfo.boost;
+        if (domainInfo.penalty) boost -= domainInfo.penalty;
+      }
+
+      // COMPOSITE SCORE FORMULA
+      // accessibility×0.35 + authority×0.25 + content×0.25 + match×0.15
+      const compositeScore = (
+        (accessibilityScore * 0.35) +
+        (authorityScore * 0.25) +
+        (contentScore * 0.25) +
+        (titleMatchScore * 0.15)
+      ) + boost;
+
+      return Math.max(0, Math.min(100, Math.round(compositeScore)));
+
+    } catch (error) {
+      console.error(`URL scoring error: ${error.message}`);
+      return 50; // Default score on error
+    }
   }
 }
 
@@ -351,10 +587,11 @@ class ExperimentExecutor {
 // ============================================================================
 
 class TierExecutor {
-  constructor(executor, db, matrix) {
+  constructor(executor, db, matrix, strategies) {
     this.executor = executor;
     this.db = db;
     this.matrix = matrix;
+    this.strategies = strategies;
   }
 
   async executeTier(tierName, references) {
@@ -363,7 +600,9 @@ class TierExecutor {
     console.log(`${'='.repeat(70)}`);
 
     const tierConfig = this.matrix.tiers[tierName];
-    const { strategies_to_test } = tierConfig.experiments_per_ref;
+
+    // Get all ranking algorithm IDs from strategies catalog
+    const rankingAlgorithms = this.strategies.ranking_algorithms.map(alg => alg.id);
 
     let tierExperiments = 0;
     let tierWins = 0;
@@ -372,7 +611,7 @@ class TierExecutor {
       console.log(`\n  📄 REF [${reference.id}]: ${reference.title.substring(0, 60)}...`);
 
       for (const strategyId of tierConfig.strategies_to_test) {
-        for (const rankingAlg of this.matrix.tiers[tierName].experiments_per_ref.ranking_algorithms || ['current_v20']) {
+        for (const rankingAlg of rankingAlgorithms) {
 
           const result = await this.executor.executeExperiment(
             reference,
@@ -476,7 +715,7 @@ async function main() {
 
   // Initialize executors
   const executor = new ExperimentExecutor(db, strategies, matrix, domains);
-  const tierExecutor = new TierExecutor(executor, db, matrix);
+  const tierExecutor = new TierExecutor(executor, db, matrix, strategies);
 
   // Execute tiers
   console.log('\n🚀 Starting experiments...\n');
@@ -490,8 +729,29 @@ async function main() {
 
   // Tier 3: Validation (if budget allows)
   if (executor.totalSpent < CONFIG.BUDGET.available - 100) {
-    // TODO: Sample 30 random references for validation
-    console.log('\n⏭️  Tier 3 (Validation) - Skipped (implement random sampling)');
+    // Load baseline to get all references
+    const baselineJson = await fs.readFile(CONFIG.INPUTS.baseline, 'utf-8');
+    const baseline = JSON.parse(baselineJson);
+
+    // Get IDs already used in Tier 1 and Tier 2
+    const usedIds = new Set([
+      ...manualReviewRefs.map(r => r.id),
+      ...edgeCasesSample.map(r => r.id)
+    ]);
+
+    // Get all other references
+    const availableRefs = baseline.references.filter(ref =>
+      !usedIds.has(ref.id) && ref.primaryUrl
+    );
+
+    // Random sample 30 references
+    const shuffled = availableRefs.sort(() => Math.random() - 0.5);
+    const validationSample = shuffled.slice(0, 30);
+
+    console.log(`\n✅ Sampled ${validationSample.length} references for Tier 3 validation`);
+    await tierExecutor.executeTier('tier_3_validation', validationSample);
+  } else {
+    console.log('\n⏭️  Tier 3 (Validation) - Skipped (insufficient budget)');
   }
 
   // Final summary
