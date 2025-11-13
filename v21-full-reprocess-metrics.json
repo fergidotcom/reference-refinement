@@ -1,0 +1,188 @@
+{
+  "total_processed": 113,
+  "improved": 17,
+  "degraded": 0,
+  "unchanged": 96,
+  "manual_review_removed": 2,
+  "strategy_usage": {
+    "title_keywords_5_terms": 16,
+    "plus_best_2_from_tier_1": 4,
+    "title_first_60_chars": 93,
+    "unquoted_full_title": 0
+  },
+  "improvements": [
+    {
+      "id": 634,
+      "title": "The daily you: How the new advertising industry is defining your identity and your worth",
+      "old_primary": "https://scalar.usc.edu/works/uiuc-macs410-media-information-ethics-/media/PDF_DailyYou_IntroC4.pdf",
+      "new_primary": "https://scalar.usc.edu/works/uiuc-macs410-media-information-ethics-/media/PDF_DailyYou_IntroC4.pdf",
+      "old_secondary": "https://www.tandfonline.com/doi/pdf/10.1080/15205436.2013.822520",
+      "new_secondary": "https://review.law.stanford.edu/wp-content/uploads/sites/3/2016/08/64-SLRO-70_0.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 635,
+      "title": "Digital labour and Karl Marx",
+      "old_primary": "https://fuchsc.net/wp-content/uploads/CF_value.pdf",
+      "new_primary": "https://fuchsc.net/wp-content/uploads/CF_value.pdf",
+      "old_secondary": "https://marxandphilosophy.org.uk/reviews/8061_digital-labour-and-karl-marx-review-by-vladimir-rizov/",
+      "new_secondary": "https://cinema.usc.edu/spectator/35.2/9_Bohrod.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 652,
+      "title": "The filter bubble: What the Internet is hiding from you",
+      "old_primary": "https://archive.org/details/filterbubblewhat0000pari_z3l4",
+      "new_primary": "https://www.amazon.com/Filter-Bubble-What-Internet-Hiding/dp/1594203008",
+      "old_secondary": "http://escholarship.ucop.edu/uc/item/8w7105jp",
+      "new_secondary": "https://escholarship.org/uc/item/8w7105jp",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 706,
+      "title": "Diagnosing and changing organizational culture: Based on the competing values framework (3rd ed) Jossey-Bass",
+      "old_primary": "http://edl.emi.gov.et/jspui/bitstream/123456789/159/1/Diagnosing%20and%20Changing%20Organizational%20Culture%20Based%20on%20the%20Competing%20Values%20Framework%20%28%20PDFDrive%20%29.pdf",
+      "new_primary": "https://www.semanticscholar.org/paper/Diagnosing-and-Changing-Organizational-Culture%3A-on-Cameron-Quinn/4123a70abb4ae0e357613930d8f1feb82ea7194e",
+      "old_secondary": "https://scholarship.shu.edu/cgi/viewcontent.cgi?article=1392&context=omj",
+      "new_secondary": "https://scholarship.shu.edu/cgi/viewcontent.cgi?article=1392&context=omj",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 707,
+      "title": "Opting out of political discussions",
+      "old_primary": "https://www.tandfonline.com/doi/full/10.1080/10584609.2018.1561563",
+      "new_primary": "https://moritzlaw.osu.edu/sites/default/files/2024-02/0.9%20Siebecker%20Disocurse%20Final.pdf",
+      "old_secondary": "https://sociologicalscience.com/download/vol_12/july/SocSci_v12_409to430.pdf",
+      "new_secondary": "https://sociologicalscience.com/download/vol_12/july/SocSci_v12_409to430.pdf",
+      "strategy": "title_keywords_5_terms",
+      "score_delta": 0
+    },
+    {
+      "id": 708,
+      "title": "All of the work around safety and accountability is complex",
+      "old_primary": "https://www.startribune.com/incumbent-jacob-frey-declared-winner-in-minneapolis-mayoral-race/600112652",
+      "new_primary": "https://www.mpd150.com/wp-content/uploads/reports/report_2_compressed.pdf",
+      "old_secondary": "https://www.mpd150.com/wp-content/uploads/reports/report_2_compressed.pdf",
+      "new_secondary": "https://icjia.illinois.gov/researchhub/articles/the-effectiveness-and-implications-of-police-reform-a-review-of-the-literature",
+      "strategy": "title_keywords_5_terms",
+      "score_delta": 0
+    },
+    {
+      "id": 715,
+      "title": "Preachers who are not believers",
+      "old_primary": "https://cognitionandculture.net/wp-content/uploads/Preachers-who-are-not-Believers.pdf",
+      "new_primary": "https://cognitionandculture.net/wp-content/uploads/Preachers-who-are-not-Believers.pdf",
+      "old_secondary": "https://secularismandnonreligion.org/articles/10.5334/snr.211",
+      "new_secondary": "https://albertmohler.com/2010/03/18/clergy-who-dont-believe-the-scandal-of-apostate-pastors/",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 731,
+      "title": "The case for motivated reasoning",
+      "old_primary": "https://fbaum.unc.edu/teaching/articles/Psych-Bulletin-1990-Kunda.pdf",
+      "new_primary": "https://fbaum.unc.edu/teaching/articles/Psych-Bulletin-1990-Kunda.pdf",
+      "old_secondary": "https://www.semanticscholar.org/paper/The-case-for-motivated-reasoning.-Kunda/329a0178e56350cf27b41e4cde9c8e278854ec32",
+      "new_secondary": "https://www.psychologytoday.com/us/blog/hot-thought/202205/motivated-reasoning-brief-history",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 735,
+      "title": "Evaluating the contributions of interactive problem solving to the resolution of ethnonational conflicts",
+      "old_primary": "https://doi.org/10.1080/10781910701839767",
+      "new_primary": "https://doi.org/10.1080/10781910701839767",
+      "old_secondary": "https://scholar.harvard.edu/hckelman/publications",
+      "new_secondary": "https://www.osce.org/files/f/documents/8/b/525594.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 746,
+      "title": "The role of stereotyping in system-justification and the production of false consciousness",
+      "old_primary": "https://bpspsychub.onlinelibrary.wiley.com/doi/10.1111/j.2044-8309.1994.tb01008.x",
+      "new_primary": "https://banaji.sites.fas.harvard.edu/research/publications/articles/1994_Jost_BJSP.pdf",
+      "old_secondary": "https://banaji.sites.fas.harvard.edu/research/publications/articles/1994_Jost_BJSP.pdf",
+      "new_secondary": "https://nibmehub.com/opac-service/pdf/read/Blackwell%20Handbook%20of%20Social%20Psychology%20_%20intergroup%20processes.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 747,
+      "title": "Persecution and the art of writing",
+      "old_primary": "https://ia800304.us.archive.org/20/items/LeoStrauss/LeoStraussPersecutionAndTheArtOfWriting.pdf",
+      "new_primary": "https://archive.org/download/LeoStrauss/LeoStraussPersecutionAndTheArtOfWriting.pdf",
+      "old_secondary": "https://www.researchgate.net/profile/Michael_Kochin/publication/231983124_Morality_Nature_and_Esotericism_in_Leo_Strauss's_Persecution_and_the_Art_of_Writing/links/57c60a1f08ae6db2cc76aa63/Morality-Nature-and-Esotericism-in-Leo-Strausss-Persecution-and-the-Art-of-Writing.pdf",
+      "new_secondary": "https://www.researchgate.net/profile/Michael_Kochin/publication/231983124_Morality_Nature_and_Esotericism_in_Leo_Strauss's_Persecution_and_the_Art_of_Writing/links/57c60a1f08ae6db2cc76aa63/Morality-Nature-and-Esotericism-in-Leo-Strausss-Persecution-and-the-Art-of-Writing.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 750,
+      "title": "A theory of cognitive dissonance",
+      "old_primary": "https://ftp.spaceneedle.com/libweb/mL5CGA/602738/festinger_l-1957-a_theory-of_cognitive-dissonance_stanford_university.pdf",
+      "new_primary": "https://ftp.spaceneedle.com/libweb/mL5CGA/602738/festinger_l-1957-a_theory-of_cognitive-dissonance_stanford_university.pdf",
+      "old_secondary": "https://psycnet.apa.org/doiLanding?doi=10.1037/0033-295X.85.1.53",
+      "new_secondary": "https://www.apa.org/pubs/books/Cognitive-Dissonance-Intro-Sample.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 802,
+      "title": "A Theory of Cognitive Dissonance",
+      "old_primary": "https://archive.org/details/byleonfestingert0000leon",
+      "new_primary": "https://archive.org/details/byleonfestingert0000leon",
+      "old_secondary": "https://psycnet.apa.org/doiLanding?doi=10.1037/0033-295X.85.1.53",
+      "new_secondary": "https://www.apa.org/pubs/books/Cognitive-Dissonance-Intro-Sample.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 818,
+      "title": "Political Advertising in the United States",
+      "old_primary": "https://www.researchgate.net/publication/336803705_Issues_Relevant_to_Population_Health_in_Political_Advertising_in_the_United_States_2011-2012_and_2015-2016/fulltext/5db2f023299bf111d4c885ac/Issues-Relevant-to-Population-Health-in-Political-Advertising-in-the-United-States-2011-2012-and-2015-2016.pdf",
+      "new_primary": "https://www.amazon.com/Political-Advertising-United-States-Franklin/dp/0367761475",
+      "old_secondary": "https://mediaproject.wesleyan.edu/updated-book-on-political-advertising-released/",
+      "new_secondary": "https://mediaproject.wesleyan.edu/updated-book-on-political-advertising-released/",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 828,
+      "title": "Too Funny to Be President",
+      "old_primary": "https://www.nytimes.com/1988/05/22/books/too-funny-to-be-president.html",
+      "new_primary": "http://contentdm-landing.library.arizona.edu/contentdm/mo-joke/index.html",
+      "old_secondary": "https://www.uapress.arizona.edu/books/bid1547.htm",
+      "new_secondary": "https://www.uapress.arizona.edu/books/bid1547.htm",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 833,
+      "title": "Report Card for America's Infrastructure",
+      "old_primary": "https://2013.infrastructurereportcard.org/wp-content/uploads/2013ReportCardforAmericasInfrastructure.pdf",
+      "new_primary": "https://www.nucorskyline.com/file%20library/document%20library/english/brochures/national_irc_2021-report.pdf",
+      "old_secondary": "https://www.pdx.edu/civil-environmental-engineering/sites/civilenvironmentalengineering.web.wdt.pdx.edu/files/2020-10/CE315_Norvell%20Mead%20Ethics%20Essay.pdf",
+      "new_secondary": "https://www.pdx.edu/civil-environmental-engineering/sites/civilenvironmentalengineering.web.wdt.pdx.edu/files/2020-10/CE315_Norvell%20Mead%20Ethics%20Essay.pdf",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    },
+    {
+      "id": 845,
+      "title": "Examining algorithmic amplification of political content on Twitter",
+      "old_primary": "https://www.pnas.org/doi/10.1073/pnas.2025334119",
+      "new_primary": "https://scholar.google.com/citations?user=NcR_PmwAAAAJ&hl=en",
+      "old_secondary": "https://www.pnas.org/doi/10.1073/pnas.2025334119",
+      "new_secondary": "https://www.pnas.org/doi/10.1073/pnas.2025334119",
+      "strategy": "title_first_60_chars",
+      "score_delta": 0
+    }
+  ],
+  "timestamp": "2025-11-13T17:49:23.216Z",
+  "duration_seconds": 2331,
+  "improvement_rate": "15.0"
+}
