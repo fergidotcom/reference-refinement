@@ -1,0 +1,48 @@
+# Batch Processing Configuration - v21.0 FULL REPROCESSING
+# Reprocess all unfinalized references with Query Evolution algorithms
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"  # Will override with --output flag
+
+  # REFERENCE SELECTION
+  selection_mode: "criteria"  # Process based on criteria
+  criteria:
+    not_finalized: true  # Only non-finalized references
+  max_references: null  # No limit - process all
+
+  # QUERY GENERATION
+  query_mode: "standard"  # Using Query Evolution (v21.0)
+
+  # AUTO-FINALIZATION - DISABLED (user reviews manually)
+  auto_finalize: false
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 70
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 300
+    delay_after_search: 500
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 10  # Save every 10 references

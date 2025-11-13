@@ -1,0 +1,49 @@
+# Batch Processing Configuration - v21.0 TEST (10 references)
+# Testing Query Evolution algorithms on small sample
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"  # Will override with --output flag
+
+  # REFERENCE SELECTION
+  selection_mode: "range"  # Process specific range for testing
+  reference_range:
+    start: 634
+    end: 643
+  max_references: null  # No limit (range already limits to 10)
+
+  # QUERY GENERATION
+  query_mode: "standard"  # Using Query Evolution (v21.0)
+
+  # AUTO-FINALIZATION - DISABLED for testing
+  auto_finalize: false
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 70
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 300
+    delay_after_search: 500
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5
