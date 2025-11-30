@@ -13,10 +13,15 @@
  * - proxy-fetch.ts
  */
 
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const fetch = require('node-fetch');
+import express from 'express';
+import path from 'path';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+import 'dotenv/config';
+
+// ES Module compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -49,19 +54,34 @@ console.log('[SERVER] Environment variables loaded:', {
 
 // ===== HEALTH CHECK =====
 // Converted from: netlify/functions/health.ts
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
-    version: 'v18.6.3/v22.0-linode',
+    version: 'v19.0-linode',
     ranking_algorithm: 'v22.0',
     timestamp: new Date().toISOString(),
-    service: 'reference-refinement'
+    service: 'reference-refinement',
+    endpoints: [
+      '/api/health',
+      '/api/llm-chat',
+      '/api/llm-rank',
+      '/api/search-google',
+      '/api/dropbox-oauth',
+      '/api/resolve-urls',
+      '/api/proxy-fetch'
+    ]
   });
+});
+
+// Legacy health endpoint (backwards compatibility)
+app.get('/health', (req, res) => {
+  res.redirect('/api/health');
 });
 
 // ===== ANTHROPIC CLAUDE API - CHAT/QUERY GENERATION =====
 // Converted from: netlify/functions/llm-chat.ts
-app.post('/api/llm/chat', async (req, res) => {
+// Frontend expects: /api/llm-chat
+app.post('/api/llm-chat', async (req, res) => {
   try {
     const { prompt, model } = req.body;
 
@@ -123,13 +143,28 @@ app.post('/api/llm/chat', async (req, res) => {
 
 // ===== ANTHROPIC CLAUDE API - URL RANKING =====
 // Converted from: netlify/functions/llm-rank.ts
-app.post('/api/llm/rank', async (req, res) => {
+// Frontend expects: /api/llm-rank with { reference, candidates }
+app.post('/api/llm-rank', async (req, res) => {
   try {
-    const { citation, relevance, results, model } = req.body;
+    // Support both old format (citation, relevance, results) and new format (reference, candidates)
+    let reference, candidates;
 
-    if (!citation || !relevance || !results) {
-      return res.status(400).json({ error: 'Missing required parameters' });
+    if (req.body.reference && req.body.candidates) {
+      // New format from frontend
+      reference = req.body.reference;
+      candidates = req.body.candidates;
+    } else if (req.body.citation && req.body.results) {
+      // Legacy format
+      reference = {
+        title: req.body.citation,
+        relevance: req.body.relevance
+      };
+      candidates = req.body.results;
+    } else {
+      return res.status(400).json({ error: 'Missing reference/candidates or citation/results' });
     }
+
+    const model = req.body.model;
 
     if (!ANTHROPIC_API_KEY) {
       return res.json({
@@ -143,8 +178,13 @@ app.post('/api/llm/rank', async (req, res) => {
     // Archive.org boost, CV penalties, OSF.io/ResearchGate recognition
     const systemPrompt = `You rank URLs. Reply with ONLY the scores table, nothing else.`;
 
-    const prompt = `Rank these URLs for: "${citation}"
-${relevance ? `\nRelevance: ${relevance.substring(0, 200)}...` : ''}
+    const refTitle = reference.title || 'Unknown';
+    const refAuthors = reference.authors || 'Unknown';
+    const refYear = reference.year || '';
+    const refRelevance = reference.relevance || '';
+
+    const prompt = `Rank these URLs for: "${refTitle}" by ${refAuthors} (${refYear})
+${refRelevance ? `\nRelevance: ${refRelevance.substring(0, 200)}...` : ''}
 
 Score each URL independently using content-type detection:
 
@@ -281,7 +321,7 @@ UNRELATED (0-30):
 • Different work or topic
 
 CANDIDATES:
-${results.map((r, i) => `${i}. ${r.title}\n   ${r.url}\n   ${r.snippet || ''}`).join('\n\n')}
+${candidates.map((c, i) => `${i}. ${c.title}\n   ${c.url}\n   ${c.snippet || ''}`).join('\n\n')}
 
 IMPORTANT: After scoring, identify:
 - PRIMARY RECOMMENDATION: The candidate with the HIGHEST primary score
@@ -367,10 +407,11 @@ Use exact/partial/none for TITLE_MATCH, yes/no for AUTHOR_MATCH.`;
 
       res.json({
         rankings: rankings,
-        allCandidates: results,
+        allCandidates: candidates,
         model: data.model,
         input_tokens: data.usage?.input_tokens || 0,
         output_tokens: data.usage?.output_tokens || 0,
+        searches_performed: 0,
         version: 'v22.0'
       });
 
@@ -379,16 +420,16 @@ Use exact/partial/none for TITLE_MATCH, yes/no for AUTHOR_MATCH.`;
       console.error('[LLM-RANK] v22.0: Full response:', resultText);
       res.json({
         rankings: [],
-        allCandidates: results,
+        allCandidates: candidates,
         error: 'Failed to parse ranking response',
-        rawResponse: resultText.substring(0, 500)
+        raw_response_preview: resultText.substring(0, 500)
       });
     }
 
   } catch (error) {
     console.error('[LLM-RANK] Error:', error);
     res.json({
-      rankedResults: req.body.results || [],
+      rankings: [],
       error: error.message || 'Ranking failed'
     });
   }
@@ -396,7 +437,8 @@ Use exact/partial/none for TITLE_MATCH, yes/no for AUTHOR_MATCH.`;
 
 // ===== GOOGLE CUSTOM SEARCH =====
 // Converted from: netlify/functions/search-google.ts
-app.post('/api/search/google', async (req, res) => {
+// Frontend expects: /api/search-google
+app.post('/api/search-google', async (req, res) => {
   try {
     const { query } = req.body;
 
@@ -454,8 +496,8 @@ app.post('/api/search/google', async (req, res) => {
 
 // ===== DROPBOX OAUTH =====
 // Converted from: netlify/functions/dropbox-oauth.ts
-// Note: Uses centralized OAuth library patterns
-app.post('/api/dropbox/oauth', async (req, res) => {
+// Frontend expects: /api/dropbox-oauth
+app.post('/api/dropbox-oauth', async (req, res) => {
   try {
     const { code, code_verifier, grant_type, refresh_token } = req.body;
 
@@ -510,7 +552,7 @@ app.post('/api/dropbox/oauth', async (req, res) => {
           code_verifier: code_verifier,
           client_id: DROPBOX_APP_KEY,
           client_secret: DROPBOX_APP_SECRET,
-          redirect_uri: 'https://refs.fergi.com/'
+          redirect_uri: process.env.DROPBOX_REDIRECT_URI || 'https://refs.fergi.com/'
         }).toString()
       });
 
@@ -547,7 +589,8 @@ app.post('/api/dropbox/oauth', async (req, res) => {
 
 // ===== URL RESOLUTION =====
 // Converted from: netlify/functions/resolve-urls.ts
-app.post('/api/urls/resolve', async (req, res) => {
+// Frontend expects: /api/resolve-urls
+app.post('/api/resolve-urls', async (req, res) => {
   try {
     const { urls = [] } = req.body;
     const resolved = [];
@@ -588,7 +631,8 @@ app.post('/api/urls/resolve', async (req, res) => {
 
 // ===== CORS PROXY =====
 // Converted from: netlify/functions/proxy-fetch.ts
-app.get('/api/proxy/fetch', async (req, res) => {
+// Frontend expects: /api/proxy-fetch
+app.get('/api/proxy-fetch', async (req, res) => {
   try {
     const { url, method = 'GET' } = req.query;
 
@@ -625,14 +669,62 @@ app.get('/api/proxy/fetch', async (req, res) => {
   }
 });
 
+// POST handler for proxy-fetch (some clients may use it)
+app.post('/api/proxy-fetch', async (req, res) => {
+  const { url, options = {} } = req.body;
+
+  if (!url) {
+    return res.status(400).json({ error: 'missing url' });
+  }
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; ReferenceRefinement/1.0)',
+        ...options.headers
+      }
+    });
+
+    const contentType = response.headers.get('content-type') || '';
+
+    if (contentType.includes('application/json')) {
+      const data = await response.json();
+      res.json({ data, status: response.status, contentType });
+    } else {
+      const text = await response.text();
+      res.json({ data: text, status: response.status, contentType });
+    }
+
+  } catch (error) {
+    console.error('[PROXY-FETCH] POST Error:', error);
+    res.status(500).json({ error: error.message || 'Proxy fetch failed' });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
-  console.log(`
-====================================
-📚 Reference Refinement Server
-====================================
-🌐 Port: ${PORT}
-🔧 Environment: ${process.env.NODE_ENV || 'development'}
-✅ Server ready
-  `);
+  console.log('');
+  console.log('='.repeat(60));
+  console.log('  Reference Refinement Server - Linode v19.0');
+  console.log('='.repeat(60));
+  console.log(`  Port: ${PORT}`);
+  console.log(`  Health: http://localhost:${PORT}/api/health`);
+  console.log(`  Static: http://localhost:${PORT}/`);
+  console.log('');
+  console.log('  Endpoints:');
+  console.log('    POST /api/llm-chat      - Query generation');
+  console.log('    POST /api/llm-rank      - URL ranking');
+  console.log('    POST /api/search-google - Google search');
+  console.log('    POST /api/dropbox-oauth - OAuth tokens');
+  console.log('    POST /api/resolve-urls  - URL validation');
+  console.log('    GET  /api/proxy-fetch   - CORS proxy');
+  console.log('');
+  console.log('  Environment:');
+  console.log(`    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY ? '✓ configured' : '✗ missing'}`);
+  console.log(`    GOOGLE_API_KEY:    ${GOOGLE_API_KEY ? '✓ configured' : '✗ missing'}`);
+  console.log(`    GOOGLE_CX:         ${GOOGLE_CX ? '✓ configured' : '✗ missing'}`);
+  console.log(`    DROPBOX_APP_SECRET:${DROPBOX_APP_SECRET ? '✓ configured' : '✗ missing'}`);
+  console.log('='.repeat(60));
+  console.log('');
 });

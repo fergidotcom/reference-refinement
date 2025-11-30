@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Reference Refinement v17.2</title>
+    <title>Reference Refinement v19.0</title>
     <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
     <style>
         /* CSS Variables */
@@ -1139,7 +1139,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1>Reference Refinement v17.2</h1>
+            <h1>Reference Refinement v19.0</h1>
             <button onclick="app.showQuickNote()" class="secondary" style="margin-left: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
                 📝 Quick Note
             </button>
@@ -1669,19 +1669,17 @@
 
             // API Client
             async apiRequest(endpoint, options = {}) {
-                // When in standalone mode (no custom backend), use absolute Netlify URL
+                // When in standalone mode (no custom backend), use Linode server
                 // because the HTML may be served from claude.ai artifacts
-                const NETLIFY_URL = 'https://rrv521-1760738877.netlify.app';
+                const LINODE_URL = 'https://refs.fergi.com';
 
                 let url;
                 if (this.apiBaseUrl) {
                     // Advanced mode - use custom backend
                     url = `${this.apiBaseUrl}${endpoint}`;
                 } else {
-                    // Standalone mode - use absolute Netlify URL
-                    // Convert /api/ to /.netlify/functions/
-                    const functionPath = endpoint.replace('/api/', '/');
-                    url = `${NETLIFY_URL}/.netlify/functions${functionPath}`;
+                    // Standalone mode - use Linode URL with /api/ paths
+                    url = `${LINODE_URL}${endpoint}`;
                 }
 
                 const defaultOptions = {
@@ -4717,7 +4715,7 @@ Combined Score: ${bestSecondary?.combined_score || 'N/A'}${costInfo}`;
                 const stateWithVerifier = `pkce:${codeVerifier}`;
 
                 // Use PKCE flow (required for public clients)
-                const redirectUri = 'https://rrv521-1760738877.netlify.app/';
+                const redirectUri = 'https://refs.fergi.com/';
                 const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${this.dropboxAppKey}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&token_access_type=offline&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${encodeURIComponent(stateWithVerifier)}`;
 
                 console.log('[DROPBOX] Redirecting to Dropbox for authorization');
