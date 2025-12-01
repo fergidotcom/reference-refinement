@@ -268,11 +268,11 @@ Express.js (port 3002)
 
 ### Environment Variables (systemd)
 ```bash
-ANTHROPIC_API_KEY=sk-ant-api03-...
-GOOGLE_API_KEY=AIzaSyD9ew5WFmnLykz5UcL8LFsJPSPtnMcuMTo
-GOOGLE_CX=d370fa65144264434
+ANTHROPIC_API_KEY=[REDACTED - set in Netlify/server env]
+GOOGLE_API_KEY=[REDACTED - set in Netlify/server env]
+GOOGLE_CX=[REDACTED - set in Netlify/server env]
 DROPBOX_APP_KEY=q4ldgkwjmhxv6w2
-DROPBOX_APP_SECRET=3a5rvori2s15f3b
+DROPBOX_APP_SECRET=[REDACTED - set in Netlify/server env]
 NODE_ENV=production
 PORT=3002
 ```
