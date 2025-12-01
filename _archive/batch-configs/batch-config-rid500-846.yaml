@@ -1,0 +1,49 @@
+# Batch configuration for RIDs 500-846 (remaining references)
+# v16.8 title cleanup enabled
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION
+  selection_mode: "range"
+  reference_range:
+    start: 500
+    end: 846
+  max_references: 300  # Allow processing all remaining
+
+  # QUERY GENERATION
+  query_mode: "standard"
+
+  # AUTO-FINALIZATION
+  auto_finalize: false  # Manual review
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 70
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 300
+    delay_after_search: 500
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5

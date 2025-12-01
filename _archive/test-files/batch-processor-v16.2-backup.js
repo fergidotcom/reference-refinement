@@ -1,30 +1,23 @@
 #!/usr/bin/env node
 /**
- * Reference Refinement - Batch Processor v22.0
+ * Reference Refinement - Batch Processor
  *
- * Automates bulk reference processing with YAML FORMAT SUPPORT:
+ * Automates bulk reference processing by calling Netlify Functions:
  * 1. Generate Queries (llm-chat)
  * 2. Search (search-google)
  * 3. Autorank (llm-rank)
- * 4. DEEP Validation (Python deep_url_validation.py)
- * 5. Auto-Finalize (based on criteria)
+ * 4. Auto-Finalize (based on criteria)
  *
- * Version: 22.0 - YAML SUPPORT + FLAG CLEANUP
- * - Auto-detects and preserves YAML format
- * - Clears old algorithm version flags (v30.0_PHASE1_BASELINE, BATCH_v20.0, etc.)
- * - Maintains finalized references unchanged
- * - Works with CaughtInTheActDecisions.txt (YAML format)
+ * Version: 16.2
  */
 
 // Batch version - gets written to FLAGS[BATCH_vX.X] for tracking
-const BATCH_VERSION = 'v22.0';
+const BATCH_VERSION = 'v16.2';
 
 import fs from 'fs/promises';
 import { existsSync } from 'fs';
 import { parse as parseYaml } from 'yaml';
 import chalk from 'chalk';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import {
     parseDecisionsFile,
     formatDecisionsFile,
@@ -37,8 +30,6 @@ import {
     formatElapsedTime,
     estimateCosts
 } from './batch-utils.js';
-
-const execPromise = promisify(exec);
 
 // Command line arguments
 const args = process.argv.slice(2);
@@ -75,25 +66,6 @@ async function main() {
         const decisionsContent = await fs.readFile(batchConfig.input_file, 'utf-8');
         const allReferences = parseDecisionsFile(decisionsContent);
         log.success(`Loaded ${allReferences.length} references`);
-
-        // v22.0: Clear old algorithm version flags from ALL references
-        log.info('Clearing old algorithm version flags...');
-        let flagsCleared = 0;
-        for (const ref of allReferences) {
-            const oldFlags = ref.flags.length;
-            // Remove old version flags but PRESERVE BATCH_vX.X flags from previous runs
-            ref.flags = ref.flags.filter(f =>
-                !f.startsWith('v') &&  // Remove v30.0_PHASE1_BASELINE, V21.0, etc.
-                !f.startsWith('WEB_SESSION') &&  // Remove WEB_SESSION flags
-                f !== 'FINALIZED' &&  // Will be re-added from ref.finalized
-                f !== 'MANUAL_REVIEW' &&  // Will be re-added from ref.manual_review
-                (f.startsWith('BATCH_v') || !f.startsWith('BATCH_'))  // Keep BATCH_vX.X, remove BATCH_X.X
-            );
-            if (ref.flags.length < oldFlags) {
-                flagsCleared++;
-            }
-        }
-        log.success(`Cleared old flags from ${flagsCleared} references`);
 
         // Filter references based on selection mode
         log.info(`Filtering references (mode: ${batchConfig.selection_mode})...`);
@@ -265,37 +237,29 @@ async function main() {
                 // Update progress
                 progress.stats.autoranks_completed++;
 
-                // v20.0: DEEP URL validation (paywall/login/soft404 detection)
-                log.step('3.5', 'Deep validating candidate URLs...');
-
-                // Build citation string for validation
-                const citation = `${ref.authors || ''} ${ref.year ? `(${ref.year})` : ''}. ${ref.title || 'Untitled'}`.trim();
-
+                // v16.2: Validate URL accessibility before selecting top candidates
+                log.step('3.5', 'Validating candidate URLs...');
                 const validatedRankings = await validateURLs(
                     rankings,
-                    citation,
+                    batchConfig.rate_limiting,
                     20 // Check top 20 candidates
                 );
 
-                // Validation summary is now logged inside validateURLs()
+                // Count validation results
+                const validCount = validatedRankings.filter(r => r.valid).length;
+                const invalidCount = validatedRankings.filter(r => r.valid === false && r.httpStatus !== null).length;
+                log.result(`✓ Validated: ${validCount} valid, ${invalidCount} invalid (checked top 20)`);
 
-                // Log invalid URLs with details (paywall/login/soft404)
-                if (batchConfig.logging.verbose) {
+                // Log invalid URLs for debugging
+                if (invalidCount > 0 && batchConfig.logging.verbose) {
+                    console.log(chalk.yellow('\n      Invalid URLs detected:'));
                     const invalidUrls = validatedRankings.filter(r => !r.valid && r.validationReason);
-                    if (invalidUrls.length > 0) {
-                        console.log(chalk.yellow('\n      Invalid URLs detected:'));
-                        for (const r of invalidUrls.slice(0, 5)) {
-                            const urlShort = r.url.length > 50 ? r.url.slice(0, 50) + '...' : r.url;
-                            const issues = [];
-                            if (r.paywall) issues.push('PAYWALL');
-                            if (r.login_required) issues.push('LOGIN');
-                            if (r.soft_404) issues.push('SOFT-404');
-                            const issueTag = issues.length > 0 ? ` [${issues.join(', ')}]` : '';
-                            console.log(chalk.yellow(`      ❌ ${urlShort}`));
-                            console.log(chalk.gray(`         ${r.validationReason}${issueTag}`));
-                        }
-                        console.log('');
+                    for (const r of invalidUrls.slice(0, 5)) {
+                        const urlShort = r.url.length > 50 ? r.url.slice(0, 50) + '...' : r.url;
+                        console.log(chalk.yellow(`      ❌ ${urlShort}`));
+                        console.log(chalk.gray(`         ${r.validationReason}`));
                     }
+                    console.log('');
                 }
 
                 // Log top 5 VALID candidates with scores for debugging
@@ -308,8 +272,8 @@ async function main() {
                     for (const r of topValid) {
                         const url = r.url || 'NO URL';
                         const urlShort = url.length > 50 ? url.slice(0, 50) + '...' : url;
-                        const scoreInfo = r.validationScore !== null ? ` [Score:${r.validationScore}]` : '';
-                        console.log(chalk.gray(`      P:${r.primary_score || 0} S:${r.secondary_score || 0}${scoreInfo} - ${urlShort}`));
+                        const statusInfo = r.httpStatus ? ` [${r.httpStatus}]` : '';
+                        console.log(chalk.gray(`      P:${r.primary_score || 0} S:${r.secondary_score || 0}${statusInfo} - ${urlShort}`));
                     }
                     console.log('');
                 }
@@ -707,119 +671,89 @@ async function callWithRetry(fn, maxRetries = 3) {
 }
 
 /**
- * DEEP URL Validation - Content-based accessibility checking
- * v20.0: Calls Python deep_url_validation.py for comprehensive validation
- *
- * Features:
- * - Paywall detection (12 patterns)
- * - Login wall detection (10 patterns)
- * - Soft 404 detection (8 patterns)
- * - Accessibility scoring (0-100)
- * - Content matching
+ * Validate URL accessibility and content-type
+ * v16.2: Detect both hard 404s and soft 404s (content-type mismatch)
  */
-async function validateURLDeep(url, citation, urlType = 'primary') {
+async function validateURL(url, rateLimiting) {
     try {
-        const citationEscaped = citation.replace(/"/g, '\\"');
-        const command = `python3 deep_validate_batch.py "${url}" "${citationEscaped}" "${urlType}"`;
-
-        const { stdout, stderr } = await execPromise(command, {
-            cwd: process.cwd(),
-            timeout: 15000  // 15 second timeout for deep validation
+        // Make HEAD request to check status and content-type
+        const response = await fetch(url, {
+            method: 'HEAD',
+            redirect: 'follow',
+            signal: AbortSignal.timeout(rateLimiting.timeout)
         });
 
-        if (stderr && stderr.length > 0 && !stderr.includes('DeprecationWarning')) {
-            console.error(chalk.yellow(`      ⚠️  Validation warning: ${stderr.slice(0, 100)}`));
+        const status = response.status;
+        const contentType = (response.headers.get('content-type') || '').toLowerCase();
+
+        // Check for HTTP errors
+        if (status >= 400) {
+            return {
+                valid: false,
+                status,
+                reason: `HTTP ${status} error`
+            };
         }
 
-        const result = JSON.parse(stdout);
+        // Check for content-type mismatch (catches many soft 404s)
+        // If URL ends with .pdf but server returns HTML, it's likely an error page
+        if (url.toLowerCase().endsWith('.pdf')) {
+            if (!contentType.includes('pdf') && contentType.includes('html')) {
+                return {
+                    valid: false,
+                    status,
+                    reason: 'PDF URL returns HTML (likely error page)'
+                };
+            }
+        }
 
         return {
-            valid: result.accessible && result.score >= 75,  // Valid = accessible AND good score
-            accessible: result.accessible,
-            score: result.score,
-            reason: result.reason,
-            paywall: result.paywall,
-            login_required: result.login_required,
-            soft_404: result.soft_404,
-            preview_only: result.preview_only
+            valid: true,
+            status,
+            contentType
         };
     } catch (error) {
-        // Fall back to basic validation on error
-        console.error(chalk.yellow(`      ⚠️  Deep validation failed for ${url.slice(0, 50)}: ${error.message}`));
         return {
             valid: false,
-            accessible: false,
-            score: 0,
-            reason: `Deep validation error: ${error.message}`,
-            paywall: false,
-            login_required: false,
-            soft_404: false,
-            preview_only: false
+            error: error.message,
+            reason: `Fetch failed: ${error.message}`
         };
     }
 }
 
 /**
- * Validate multiple URLs in batch with DEEP validation
- * v20.0: Deep content-based validation (paywall/login/soft404 detection)
+ * Validate multiple URLs in batch
+ * v16.2: Check top candidates for accessibility
  */
-async function validateURLs(rankings, citation, maxToCheck = 20) {
+async function validateURLs(rankings, rateLimiting, maxToCheck = 20) {
     const candidatesToCheck = rankings.slice(0, maxToCheck);
     const results = [];
-    let validCount = 0;
-    let invalidCount = 0;
-    let paywallCount = 0;
-    let loginCount = 0;
-    let soft404Count = 0;
 
     for (const ranking of candidatesToCheck) {
         if (!ranking.url) {
-            results.push({ ...ranking, valid: false, accessible: false, reason: 'No URL' });
-            invalidCount++;
+            results.push({ ...ranking, valid: false, reason: 'No URL' });
             continue;
         }
 
-        // Determine if this is likely a primary or secondary candidate
-        const urlType = ranking.primary_score >= ranking.secondary_score ? 'primary' : 'secondary';
-
-        const validation = await validateURLDeep(ranking.url, citation, urlType);
-
+        const validation = await validateURL(ranking.url, rateLimiting);
         results.push({
             ...ranking,
             valid: validation.valid,
-            accessible: validation.accessible,
-            validationScore: validation.score,
-            validationReason: validation.reason,
-            paywall: validation.paywall,
-            login_required: validation.login_required,
-            soft_404: validation.soft_404,
-            preview_only: validation.preview_only
+            httpStatus: validation.status,
+            validationReason: validation.reason
         });
 
-        if (validation.valid) validCount++;
-        else invalidCount++;
-        if (validation.paywall) paywallCount++;
-        if (validation.login_required) loginCount++;
-        if (validation.soft_404) soft404Count++;
-
-        // Small delay between validations
-        await sleep(300);
+        // Small delay between validations to avoid overwhelming servers
+        await sleep(200);
     }
 
     // Include unvalidated rankings as potentially valid (benefit of doubt)
     const remaining = rankings.slice(maxToCheck).map(r => ({
         ...r,
         valid: true,
-        accessible: true,
-        validationScore: null,
+        httpStatus: null,
         validationReason: 'Not validated (beyond top 20)'
     }));
-
-    // Log validation summary
-    console.log(chalk.blue(`      ✓ Validated: ${validCount} valid, ${invalidCount} invalid (checked top ${candidatesToCheck.length})`));
-    if (paywallCount > 0 || loginCount > 0 || soft404Count > 0) {
-        console.log(chalk.yellow(`      ⚠️  Issues: ${paywallCount} paywalled, ${loginCount} login-required, ${soft404Count} soft-404`));
-    }
 
     return [...results, ...remaining];
 }

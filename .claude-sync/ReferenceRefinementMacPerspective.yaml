@@ -1,0 +1,156 @@
+# Reference Refinement - Mac Claude Code Checkpoint
+# Generated: 2025-11-16T07:59:46Z
+
+# Project Identity
+project_id: reference-refinement
+project_name: Reference Refinement
+perspective: mac
+timestamp: 2025-11-16T07:59:46Z
+checkpoint_id: mac-20251116-075946
+counterpart_expected: claude_ai
+last_sync_from_counterpart: null
+
+# Session Context
+mac_context_usage: 23.9%
+session_duration: 15
+status: blocked
+git_branch: v30-linode-deployment
+
+# Session Summary
+session_summary: |
+  User reported unexpected finalized references in test file. Investigation
+  revealed both decisions.txt and SAMPLE25_decisions.txt contain 25 finalized
+  references using FLAGS[FINALIZED] format. User attempted to share error
+  screenshot but image didn't render properly. Session paused for user
+  clarification on production vs test file workflow.
+
+# Work Completed This Session
+completed_since_last_checkpoint:
+  - Investigated decisions.txt file structure
+  - Counted finalized references in both decisions.txt (25) and SAMPLE25_decisions.txt (25)
+  - Discovered both files use FLAGS[FINALIZED] format (not standalone [FINALIZED] markers)
+  - Identified backup files available for potential restore
+  - Identified test/sample files available
+
+# Investigation Results
+files_analyzed:
+  - path: decisions.txt
+    size: 575 lines
+    finalized_count: 25
+    format: FLAGS[FINALIZED]
+
+  - path: SAMPLE25_decisions.txt
+    size: 287 lines
+    finalized_count: 25
+    format: FLAGS[FINALIZED]
+    note: Subset of main file, same finalization status
+
+  - path: test_simple.txt
+    size: 4.1K
+
+  - path: test_v21_output.txt
+    size: 320K
+
+backup_files_available:
+  - decisions_backup_2025-11-15_*.txt
+  - decisions_backup_2025-11-13_*.txt
+  - decisions_backup_2025-11-11_*.txt
+  - decisions_backup_before_sample25_20251110_142556.txt
+  - Multiple other dated backups
+
+# Current State
+current_state:
+  - Production file (decisions.txt) confirmed with 25 finalized references
+  - Test file (SAMPLE25_decisions.txt) also has 25 finalized references
+  - User expected test file to have NO finalized references
+  - Format uses FLAGS[FINALIZED] instead of standalone [FINALIZED]
+  - User attempted to show error screenshot but it didn't render
+  - Unclear which workflow user intends: production vs test separation
+
+# Blockers (CRITICAL)
+blockers:
+  - severity: high
+    issue: Screenshot didn't render - cannot see error message
+    impact: Cannot diagnose error user is experiencing
+    resolution_needed: User must paste error text or describe error
+
+  - severity: high
+    issue: Unclear production vs test file workflow
+    impact: Don't know which file to modify or restore
+    resolution_needed: User clarification on which file should be production vs test
+
+  - severity: medium
+    issue: User didn't respond to three solution options
+    impact: Cannot proceed with fix
+    options_offered:
+      - Create clean test file (remove FLAGS[FINALIZED] from SAMPLE25)
+      - Restore from backup (use pre-finalization backup)
+      - Clarify workflow (explain which file is which)
+
+# Questions for Claude.ai Strategic Planning
+questions_for_claude:
+  - question: What is the intended workflow for production vs test files?
+    context: User has decisions.txt and SAMPLE25_decisions.txt both with finalized refs
+    priority: high
+
+  - question: Should we create automated test file generation?
+    context: User needs clean test files without finalized markers
+    priority: medium
+    impact: Could prevent this issue in future
+
+  - question: What error was user trying to show in screenshot?
+    context: Screenshot didn't render, user saw error in Reference Refinement UI
+    priority: high
+    blocking: true
+
+# Available Solutions (Pending User Choice)
+proposed_solutions:
+  solution_1:
+    name: Create clean test file
+    description: Copy SAMPLE25_decisions.txt and strip all FLAGS[FINALIZED] markers
+    effort: 5 minutes
+    risk: low
+
+  solution_2:
+    name: Restore from backup
+    description: Use decisions_backup_before_sample25_20251110_142556.txt
+    effort: 2 minutes
+    risk: medium
+    caveat: May lose recent work
+
+  solution_3:
+    name: Clarify workflow
+    description: Document which file is production, which is test, create separation
+    effort: 15 minutes
+    risk: low
+    benefit: Prevents future confusion
+
+# Current Project State
+project_status:
+  production_version: v16.10
+  deployment_status: Production ready
+  active_branch: v30-linode-deployment
+  git_status: |
+    Modified: batch-processor.js, batch-progress.json, index.html
+    Modified: netlify/functions/llm-rank.ts
+    Modified: v30 server services files
+    Many untracked analysis and backup files
+
+# Next Steps (Blocked - Awaiting User Input)
+next_steps_pending_user:
+  - Get error message text (screenshot didn't work)
+  - Clarify production vs test file workflow
+  - Choose solution: clean test file, restore backup, or clarify workflow
+  - Then proceed with selected solution
+
+# Metadata
+waiting_for_claude: false
+waiting_for_user: true
+ready_for_web_build: false
+mac_can_proceed: false
+user_response_needed: true
+user_questions_pending:
+  - "Which file should be your production file?"
+  - "Which file should be your test file?"
+  - "What error message did the screenshot show?"
+  - "Which solution do you prefer?"

@@ -68,6 +68,11 @@ ENV/
 *.bak
 *.backup
 
+# API Keys and sensitive files
+WEB_SESSION_API_KEYS.txt
+START_PIPELINE.sh
+*API_KEYS*.txt
+
 # Don't ignore important config files
 !netlify.toml
 !package.json

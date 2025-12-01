@@ -1,0 +1,831 @@
+{
+  "batch_id": "batch_2025-10-28T16-22-21-309Z",
+  "started_at": "2025-10-28T16:22:21.309Z",
+  "status": "completed",
+  "completed": [
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    107,
+    108,
+    109,
+    110,
+    111,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    107,
+    108,
+    109,
+    110,
+    111,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    200,
+    201,
+    202,
+    203,
+    120,
+    121,
+    122,
+    124,
+    126,
+    127,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    217,
+    218,
+    219,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    222,
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    307,
+    308,
+    309,
+    310,
+    311,
+    312,
+    314,
+    315,
+    318,
+    319,
+    320,
+    322,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    607,
+    608,
+    609,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624,
+    312,
+    314,
+    315,
+    318,
+    319,
+    320,
+    322,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    431,
+    434,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    315,
+    320,
+    414,
+    508,
+    606,
+    613,
+    620,
+    315,
+    422,
+    423,
+    424,
+    426,
+    427,
+    428,
+    430,
+    431,
+    434,
+    500,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    607,
+    608,
+    609,
+    610,
+    611,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624,
+    625,
+    626,
+    627,
+    628,
+    629,
+    630,
+    631,
+    632,
+    633,
+    634,
+    635,
+    636,
+    637,
+    638,
+    639,
+    640,
+    641,
+    642,
+    643,
+    644,
+    645,
+    646,
+    647,
+    648,
+    649,
+    650,
+    651,
+    652,
+    653,
+    700,
+    701,
+    702,
+    703,
+    704,
+    705,
+    706,
+    707,
+    708,
+    709,
+    710,
+    711,
+    712,
+    713,
+    714,
+    715,
+    716,
+    717,
+    718,
+    315,
+    320,
+    414,
+    508,
+    606,
+    613,
+    620,
+    315
+  ],
+  "errors": [
+    {
+      "id": 118,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:15:21.120Z"
+    },
+    {
+      "id": 119,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:15:34.668Z"
+    },
+    {
+      "id": 120,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:15:50.186Z"
+    },
+    {
+      "id": 121,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:16:04.088Z"
+    },
+    {
+      "id": 122,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:16:16.769Z"
+    },
+    {
+      "id": 123,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:16:29.035Z"
+    },
+    {
+      "id": 124,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:16:45.014Z"
+    },
+    {
+      "id": 125,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:16:57.336Z"
+    },
+    {
+      "id": 126,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:17:11.895Z"
+    },
+    {
+      "id": 127,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-10-31T05:17:25.087Z"
+    },
+    {
+      "id": 425,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-05T22:44:28.965Z"
+    },
+    {
+      "id": 429,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-05T22:47:50.361Z"
+    },
+    {
+      "id": 719,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:07.735Z"
+    },
+    {
+      "id": 720,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:15.475Z"
+    },
+    {
+      "id": 721,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:23.319Z"
+    },
+    {
+      "id": 722,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:31.005Z"
+    },
+    {
+      "id": 723,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:38.696Z"
+    },
+    {
+      "id": 724,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:46.566Z"
+    },
+    {
+      "id": 725,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:38:54.255Z"
+    },
+    {
+      "id": 726,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:01.929Z"
+    },
+    {
+      "id": 727,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:09.815Z"
+    },
+    {
+      "id": 728,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:17.706Z"
+    },
+    {
+      "id": 729,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:25.634Z"
+    },
+    {
+      "id": 730,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:33.255Z"
+    },
+    {
+      "id": 731,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:40.942Z"
+    },
+    {
+      "id": 732,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:48.669Z"
+    },
+    {
+      "id": 733,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:39:56.430Z"
+    },
+    {
+      "id": 734,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:04.139Z"
+    },
+    {
+      "id": 735,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:11.926Z"
+    },
+    {
+      "id": 736,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:19.786Z"
+    },
+    {
+      "id": 737,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:27.566Z"
+    },
+    {
+      "id": 738,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:35.286Z"
+    },
+    {
+      "id": 739,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:43.051Z"
+    },
+    {
+      "id": 740,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:50.816Z"
+    },
+    {
+      "id": 741,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:40:58.614Z"
+    },
+    {
+      "id": 742,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:06.281Z"
+    },
+    {
+      "id": 743,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:14.055Z"
+    },
+    {
+      "id": 744,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:21.832Z"
+    },
+    {
+      "id": 745,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:29.636Z"
+    },
+    {
+      "id": 746,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:37.532Z"
+    },
+    {
+      "id": 747,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:45.238Z"
+    },
+    {
+      "id": 748,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:41:52.908Z"
+    },
+    {
+      "id": 749,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:00.687Z"
+    },
+    {
+      "id": 750,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:08.427Z"
+    },
+    {
+      "id": 751,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:16.182Z"
+    },
+    {
+      "id": 752,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:23.861Z"
+    },
+    {
+      "id": 800,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:31.583Z"
+    },
+    {
+      "id": 801,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:39.297Z"
+    },
+    {
+      "id": 802,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:46.997Z"
+    },
+    {
+      "id": 803,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:42:54.707Z"
+    },
+    {
+      "id": 804,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:02.348Z"
+    },
+    {
+      "id": 805,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:10.067Z"
+    },
+    {
+      "id": 806,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:17.793Z"
+    },
+    {
+      "id": 807,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:25.469Z"
+    },
+    {
+      "id": 808,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:33.138Z"
+    },
+    {
+      "id": 809,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:40.840Z"
+    },
+    {
+      "id": 810,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:48.519Z"
+    },
+    {
+      "id": 816,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:43:56.351Z"
+    },
+    {
+      "id": 817,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:04.041Z"
+    },
+    {
+      "id": 818,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:11.717Z"
+    },
+    {
+      "id": 819,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:19.395Z"
+    },
+    {
+      "id": 820,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:27.226Z"
+    },
+    {
+      "id": 821,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:34.959Z"
+    },
+    {
+      "id": 822,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:42.633Z"
+    },
+    {
+      "id": 823,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:50.356Z"
+    },
+    {
+      "id": 824,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:44:58.079Z"
+    },
+    {
+      "id": 825,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:05.802Z"
+    },
+    {
+      "id": 826,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:13.455Z"
+    },
+    {
+      "id": 827,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:21.115Z"
+    },
+    {
+      "id": 828,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:29.075Z"
+    },
+    {
+      "id": 829,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:36.802Z"
+    },
+    {
+      "id": 830,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:44.471Z"
+    },
+    {
+      "id": 831,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:45:52.227Z"
+    },
+    {
+      "id": 832,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:00.119Z"
+    },
+    {
+      "id": 833,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:07.963Z"
+    },
+    {
+      "id": 834,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:15.626Z"
+    },
+    {
+      "id": 835,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:23.391Z"
+    },
+    {
+      "id": 836,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:31.133Z"
+    },
+    {
+      "id": 837,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:38.846Z"
+    },
+    {
+      "id": 838,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:46.575Z"
+    },
+    {
+      "id": 839,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:46:54.427Z"
+    },
+    {
+      "id": 840,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:02.166Z"
+    },
+    {
+      "id": 841,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:09.906Z"
+    },
+    {
+      "id": 842,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:17.672Z"
+    },
+    {
+      "id": 843,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:25.367Z"
+    },
+    {
+      "id": 844,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:33.063Z"
+    },
+    {
+      "id": 845,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:40.808Z"
+    },
+    {
+      "id": 846,
+      "error": "HTTP 400: {\"error\":\"Missing query parameter\"}",
+      "timestamp": "2025-11-06T00:47:48.493Z"
+    }
+  ],
+  "stats": {
+    "queries_generated": 463,
+    "searches_run": 375,
+    "autoranks_completed": 375,
+    "auto_finalized": 34
+  },
+  "last_updated": "2025-11-11T16:17:29.649Z"
+}

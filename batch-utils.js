@@ -6,11 +6,21 @@
 import fs from 'fs/promises';
 import { existsSync } from 'fs';
 import chalk from 'chalk';
+import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 
 /**
  * Parse decisions.txt into reference objects
+ * Auto-detects YAML vs legacy text format
  */
 export function parseDecisionsFile(content) {
+    // v22.0: Detect YAML format
+    const isYAML = content.trim().startsWith('references:') || content.trim().startsWith('---');
+
+    if (isYAML) {
+        return parseYamlFile(content);
+    }
+
+    // Legacy text format parser
     const references = [];
     let currentRef = null;
     const lines = content.split('\n');
@@ -275,8 +285,21 @@ function parseReferenceLine(line) {
 
 /**
  * Write references back to decisions.txt format
+ * v22.0: Auto-detects format based on whether references have context field
  */
-export function formatDecisionsFile(references) {
+export function formatDecisionsFile(references, outputFormat = 'auto') {
+    // v22.0: Auto-detect format if not specified
+    if (outputFormat === 'auto') {
+        // If any reference has a context field (even if null), it came from YAML format
+        const hasContextField = references.length > 0 && references[0].hasOwnProperty('context');
+        outputFormat = hasContextField ? 'yaml' : 'text';
+    }
+
+    if (outputFormat === 'yaml') {
+        return formatYamlFile(references);
+    }
+
+    // Legacy text format
     const lines = [];
 
     for (const ref of references) {
@@ -371,6 +394,109 @@ function formatReferenceLine(ref) {
     }
 
     return line;
+}
+
+/**
+ * Parse YAML format decisions file
+ * v22.0: Added to support YAML format
+ */
+function parseYamlFile(content) {
+    const data = parseYaml(content);
+    const references = [];
+
+    for (const ref of data.references || []) {
+        // Transform YAML structure to internal batch processor format
+        const parsed = {
+            id: parseInt(ref.id),
+            rawLine: ref.citation || '',
+            title: '',
+            authors: '',
+            year: '',
+            other: '',
+            relevance_text: ref.relevance || ref.relevance_text || '',
+            context: ref.context || '',
+            urls: {
+                primary: ref.urls?.primary || '',
+                secondary: ref.urls?.secondary || '',
+                tertiary: ref.urls?.tertiary || ''
+            },
+            queries: ref.queries || [],
+            finalized: ref.finalized || false,
+            manual_review: false,
+            batch_version: null,
+            flags: ref.flags || []
+        };
+
+        // Parse bibliographic info from citation
+        if (ref.citation) {
+            // Remove [ID] prefix if present
+            const citationText = ref.citation.replace(/^\[\d+\]\s*/, '');
+            const parsedInfo = parseReferenceLine(citationText);
+            Object.assign(parsed, parsedInfo);
+        }
+
+        // Extract batch version from flags
+        const batchFlag = parsed.flags.find(f => f.startsWith('BATCH_') || f.startsWith('v'));
+        if (batchFlag) {
+            parsed.batch_version = batchFlag.replace('BATCH_', '').replace(/^v/, '');
+        }
+
+        // Check for manual review flag
+        if (parsed.flags.includes('MANUAL_REVIEW')) {
+            parsed.manual_review = true;
+        }
+
+        references.push(parsed);
+    }
+
+    return references;
+}
+
+/**
+ * Format references as YAML
+ * v22.0: Added to support YAML format output
+ */
+function formatYamlFile(references) {
+    const yamlData = {
+        references: references.map(ref => {
+            // Build citation string
+            let citation = `[${ref.id}] `;
+            if (ref.authors) citation += `${ref.authors} `;
+            if (ref.year) citation += `(${ref.year}). `;
+            if (ref.title) citation += `${ref.title}. `;
+            if (ref.other) citation += `${ref.other}`;
+            citation = citation.trim();
+
+            // Build flags array (exclude old version flags unless it's the current batch version)
+            const flags = [];
+            if (ref.batch_version) {
+                flags.push(`BATCH_${ref.batch_version}`);
+            }
+            // Add any other non-version flags
+            for (const flag of ref.flags) {
+                if (!flag.startsWith('v') && !flag.startsWith('BATCH_') && !flag.startsWith('WEB_SESSION') && flag !== 'FINALIZED' && flag !== 'MANUAL_REVIEW') {
+                    flags.push(flag);
+                }
+            }
+
+            return {
+                id: String(ref.id),
+                citation: citation,
+                finalized: ref.finalized || false,
+                context: ref.context || null,
+                relevance: ref.relevance_text || '',
+                flags: flags,
+                urls: {
+                    primary: ref.urls?.primary || null,
+                    secondary: ref.urls?.secondary || null,
+                    tertiary: ref.urls?.tertiary || null
+                },
+                queries: ref.queries || []
+            };
+        })
+    };
+
+    return stringifyYaml(yamlData);
 }
 
 /**

@@ -1,0 +1,20 @@
+project_id: reference-refinement
+project_name: Reference Refinement
+description: Academic reference management with AI-powered URL search
+
+coordination:
+  mac:
+    path: /Users/joeferguson/Library/CloudStorage/Dropbox/Fergi/AI Wrangling/References
+    sync_path: /Users/joeferguson/Library/CloudStorage/Dropbox/Fergi/.claude-sync/reference-refinement
+
+  claude_ai:
+    project_name: "Reference Refinement - Planning"
+    project_url: null
+    notes: Strategic planning and architecture decisions
+
+  web:
+    github_repo: fergidotcom/reference-refinement
+    notes: Bulk code generation, multi-phase builds
+
+created: 2025-11-07
+last_sync: null

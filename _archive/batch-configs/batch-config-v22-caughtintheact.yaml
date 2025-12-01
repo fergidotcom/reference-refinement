@@ -1,0 +1,57 @@
+# Batch Processing Configuration v22.0 - Caught In The Act Production File
+# Process all 82 unfinalized references in the iPad production file
+
+batch_processor:
+  # INPUT/OUTPUT FILES
+  input_file: "/Users/joeferguson/Library/CloudStorage/Dropbox/Apps/Reference Refinement/CaughtInTheActDecisions.txt"
+  output_file: "/Users/joeferguson/Library/CloudStorage/Dropbox/Apps/Reference Refinement/CaughtInTheActDecisions.txt"
+
+  # REFERENCE SELECTION - Process ALL unfinalized references
+  selection_mode: "criteria"
+  max_references: null  # No limit - process all
+
+  # Not used in criteria mode
+  reference_range:
+    start: 1
+    end: 999
+
+  # Select references that are NOT finalized
+  criteria:
+    missing_primary_url: false     # Don't filter by primary URL
+    missing_secondary_url: false   # Don't filter by secondary URL
+    not_finalized: true            # ONLY select not finalized (82 refs)
+    has_queries: false             # Don't filter by queries
+
+  # QUERY GENERATION - Use FULL mode for best quality
+  query_mode: "full"  # 8 queries (best quality)
+
+  # AUTO-FINALIZATION - DISABLED (user will finalize manually)
+  auto_finalize: false
+  finalize_criteria:
+    min_primary_score: 85
+    min_secondary_score: 85
+    require_title_match: true
+    require_author_match: false
+    max_warnings: 0
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 2000   # 2 seconds between refs
+    delay_after_search: 1000   # 1 second after search
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5  # Save after every 5 references

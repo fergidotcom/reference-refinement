@@ -1,0 +1,47 @@
+# Batch Processing Configuration - MANUAL_REVIEW Reprocessing v20.1
+# Testing new unquoted query generation on problem references
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION - All remaining MANUAL_REVIEW refs
+  selection_mode: "specific_refs"
+  specific_refs: [648, 649, 703, 704, 705, 706, 707, 708, 709, 710, 711, 715, 716, 717, 721, 722, 723, 724, 725, 732, 733, 734, 735, 736, 737, 742, 743, 744, 745, 803, 804, 806, 807, 808, 809, 816, 817, 825, 826, 827, 828, 833, 834, 836, 837, 838, 839, 840, 841, 842, 843, 844]
+  max_references: 52
+
+  # QUERY GENERATION - SIMPLE MODE (3 queries, unquoted titles)
+  query_mode: "simple"  # 3 queries: title+author, review, keywords
+
+  # AUTO-FINALIZATION - DISABLED (manual review required)
+  auto_finalize: false
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 70
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 300   # 300ms between operations
+    delay_after_search: 500   # 500ms after search
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5  # Save every 5 references

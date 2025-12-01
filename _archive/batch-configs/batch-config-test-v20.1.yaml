@@ -1,0 +1,47 @@
+# Batch Processing Configuration - TEST v20.1 Query Generation
+# Testing 3 MANUAL_REVIEW references with unquoted queries
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION - 3 test refs
+  selection_mode: "specific_refs"
+  specific_refs: [638, 646, 647]  # 3 MANUAL_REVIEW refs to test
+  max_references: 3
+
+  # QUERY GENERATION - SIMPLE MODE (3 queries, unquoted titles)
+  query_mode: "simple"
+
+  # AUTO-FINALIZATION - DISABLED
+  auto_finalize: false
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 70
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 300
+    delay_after_search: 500
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5

@@ -1,0 +1,79 @@
+# Batch Processing Configuration - WEB SESSION 2025-11-11
+# Process all 139 unfinalized references with deep URL validation
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions_backup_pre_web_session_2025_11_11.txt"
+  output_file: "decisions_web_session_2025_11_11.txt"
+
+  # REFERENCE SELECTION - All unfinalized references
+  selection_mode: "criteria"
+  max_references: 139  # Process all unfinalized
+
+  # Not used in criteria mode, but kept for reference
+  reference_range:
+    start: 1
+    end: 999
+
+  # Select references that are NOT finalized
+  criteria:
+    missing_primary_url: false     # Don't filter by primary URL
+    missing_secondary_url: false   # Don't filter by secondary URL
+    not_finalized: true            # ONLY select not finalized
+    has_queries: false             # Don't filter by queries
+
+  # QUERY GENERATION - Use comprehensive mode
+  query_mode: "comprehensive"  # 8 queries (6 primary + 2 secondary)
+
+  # AUTO-FINALIZATION - DISABLED (user reviews on iPad first)
+  auto_finalize: false
+
+  # SESSION FLAGS - Add WEB_SESSION_2025_11_11 to all processed refs
+  session_flags:
+    - "WEB_SESSION_2025_11_11"
+
+  # QUALITY THRESHOLDS
+  finalize_criteria:
+    min_primary_score: 75      # Minimum acceptable primary score
+    min_secondary_score: 75    # Minimum acceptable secondary score
+    require_title_match: true
+    require_author_match: false
+    max_warnings: 2
+
+  # MANUAL REVIEW FLAGGING
+  manual_review:
+    flag_low_scores: true       # Flag refs with scores < 75
+    flag_paywalled: true        # Flag paywalled primaries
+    flag_no_urls: true          # Flag refs with no good URLs
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 3000   # 3 seconds between refs (conservative)
+    delay_after_search: 1500   # 1.5 seconds after search
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "web-session-logs"
+    include_api_responses: true
+    log_file: "web_session_2025_11_11_log.txt"
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 5  # Save after every 5 references
+    checkpoint_file: "web_session_checkpoint.json"
+
+  # DEEP URL VALIDATION (if supported by batch processor)
+  deep_validation:
+    enabled: true
+    validate_top_candidates: 10  # Deep validate top 10 candidates
+    min_accessible_score: 90     # Only accept fully accessible URLs
+    reject_paywalled: false      # Still record paywalled URLs but flag them
+    reject_login_required: false # Still record login URLs but flag them

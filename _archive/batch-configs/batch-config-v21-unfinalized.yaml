@@ -1,0 +1,78 @@
+# Batch Configuration - v21.0 True Logic - Unfinalized References
+# Created: November 13, 2025
+# Purpose: Reprocess all 97 unfinalized references with true v21.0 logic
+
+batch_processor:
+  # INPUT FILES
+  input_file: "decisions.txt"
+  output_file: "decisions.txt"
+
+  # REFERENCE SELECTION - Use criteria mode to select unfinalized
+  selection_mode: "criteria"
+
+  criteria:
+    not_finalized: true  # Only process references that are NOT finalized
+
+  max_references: 100  # Safety limit (we have 97 unfinalized)
+
+  # QUERY GENERATION
+  # Use standard 8-query mode with TRUE v21.0 logic (unquoted title in Q1)
+  query_mode: "standard"
+
+  # AUTO-FINALIZATION
+  # Don't auto-finalize - let user review v21.0 results first
+  auto_finalize: false
+
+  finalize_criteria:
+    min_primary_score: 75
+    min_secondary_score: 70
+    require_title_match: false
+    require_author_match: false
+    max_warnings: 2
+
+  # RATE LIMITING
+  rate_limiting:
+    delay_between_refs: 2000   # 2 seconds between references
+    delay_after_search: 500    # 500ms after each search
+    max_retries: 3
+    timeout: 30000
+
+  # API ENDPOINTS
+  api_base_url: "https://rrv521-1760738877.netlify.app/.netlify/functions"
+
+  # LOGGING
+  logging:
+    verbose: true
+    save_logs: true
+    log_directory: "batch-logs"
+    include_api_responses: false
+
+  # RESUME CAPABILITY
+  resume:
+    enabled: true
+    checkpoint_frequency: 10   # Save progress every 10 references
+    progress_file: "batch-progress-v21-unfinalized.json"
+
+  # NOTES
+  notes: |
+    This batch run reprocesses all 97 unfinalized references with TRUE v21.0 logic.
+
+    Previous "v21.0" runs were actually v20.0 (version mismatch bug).
+
+    TRUE v21.0 FEATURES:
+    - Q1: UNQUOTED title search (was missing!)
+    - Q2-Q3: Quoted full-text searches
+    - Q4: Publisher/purchase page
+    - Q5-Q7: Reviews/analyses
+    - Q8: Scholarly topic fallback
+
+    URL RANKING IMPROVEMENTS (via shared llm-rank.ts):
+    - Title + author validation BEFORE scoring
+    - EPUB downloads max score 40
+    - Irrelevant URLs max score 40
+    - Wrong author max score 30
+
+    Expected improvements over fake v21.0:
+    - Better document discovery
+    - No EPUB downloads
+    - No irrelevant high-scoring URLs
